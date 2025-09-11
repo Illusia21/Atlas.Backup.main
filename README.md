@@ -1,3 +1,10 @@
+# Dev Environment
+```bash
+git clone https://github.com/MCM-CSS/atlas.accounting.web.git
+cd atlas.accounting.web
+npm install
+npm run dev
+```
 # Github Workflow
 ## Create a branch!
 ```bash
