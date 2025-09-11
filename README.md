@@ -1,69 +1,63 @@
-# React + TypeScript + Vite
-
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# Github Workflow
+## Create a branch!
+```bash
+git fetch origin main
+git checkout -b <ticket id> origin/main
 ```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Pushing your changes
+_Please refer to [Conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) for the format of your commit messages_
+```bash
+git add .
+git commit -m "your message here"
+git push origin <current branch name>
 ```
+1. Create a PR (Pull Request)
+2. Move the ticket to "For review" column
+3. In case of errors:
+```bash
+git push origin <current branch name> --force
+```
+## Branch behind? do rebase!
+Do this first before pushing your changes if you are behind!
+```bash
+git fetch origin main
+git rebase origin/main
+```
+Stash if you can't rebase
+```bash
+git stash
+git fetch origin main
+git rebase origin/main
+git stash pop
+```
+**_Fix possible merge conflicts_**
+
+After fixing conflicts
+```bash
+git push origin <current branch name> --force
+```
+***WARNING: Always ask the last person who made changes on a conflict file to know which lines of code are okay to overwrite***
+## Still in main branch?
+Move to a remote branch
+```bash
+git checkout -b <ticket id> origin/main
+```
+If you can't move, stash!
+```bash
+git stash
+git checkout -b <ticket id> origin/main
+git stash pop
+```
+## Dependent branches
+If a branch is dependent on an un-merged branch you can run
+```bash
+git fetch origin <dependent branch name>
+git rebase origin/<dependent branch name>
+```
+If you're still in **main** branch 
+```bash
+git checkout -b <ticket id> origin/<dependent branch name>
+```
+**_1 ticket 1 branch rule, make sure to only have 1 branch for each ticket for easier monitoring and reviews_**
+
+_Workflow by Sam Dacara_
