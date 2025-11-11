@@ -1,5 +1,4 @@
-import react from 'react'
-import {BrowserRouter, Routes, Route, Navigate} from "react-router-dom"
+import {Routes, Route, Navigate} from "react-router-dom"
 import Login from "./pages/Login"
 import ForgotPassword from './pages/ForgotPassword'
 import ResetPassword from './pages/ResetPassword'
@@ -14,23 +13,21 @@ function Logout() {
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <ProtectedRoute>
-              <Dashboard/>
-            </ProtectedRoute>
-          }
-        />
-        <Route path="/login" element={<Login/>}/>
-        <Route path="/forgot-password" element={<ForgotPassword/>}/>
-        <Route path="/reset-password" element={<ResetPassword/>}/>
-        <Route path="/auth-recall" element={<AuthRecall/>}/>
-      </Routes> 
-    </BrowserRouter>
-  )
+    <Routes>
+      <Route
+      path="/"
+      element={
+        <ProtectedRoute>
+          <Dashboard/>
+        </ProtectedRoute>
+      }
+      />
+      <Route path="/login" element={<Login/>}/>
+      <Route path="/forgot-password" element={<ForgotPassword/>}/>
+      <Route path="/reset-password" element={<ResetPassword/>}/>
+      <Route path="/auth-recall" element={<AuthRecall/>}/>
+    </Routes> 
+)
 }
 
 export default App
