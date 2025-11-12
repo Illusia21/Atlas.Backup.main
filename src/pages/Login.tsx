@@ -21,8 +21,8 @@ import {
 } from "@/components/ui/card"
 
 type FormFields = {
-    username: string; //email
-    password: string;
+    username: string //email
+    password: string
 }
 
 function Login() {
@@ -77,7 +77,7 @@ function Login() {
                                             <Link to="/forgot-password" className="text-blue-600 underline">Click here</Link>
                                         </div>                    
                                     </FieldLabel>
-                                    <Input {...register('password')} type="password" placeholder='Password'></Input>
+                                    <Input {...register('password')} autoComplete="new-password" type="password" placeholder='Password'></Input>
                                 </Field>
                                 <Field orientation="vertical">
                                     <Button type="submit" className="rounded-[24px] h-[45px]">Login</Button>
