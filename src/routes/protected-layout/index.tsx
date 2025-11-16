@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Navigate } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import api from "../../api";
 import { REFRESH_TOKEN, ACCESS_TOKEN } from "../../constants";
@@ -11,7 +11,7 @@ interface JWTPayload {
   [key: string]: any;
 }
 
-export default function ProtectedLayout({ children }: any) {
+export default function ProtectedLayout() {
   const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null);
 
   useEffect(() => {
@@ -77,5 +77,5 @@ export default function ProtectedLayout({ children }: any) {
     return <div>Loading...</div>;
   }
 
-  return isAuthorized ? children : <Navigate to="/login" />;
+  return isAuthorized ? <Outlet /> : <Navigate to="/login" />;
 }
