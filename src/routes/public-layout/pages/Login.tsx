@@ -11,7 +11,7 @@ function Login() {
 
   return (
     <div className="flex justify-center items-center min-h-screen">
-      <Card className="bg-[#FCFCFC] w-full max-w-lg p-6">
+      <Card className="bg-[#FCFCFC] w-full max-w-lg p-6 border-none shadow-none">
         <CardHeader className="flex items-center justify-center gap-4">
           <img
             src={mmcmLogo}
@@ -29,7 +29,7 @@ function Login() {
             onClick={handleMicrosoftLogin}
             variant="secondary"
             type="button"
-            className="w-full rounded-[24px] h-[45px] border border-[#001C43]"
+            className="w-full rounded-[24px] h-[45px] border border-[#001C43] font-bold cursor-pointer"
           >
             Login with a Microsoft Account
           </Button>
