@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from 'react'
 import {useForm} from 'react-hook-form'
 import type {SubmitHandler} from 'react-hook-form'
 import {useParams,useNavigate} from 'react-router-dom'
-import api from "../api"
+import api from "../../../api"
 import {z} from 'zod'
 import {zodResolver} from '@hookform/resolvers/zod'
 import { Button } from "@/components/ui/button"
