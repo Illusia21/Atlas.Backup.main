@@ -1,9 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { /**Navigate,**/ Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import api from "../../api";
 import { REFRESH_TOKEN, ACCESS_TOKEN } from "../../constants";
 import { useState, useEffect } from "react";
+import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
+import { AppSidebar } from '@/components/AppSidebar'
+import { Separator } from '@/components/ui/separator'
 
 interface JWTPayload {
   exp?: number;
@@ -11,8 +14,16 @@ interface JWTPayload {
   [key: string]: any;
 }
 
+// Page titles for different routes
+const routeTitles: Record<string, string> = {
+  '/': 'Dashboard',
+  '/my-requests': 'My Requests',
+}
+
 export default function ProtectedLayout() {
   const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null);
+  const location = useLocation()
+  const pageTitle = routeTitles[location.pathname] || 'Dashboard'
 
   useEffect(() => {
     auth().catch(() => setIsAuthorized(false));
@@ -77,8 +88,40 @@ export default function ProtectedLayout() {
     return <div>Loading...</div>;
   }
 
-  //Temporary bypass authentication
-  return <Outlet />;
+  // Temporary bypass - wrapping with Sidebar + Topbar
+  return (
+    <SidebarProvider defaultOpen={false}>
+      <AppSidebar />
+      <div className="flex flex-col w-full">
+        {/* Topbar */}
+        <header className="flex h-16 items-center gap-4 border-b bg-white px-6">
+          <SidebarTrigger />
+          <Separator orientation="vertical" className="h-6" />
+          <h1 className="text-lg font-semibold text-[#001C43]">{pageTitle}</h1>
+        </header>
 
-  //return isAuthorized ? <Outlet /> : <Navigate to="/login" />;
+        {/* Main Content Area */}
+        <main className="flex-1 bg-[#F5F5F5] p-6">
+          <Outlet />
+        </main>
+      </div>
+    </SidebarProvider>
+  );
+
+  // When you're ready to enable auth again, replace the return above with:
+  // return isAuthorized ? (
+  //   <SidebarProvider defaultOpen={false}>
+  //     <AppSidebar />
+  //     <div className="flex flex-col w-full">
+  //       <header className="flex h-16 items-center gap-4 border-b bg-white px-6">
+  //         <SidebarTrigger />
+  //         <Separator orientation="vertical" className="h-6" />
+  //         <h1 className="text-lg font-semibold text-[#001C43]">{pageTitle}</h1>
+  //       </header>
+  //       <main className="flex-1 bg-[#F5F5F5] p-6">
+  //         <Outlet />
+  //       </main>
+  //     </div>
+  //   </SidebarProvider>
+  // ) : <Navigate to="/login" />;
 }

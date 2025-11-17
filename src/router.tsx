@@ -18,18 +18,12 @@ const Router = createBrowserRouter([
     element: <ProtectedLayout />,
     children: [
       {
-        path: "/",
-        element: <Dashboard />,
-        children: [
-          {
-            index: true,
-            element: <Navigate to="/my-requests" replace />,
-          },
-          {
-            path: "my-requests",
-            element: <MyRequests />,
-          },
-        ],
+        index: true,
+        element: <Navigate to="/my-requests" replace />,
+      },
+      {
+        path: "/my-requests",
+        element: <MyRequests />,
       },
       {
         path: "/logout",
