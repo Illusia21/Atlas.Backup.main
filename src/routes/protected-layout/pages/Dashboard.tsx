@@ -14,7 +14,7 @@ function Dashboard() {
   const pageTitle = routeTitles[location.pathname] || 'Dashboard'
 
   return (
-    <SidebarProvider>
+    <SidebarProvider defaultOpen={false}>
       <AppSidebar />
       <div className="flex flex-col w-full">
         {/* Topbar */}
