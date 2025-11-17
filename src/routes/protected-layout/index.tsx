@@ -4,9 +4,9 @@ import { jwtDecode } from "jwt-decode";
 import api from "../../api";
 import { REFRESH_TOKEN, ACCESS_TOKEN } from "../../constants";
 import { useState, useEffect } from "react";
-import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
+import { SidebarProvider } from '@/components/ui/sidebar'
 import { AppSidebar } from '@/components/AppSidebar'
-import { Separator } from '@/components/ui/separator'
+import { Topbar } from '@/components/Topbar'
 
 interface JWTPayload {
   exp?: number;
@@ -94,11 +94,7 @@ export default function ProtectedLayout() {
       <AppSidebar />
       <div className="flex flex-col w-full">
         {/* Topbar */}
-        <header className="flex h-16 items-center gap-4 border-b bg-white px-6">
-          <SidebarTrigger />
-          <Separator orientation="vertical" className="h-6" />
-          <h1 className="text-lg font-semibold text-[#001C43]">{pageTitle}</h1>
-        </header>
+        <Topbar pageTitle={pageTitle} />
 
         {/* Main Content Area */}
         <main className="flex-1 bg-[#F5F5F5] p-6">
@@ -113,11 +109,7 @@ export default function ProtectedLayout() {
   //   <SidebarProvider defaultOpen={false}>
   //     <AppSidebar />
   //     <div className="flex flex-col w-full">
-  //       <header className="flex h-16 items-center gap-4 border-b bg-white px-6">
-  //         <SidebarTrigger />
-  //         <Separator orientation="vertical" className="h-6" />
-  //         <h1 className="text-lg font-semibold text-[#001C43]">{pageTitle}</h1>
-  //       </header>
+  //       <Topbar pageTitle={pageTitle} />
   //       <main className="flex-1 bg-[#F5F5F5] p-6">
   //         <Outlet />
   //       </main>
