@@ -11,6 +11,7 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from "@/components/ui/sidebar"
+import { Separator } from "@/components/ui/separator"
 
 // Menu items for navigation (populate this later)
 const menuItems: any[] = []
@@ -23,9 +24,9 @@ export function AppSidebar() {
         <Sidebar collapsible="icon">
             <SidebarContent>
                 {/* Custom collapsed view - shown when collapsed */}
-                <div className="group-data-[state=collapsed]:flex group-data-[state=expanded]:hidden h-full flex-col items-center gap-[30px] bg-[#fcfcfc] px-[15px] py-[26px]">
+                <div className="group-data-[state=collapsed]:flex group-data-[state=expanded]:hidden h-full flex-col items-center bg-[#fcfcfc] px-[15px] pt-[20px]">
                     {/* Logo */}
-                    <div className="h-[40px] w-[40px]">
+                    <div className="h-[40px] w-[40px] flex items-center justify-center">
                         <img
                             src={mmcmLogo}
                             alt="MCM Logo"
@@ -33,15 +34,15 @@ export function AppSidebar() {
                         />
                     </div>
 
-                    {/* Separator */}
-                    <div className="h-px w-full bg-[#b1b1b1]" />
+                    {/* Separator - Using shadcn with controlled spacing */}
+                    <Separator className="my-[30px] bg-[#b1b1b1] w-full" />
 
                     {/* Main Navigation */}
                     <div className="flex w-[43px] flex-col gap-[20px]">
                         {/* Add New Request */}
                         <Link
                             to="/new-request"
-                            className="flex h-[40px] w-[36px] items-center justify-center rounded-[10px] bg-[#001c43] ml-auto mr-auto hover:bg-[#002856]"
+                            className="flex h-[36px] w-[36px] items-center justify-center rounded-[10px] bg-[#001c43] ml-auto mr-auto hover:bg-[#002856]"
                         >
                             <Plus className="h-6 w-6 text-white" />
                         </Link>
@@ -61,7 +62,7 @@ export function AppSidebar() {
                         {/* Transactions */}
                         <Link
                             to="/transactions"
-                            className={`flex h-[45px] w-full flex-col items-center justify-center rounded-[10px] p-[10px] ${isActive('/transactions') ? '' : 'hover:bg-gray-100'
+                            className={`flex h-[40px] w-full flex-col items-center justify-center rounded-[10px] p-[10px] ${isActive('/transactions') ? '' : 'hover:bg-gray-100'
                                 }`}
                         >
                             <Repeat className="h-6 w-6 text-[#001c43]" />
@@ -71,15 +72,15 @@ export function AppSidebar() {
                         </Link>
                     </div>
 
-                    {/* Separator */}
-                    <div className="h-px w-full bg-[#b1b1b1]" />
+                    {/* Separator - Using shadcn with controlled spacing */}
+                    <Separator className="my-[30px] bg-[#b1b1b1] w-full" />
 
                     {/* Bottom Navigation */}
                     <div className="flex flex-col gap-[20px]">
                         {/* Documentation */}
                         <Link
                             to="/docs"
-                            className={`flex h-[45px] w-[43px] flex-col items-center justify-center rounded-[10px] p-[10px] ${isActive('/docs') ? '' : 'hover:bg-gray-100'
+                            className={`flex h-[40px] w-[40px] flex-col items-center justify-center rounded-[10px] p-[10px] ${isActive('/docs') ? '' : 'hover:bg-gray-100'
                                 }`}
                         >
                             <BookText className="h-6 w-6 text-[#001c43]" />
@@ -91,7 +92,7 @@ export function AppSidebar() {
                         {/* Help */}
                         <Link
                             to="/help"
-                            className={`flex h-[45px] w-[43px] flex-col items-center justify-center rounded-[10px] p-[10px] ${isActive('/help') ? '' : 'hover:bg-gray-100'
+                            className={`flex h-[40px] w-[40px] flex-col items-center justify-center rounded-[10px] p-[10px] ${isActive('/help') ? '' : 'hover:bg-gray-100'
                                 }`}
                         >
                             <CircleHelp className="h-6 w-6 text-[#001c43]" />

@@ -28,7 +28,7 @@ export function Topbar({
     return (
         <header className="flex h-16 items-center gap-4 border-b bg-white px-6">
             {/* Left Section */}
-            <SidebarTrigger />
+            <SidebarTrigger className="[&>svg]:!size-5" />
             <Separator orientation="vertical" className="h-6 bg-[#808080]" />
             <h1 className="text-sm font-normal text-[#001C43]">{pageTitle}</h1>
 
