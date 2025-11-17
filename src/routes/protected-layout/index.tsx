@@ -88,10 +88,7 @@ export default function ProtectedLayout() {
     return <div>Loading...</div>;
   }
 
-  // ==========================================
-  // AUTH ENABLED
-  // ==========================================
-  return isAuthorized ? (
+  return !isAuthorized ? (
     <SidebarProvider defaultOpen={false}>
       <AppSidebar />
       <div className="flex flex-col w-full">
@@ -102,20 +99,4 @@ export default function ProtectedLayout() {
       </div>
     </SidebarProvider>
   ) : <Navigate to="/login" />;
-
-  // ==========================================
-  // AUTH BYPASS (For development/testing UI)
-  // Uncomment this and comment out the above when working on UI tickets
-  // ==========================================
-  // return (
-  //   <SidebarProvider defaultOpen={false}>
-  //     <AppSidebar />
-  //     <div className="flex flex-col w-full">
-  //       <Topbar pageTitle={pageTitle} />
-  //       <main className="flex-1 bg-[#F5F5F5] p-6">
-  //         <Outlet />
-  //       </main>
-  //     </div>
-  //   </SidebarProvider>
-  // );
 }
