@@ -57,39 +57,41 @@ function MyRequests() {
     }
 
     return (
-        <div className="p-6 space-y-6">
-            {/* Header with Tabs and Search */}
-            <div className="space-y-4">
-                {/* Filter Tabs */}
-                <div className="flex gap-2 flex-wrap">
+        <div className="space-y-6">
+            {/* Search Bar */}
+            <div className="flex justify-end">
+                <div className="relative w-[438px]">
+                    <input
+                        ref={searchInputRef}
+                        type="text"
+                        placeholder="Search by Request Type, Description, ID, etc."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="w-full rounded-[20px] border border-[#b1b1b1] bg-white px-[20px] py-[13px] font-['Montserrat'] text-sm font-normal leading-5 text-[#001c43] placeholder:text-[#b1b1b1] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    <Search
+                        onClick={handleSearchIconClick}
+                        className="absolute right-5 top-1/2 h-6 w-6 -translate-y-1/2 text-[#001c43] cursor-pointer hover:text-[#002856] transition-colors"
+                    />
+                </div>
+            </div>
+
+            {/* Horizontal Tab Bar (Version 1) */}
+            {/* Horizontal Tab Bar (Version 1) */}
+            <div className="flex items-center justify-center">
+                <div className="flex items-center rounded-[6px] bg-[#fcfcfc] p-[4px] w-full">
                     {tabs.map((tab) => (
-                        <Button
+                        <button
                             key={tab}
-                            variant={activeTab === tab ? 'default' : 'outline'}
                             onClick={() => setActiveTab(tab)}
-                            className="rounded-md"
+                            className={`w-[196px] cursor-pointer px-[12px] py-[6px] text-center font-['Montserrat'] text-sm font-normal leading-5 transition-colors ${activeTab === tab
+                                ? 'rounded-[4px] bg-white text-[#09090b] shadow-sm'
+                                : 'text-[#71717a]'
+                                }`}
                         >
                             {tab}
-                        </Button>
+                        </button>
                     ))}
-                </div>
-
-                {/* Search Bar */}
-                <div className="flex justify-end">
-                    <div className="relative w-[438px]">
-                        <input
-                            ref={searchInputRef}
-                            type="text"
-                            placeholder="Search by Request Type, Description, ID, etc."
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full rounded-[20px] border border-[#b1b1b1] bg-white px-[20px] py-[13px] font-['Montserrat'] text-sm font-normal leading-5 text-[#001c43] placeholder:text-[#b1b1b1] focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                        <Search
-                            onClick={handleSearchIconClick}
-                            className="absolute right-5 top-1/2 h-6 w-6 -translate-y-1/2 text-[#001c43] cursor-pointer hover:text-[#002856] transition-colors"
-                        />
-                    </div>
                 </div>
             </div>
 
