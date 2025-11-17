@@ -14,11 +14,6 @@ import {
 // Menu items for navigation
 const menuItems = [
     {
-        title: "Dashboard",
-        url: "/",
-        icon: Home,
-    },
-    {
         title: "My Requests",
         url: "/my-requests",
         icon: FileText,
