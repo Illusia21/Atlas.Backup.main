@@ -24,7 +24,7 @@ const Router = createBrowserRouter([
         children: [
           {
             index: true,
-            element: <div className="text-center text-gray-500">Welcome to Dashboard</div>,
+            element: <Navigate to="/my-requests" replace />,
           },
           {
             path: "my-requests",
