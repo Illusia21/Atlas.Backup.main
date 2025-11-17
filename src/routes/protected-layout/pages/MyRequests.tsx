@@ -1,5 +1,5 @@
 import { useState, useMemo, useRef } from 'react'
-import { Eye, Search } from 'lucide-react'
+import { Eye, Search, Table as TableIcon, LayoutGrid, ListFilterPlus } from 'lucide-react'
 import { mockRequests } from '@/data/mockRequests'
 import { StatusBadge } from '@/components/StatusBadge'
 import { Button } from '@/components/ui/button'
@@ -17,6 +17,7 @@ function MyRequests() {
     // State for filters
     const [activeTab, setActiveTab] = useState<RequestStatus | 'All'>('All')
     const [searchQuery, setSearchQuery] = useState('')
+    const [viewMode, setViewMode] = useState<'table' | 'grid'>('table')
     const searchInputRef = useRef<HTMLInputElement>(null)
 
     // Filter tabs
@@ -58,25 +59,52 @@ function MyRequests() {
 
     return (
         <div className="space-y-6">
-            {/* Search Bar */}
-            <div className="flex justify-end">
-                <div className="relative w-[438px]">
-                    <input
-                        ref={searchInputRef}
-                        type="text"
-                        placeholder="Search by Request Type, Description, ID, etc."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="text-[12px] w-full rounded-[20px] border border-[#b1b1b1] bg-white px-[20px] py-[13px] font-['Montserrat'] text-sm font-normal leading-5 text-[#001c43] placeholder:text-[#b1b1b1] focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                    <Search
-                        onClick={handleSearchIconClick}
-                        className="absolute right-5 top-1/2 h-6 w-6 -translate-y-1/2 text-[#001c43] cursor-pointer hover:text-[#002856] transition-colors"
-                    />
+            {/* View Toggle, Filter, and Search Bar */}
+            <div className="flex items-center justify-between">
+                {/* Left Section - View Toggle */}
+                <div className="flex w-[84px] items-center rounded-[6px] bg-[#fcfcfc] p-[4px]">
+                    <button
+                        onClick={() => setViewMode('table')}
+                        className={`flex flex-1 items-center justify-center rounded-[4px] px-[6px] py-[6px] transition-colors ${viewMode === 'table' ? 'bg-white shadow-sm' : ''
+                            }`}
+                    >
+                        <TableIcon className={`h-6 w-6 ${viewMode === 'table' ? 'text-[#001c43]' : 'text-[#b1b1b1]'}`} />
+                    </button>
+                    <button
+                        onClick={() => setViewMode('grid')}
+                        className={`flex flex-1 items-center justify-center rounded-[4px] px-[6px] py-[6px] transition-colors ${viewMode === 'grid' ? 'bg-white shadow-sm' : ''
+                            }`}
+                    >
+                        <LayoutGrid className={`h-6 w-6 ${viewMode === 'grid' ? 'text-[#001c43]' : 'text-[#b1b1b1]'}`} />
+                    </button>
+                </div>
+
+                {/* Right Section - Filter and Search Bar grouped together */}
+                <div className="flex items-center gap-5">
+                    {/* Filter Button */}
+                    <button className="relative cursor-pointer hover:bg-gray-100 p-2 rounded-md transition-colors">
+                        <ListFilterPlus className="h-6 w-6 text-[#001c43]" />
+                    </button>
+
+                    {/* Search Bar */}
+                    <div className="relative w-[438px]">
+                        <input
+                            ref={searchInputRef}
+                            type="text"
+                            placeholder="Search by Request Type, Description, ID, etc."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="text-[12px] w-full rounded-[20px] border border-[#b1b1b1] bg-white px-[20px] py-[13px] font-['Montserrat'] font-normal leading-5 text-[#001c43] placeholder:text-[#b1b1b1] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                        <Search
+                            onClick={handleSearchIconClick}
+                            className="absolute right-5 top-1/2 h-6 w-6 -translate-y-1/2 text-[#001c43] cursor-pointer hover:text-[#002856] transition-colors"
+                        />
+                    </div>
                 </div>
             </div>
 
-            {/* Horizontal Tab Bar (Version 1) */}
+            {/* Horizontal Tab Bar */}
             <div className="flex items-center justify-center">
                 <div className="flex items-center rounded-[6px] bg-[#fcfcfc] p-[4px] w-full">
                     {tabs.map((tab) => (
