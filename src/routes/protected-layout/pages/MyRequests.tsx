@@ -1,9 +1,8 @@
-import { useState, useMemo } from 'react'
-import { Eye } from 'lucide-react'
+import { useState, useMemo, useRef } from 'react'
+import { Eye, Search } from 'lucide-react'
 import { mockRequests } from '@/data/mockRequests'
 import { StatusBadge } from '@/components/StatusBadge'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import {
     Table,
     TableBody,
@@ -18,6 +17,7 @@ function MyRequests() {
     // State for filters
     const [activeTab, setActiveTab] = useState<RequestStatus | 'All'>('All')
     const [searchQuery, setSearchQuery] = useState('')
+    const searchInputRef = useRef<HTMLInputElement>(null)
 
     // Filter tabs
     const tabs: Array<RequestStatus | 'All'> = [
@@ -51,6 +51,11 @@ function MyRequests() {
         return filtered
     }, [activeTab, searchQuery])
 
+    // Focus search input when icon is clicked
+    const handleSearchIconClick = () => {
+        searchInputRef.current?.focus()
+    }
+
     return (
         <div className="p-6 space-y-6">
             {/* Header with Tabs and Search */}
@@ -71,12 +76,20 @@ function MyRequests() {
 
                 {/* Search Bar */}
                 <div className="flex justify-end">
-                    <Input
-                        placeholder="Search by ID, type, or description..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="max-w-md"
-                    />
+                    <div className="relative w-[438px]">
+                        <input
+                            ref={searchInputRef}
+                            type="text"
+                            placeholder="Search by Request Type, Description, ID, etc."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="w-full rounded-[20px] border border-[#b1b1b1] bg-white px-[20px] py-[13px] font-['Montserrat'] text-sm font-normal leading-5 text-[#001c43] placeholder:text-[#b1b1b1] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                        <Search
+                            onClick={handleSearchIconClick}
+                            className="absolute right-5 top-1/2 h-6 w-6 -translate-y-1/2 text-[#001c43] cursor-pointer hover:text-[#002856] transition-colors"
+                        />
+                    </div>
                 </div>
             </div>
 
