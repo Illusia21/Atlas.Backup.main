@@ -6,6 +6,7 @@ import Login from "./routes/public-layout/pages/Login";
 import ResetPassword from "./routes/public-layout/pages/ResetPassword";
 import ProtectedLayout from "./routes/protected-layout";
 import PublicLayout from "./routes/public-layout";
+import MyRequests from "./routes/protected-layout/pages/MyRequests";
 
 function Logout() {
   localStorage.clear();
@@ -19,6 +20,16 @@ const Router = createBrowserRouter([
       {
         path: "/",
         element: <Dashboard />,
+        children: [
+          {
+            index: true,
+            element: <div className="text-center text-gray-500">Welcome to Dashboard</div>,
+          },
+          {
+            path: "my-requests",
+            element: <MyRequests />,
+          },
+        ],
       },
       {
         path: "/logout",
