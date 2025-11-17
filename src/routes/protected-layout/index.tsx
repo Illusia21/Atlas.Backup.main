@@ -77,5 +77,8 @@ export default function ProtectedLayout() {
     return <div>Loading...</div>;
   }
 
-  return isAuthorized ? <Outlet /> : <Navigate to="/login" />;
+  //Temporary bypass authentication
+  return <Outlet />;
+
+  //return isAuthorized ? <Outlet /> : <Navigate to="/login" />;
 }
