@@ -67,7 +67,7 @@ function MyRequests() {
                         placeholder="Search by Request Type, Description, ID, etc."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full rounded-[20px] border border-[#b1b1b1] bg-white px-[20px] py-[13px] font-['Montserrat'] text-sm font-normal leading-5 text-[#001c43] placeholder:text-[#b1b1b1] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="text-[12px] w-full rounded-[20px] border border-[#b1b1b1] bg-white px-[20px] py-[13px] font-['Montserrat'] text-sm font-normal leading-5 text-[#001c43] placeholder:text-[#b1b1b1] focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     <Search
                         onClick={handleSearchIconClick}
@@ -77,14 +77,13 @@ function MyRequests() {
             </div>
 
             {/* Horizontal Tab Bar (Version 1) */}
-            {/* Horizontal Tab Bar (Version 1) */}
             <div className="flex items-center justify-center">
                 <div className="flex items-center rounded-[6px] bg-[#fcfcfc] p-[4px] w-full">
                     {tabs.map((tab) => (
                         <button
                             key={tab}
                             onClick={() => setActiveTab(tab)}
-                            className={`w-[196px] cursor-pointer px-[12px] py-[6px] text-center font-['Montserrat'] text-sm font-normal leading-5 transition-colors ${activeTab === tab
+                            className={`w-[196px] cursor-pointer px-[12px] py-[6px] text-center font-['Montserrat'] text-[12px] font-normal leading-5 transition-colors ${activeTab === tab
                                 ? 'rounded-[4px] bg-white text-[#09090b] shadow-sm'
                                 : 'text-[#71717a]'
                                 }`}
@@ -100,13 +99,13 @@ function MyRequests() {
                 <Table>
                     <TableHeader>
                         <TableRow className="bg-[#001C43] hover:bg-[#001C43]">
-                            <TableHead className="text-white font-semibold">Request ID</TableHead>
-                            <TableHead className="text-white font-semibold">Request Type</TableHead>
-                            <TableHead className="text-white font-semibold">Date Requested</TableHead>
-                            <TableHead className="text-white font-semibold">Description</TableHead>
-                            <TableHead className="text-white font-semibold">Amount</TableHead>
-                            <TableHead className="text-white font-semibold">Status</TableHead>
-                            <TableHead className="text-white font-semibold text-center">Action</TableHead>
+                            <TableHead className="text-white text-[12px] text-center font-semibold min-w-[80px]">Request ID</TableHead>
+                            <TableHead className="text-white text-[12px] text-center font-semibold min-w-[180px]">Request Type</TableHead>
+                            <TableHead className="text-white text-[12px] text-center font-semibold min-w-[140px]">Date Requested</TableHead>
+                            <TableHead className="text-white text-[12px] text-center font-semibold min-w-[300px]">Description</TableHead>
+                            <TableHead className="text-white text-[12px] text-center font-semibold min-w-[100px]">Amount</TableHead>
+                            <TableHead className="text-white text-[12px] text-center font-semibold min-w-[140px]">Status</TableHead>
+                            <TableHead className="text-white text-[12px] text-center font-semibold min-w-[80px]">Action</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -119,14 +118,14 @@ function MyRequests() {
                         ) : (
                             filteredRequests.map((request) => (
                                 <TableRow key={request.id}>
-                                    <TableCell className="font-medium">{request.id}</TableCell>
-                                    <TableCell>{request.requestType}</TableCell>
-                                    <TableCell>{request.dateRequested}</TableCell>
-                                    <TableCell>{request.description}</TableCell>
-                                    <TableCell>
+                                    <TableCell className="text-[12px] text-center">{request.id}</TableCell>
+                                    <TableCell className="text-[12px] text-center">{request.requestType}</TableCell>
+                                    <TableCell className="text-[12px] text-center">{request.dateRequested}</TableCell>
+                                    <TableCell className="text-[12px] text-center">{request.description}</TableCell>
+                                    <TableCell className="text-[12px] text-center">
                                         {request.currency} {request.amount}
                                     </TableCell>
-                                    <TableCell>
+                                    <TableCell className="text-center">
                                         <StatusBadge status={request.status} />
                                     </TableCell>
                                     <TableCell className="text-center">
