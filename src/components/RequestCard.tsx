@@ -10,20 +10,20 @@ interface RequestCardProps {
 
 export function RequestCard({ request }: RequestCardProps) {
     return (
-        <Card className="hover:shadow-md transition-shadow">
+        <Card className="hover:shadow-md transition-shadow py-4">
             {/* Header: Request ID + Status Badge */}
-            <CardHeader className="pb-3">
+            <CardHeader className="pb-2 px-4">
                 <div className="flex items-start justify-between gap-4">
-                    <h3 className="text-[16px] font-bold text-[#001C43]">
-                        {request.id}
+                    <h3 className="text-[16px] font-bold text-[#001C43] font-['Montserrat']">
+                        {request.id.split('-').pop() || request.id}
                     </h3>
-                    <StatusBadge status={request.status} />
+                    <StatusBadge status={request.status} className="flex-shrink-0" />
                 </div>
             </CardHeader>
 
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-3 px-4">
                 {/* Request Type (no label, just value) */}
-                <p className="text-[14px] text-[#001C43]">
+                <p className="text-[14px] text-[#001C43] font-['Montserrat']">
                     {request.requestType}
                 </p>
 
@@ -31,34 +31,28 @@ export function RequestCard({ request }: RequestCardProps) {
                 <div className="border-t border-gray-200" />
 
                 {/* Date Requested */}
-                <div>
-                    <p className="text-[14px] text-[#001C43] font-semibold mb-1">
-                        Date Requested:{' '}
-                        <span className="font-normal">{request.dateRequested}</span>
-                    </p>
-                </div>
+                <p className="text-[12px] text-[#001C43] font-['Montserrat']">
+                    <span className="font-semibold">Date Requested:</span>{' '}
+                    <span className="font-normal">{request.dateRequested}</span>
+                </p>
 
                 {/* Description */}
-                <div>
-                    <p className="text-[14px] text-[#001C43] font-semibold mb-1">
-                        Description:{' '}
-                        <span className="font-normal">{request.description}</span>
-                    </p>
-                </div>
+                <p className="text-[12px] text-[#001C43] font-['Montserrat']">
+                    <span className="font-semibold">Description:</span>{' '}
+                    <span className="font-normal">{request.description}</span>
+                </p>
 
                 {/* Amount */}
-                <div>
-                    <p className="text-[14px] text-[#001C43] font-semibold mb-1">
-                        Amount:{' '}
-                        <span className="font-normal">
-                            {request.currency} {request.amount}
-                        </span>
-                    </p>
-                </div>
+                <p className="text-[12px] text-[#001C43] font-['Montserrat']">
+                    <span className="font-semibold">Amount:</span>{' '}
+                    <span className="font-normal">
+                        {request.currency} {request.amount}
+                    </span>
+                </p>
             </CardContent>
 
             {/* Footer: View Button */}
-            <CardFooter className="justify-end pt-2">
+            <CardFooter className="justify-end pt-2 px-4">
                 <Button
                     variant="ghost"
                     size="icon"
