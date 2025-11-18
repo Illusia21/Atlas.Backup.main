@@ -51,9 +51,9 @@ export function AppSidebar() {
 
     return (
         <Sidebar collapsible="icon">
-            <SidebarContent className="bg-[#fcfcfc] px-[15px] pt-[20px]">
+            <SidebarContent className="bg-[#fcfcfc] flex flex-col items-center px-[15px] pt-[20px]">
                 {/* Logo */}
-                <div className="h-[40px] w-[40px] flex items-center justify-center mx-auto mb-[30px]">
+                <div className="h-[40px] w-[40px] flex items-center justify-center">
                     <img
                         src={mmcmLogo}
                         alt="MCM Logo"
@@ -62,28 +62,28 @@ export function AppSidebar() {
                 </div>
 
                 {/* First Separator */}
-                <Separator className="bg-[#b1b1b1] mb-[30px]" />
+                <Separator className="bg-[#b1b1b1] my-[30px] w-full" />
 
                 {/* Main Navigation */}
-                <SidebarGroup>
-                    <SidebarGroupContent>
-                        <SidebarMenu className="gap-[20px]">
+                <SidebarGroup className="w-full flex flex-col items-center">
+                    <SidebarGroupContent className="w-full flex flex-col items-center">
+                        <SidebarMenu className="gap-[20px] w-full flex flex-col items-center">
                             {menuItems.map((item) => (
-                                <SidebarMenuItem key={item.title}>
+                                <SidebarMenuItem key={item.title} className="w-auto list-none">
                                     {item.isPrimary ? (
-                                        <SidebarMenuButton asChild>
+                                        <SidebarMenuButton asChild className="w-auto h-auto p-0">
                                             <Link
                                                 to={item.url}
-                                                className="flex h-[36px] w-[36px] items-center justify-center rounded-[10px] bg-[#001c43] hover:bg-[#002856] mx-auto"
+                                                className="flex h-[36px] w-[36px] items-center justify-center rounded-[10px] bg-[#001c43] hover:bg-[#002856]"
                                             >
                                                 <item.icon className="h-6 w-6 text-white" />
                                             </Link>
                                         </SidebarMenuButton>
                                     ) : (
-                                        <SidebarMenuButton asChild>
+                                        <SidebarMenuButton asChild className="w-auto h-auto p-0">
                                             <Link
                                                 to={item.url}
-                                                className={`flex h-[45px] w-full flex-col items-center justify-center rounded-[10px] p-[6px] ${isActive(item.url) ? '' : 'hover:bg-gray-100'
+                                                className={`flex h-[45px] w-[45px] flex-col items-center justify-center rounded-[10px] p-[6px] ${isActive(item.url) ? '' : 'hover:bg-gray-100'
                                                     }`}
                                             >
                                                 <item.icon className="h-6 w-6 text-[#001c43]" />
@@ -100,15 +100,15 @@ export function AppSidebar() {
                 </SidebarGroup>
 
                 {/* Second Separator */}
-                <Separator className="bg-[#b1b1b1] my-[30px]" />
+                <Separator className="bg-[#b1b1b1] my-[30px] w-full" />
 
                 {/* Bottom Navigation */}
-                <SidebarGroup>
-                    <SidebarGroupContent>
-                        <SidebarMenu className="gap-[20px]">
+                <SidebarGroup className="w-full flex flex-col items-center">
+                    <SidebarGroupContent className="w-full flex flex-col items-center">
+                        <SidebarMenu className="gap-[20px] w-full flex flex-col items-center">
                             {bottomMenuItems.map((item) => (
-                                <SidebarMenuItem key={item.title}>
-                                    <SidebarMenuButton asChild>
+                                <SidebarMenuItem key={item.title} className="w-auto list-none">
+                                    <SidebarMenuButton asChild className="w-auto h-auto p-0">
                                         <Link
                                             to={item.url}
                                             className={`flex h-[40px] w-[40px] flex-col items-center justify-center rounded-[10px] p-[10px] ${isActive(item.url) ? '' : 'hover:bg-gray-100'
