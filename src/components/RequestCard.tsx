@@ -1,6 +1,7 @@
 import { Eye } from 'lucide-react'
 import { StatusBadge } from './StatusBadge'
 import { Button } from './ui/button'
+import { Card, CardContent, CardFooter, CardHeader } from './ui/card'
 import type { Request } from '@/types'
 
 interface RequestCardProps {
@@ -9,68 +10,63 @@ interface RequestCardProps {
 
 export function RequestCard({ request }: RequestCardProps) {
     return (
-        <div className="rounded-2xl bg-white p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+        <Card className="hover:shadow-md transition-shadow">
             {/* Header: Request ID + Status Badge */}
-            <div className="flex items-start justify-between mb-4">
-                <h3 className="text-[14px] font-bold text-[#001C43]">
-                    {request.id}
-                </h3>
-                <StatusBadge status={request.status} />
-            </div>
-
-            {/* Request Details */}
-            <div className="space-y-3">
-                {/* Request Type */}
-                <div>
-                    <p className="text-[10px] text-gray-500 uppercase tracking-wide mb-1">
-                        Request Type
-                    </p>
-                    <p className="text-[12px] text-[#001C43] font-medium">
-                        {request.requestType}
-                    </p>
+            <CardHeader className="pb-3">
+                <div className="flex items-start justify-between gap-4">
+                    <h3 className="text-[16px] font-bold text-[#001C43]">
+                        {request.id}
+                    </h3>
+                    <StatusBadge status={request.status} />
                 </div>
+            </CardHeader>
+
+            <CardContent className="space-y-4">
+                {/* Request Type (no label, just value) */}
+                <p className="text-[14px] text-[#001C43]">
+                    {request.requestType}
+                </p>
+
+                {/* Horizontal separator line */}
+                <div className="border-t border-gray-200" />
 
                 {/* Date Requested */}
                 <div>
-                    <p className="text-[10px] text-gray-500 uppercase tracking-wide mb-1">
-                        Date Requested
-                    </p>
-                    <p className="text-[12px] text-[#001C43]">
-                        {request.dateRequested}
+                    <p className="text-[14px] text-[#001C43] font-semibold mb-1">
+                        Date Requested:{' '}
+                        <span className="font-normal">{request.dateRequested}</span>
                     </p>
                 </div>
 
                 {/* Description */}
                 <div>
-                    <p className="text-[10px] text-gray-500 uppercase tracking-wide mb-1">
-                        Description
-                    </p>
-                    <p className="text-[12px] text-[#001C43] line-clamp-2">
-                        {request.description}
+                    <p className="text-[14px] text-[#001C43] font-semibold mb-1">
+                        Description:{' '}
+                        <span className="font-normal">{request.description}</span>
                     </p>
                 </div>
 
                 {/* Amount */}
                 <div>
-                    <p className="text-[10px] text-gray-500 uppercase tracking-wide mb-1">
-                        Amount
-                    </p>
-                    <p className="text-[14px] text-[#001C43] font-bold">
-                        {request.currency} {request.amount}
+                    <p className="text-[14px] text-[#001C43] font-semibold mb-1">
+                        Amount:{' '}
+                        <span className="font-normal">
+                            {request.currency} {request.amount}
+                        </span>
                     </p>
                 </div>
-            </div>
+            </CardContent>
 
             {/* Footer: View Button */}
-            <div className="mt-6 flex justify-end">
+            <CardFooter className="justify-end pt-2">
                 <Button
                     variant="ghost"
                     size="icon"
                     className="hover:bg-gray-100"
                 >
-                    <Eye className="h-5 w-5 text-[#001C43]" />
+                    <Eye className="h-5 w-5 text-[#4A90E2]" />
                 </Button>
-            </div>
-        </div>
+            </CardFooter>
+        </Card>
     )
 }

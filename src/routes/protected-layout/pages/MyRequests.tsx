@@ -2,6 +2,7 @@ import { useState, useMemo, useRef } from 'react'
 import { Eye, Search, Table as TableIcon, LayoutGrid, ListFilterPlus } from 'lucide-react'
 import { mockRequests } from '@/data/mockRequests'
 import { StatusBadge } from '@/components/StatusBadge'
+import { RequestCard } from '@/components/RequestCard'
 import { Button } from '@/components/ui/button'
 import {
     Table,
@@ -122,51 +123,71 @@ function MyRequests() {
                 </div>
             </div>
 
-            {/* Table */}
-            <div className="bg-white rounded-lg border">
-                <Table>
-                    <TableHeader>
-                        <TableRow className="bg-[#001C43] hover:bg-[#001C43]">
-                            <TableHead className="text-white text-[12px] text-center font-semibold min-w-[80px] rounded-tl-[12px]">Request ID</TableHead>
-                            <TableHead className="text-white text-[12px] text-center font-semibold min-w-[180px]">Request Type</TableHead>
-                            <TableHead className="text-white text-[12px] text-center font-semibold min-w-[140px]">Date Requested</TableHead>
-                            <TableHead className="text-white text-[12px] text-center font-semibold min-w-[300px]">Description</TableHead>
-                            <TableHead className="text-white text-[12px] text-center font-semibold min-w-[100px]">Amount</TableHead>
-                            <TableHead className="text-white text-[12px] text-center font-semibold min-w-[140px]">Status</TableHead>
-                            <TableHead className="text-white text-[12px] text-center font-semibold min-w-[80px] rounded-tr-[12px]">Action</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {filteredRequests.length === 0 ? (
-                            <TableRow>
-                                <TableCell colSpan={7} className="text-center py-8 text-gray-500">
-                                    No requests found.
-                                </TableCell>
+            {/* Conditional Rendering: Table or Card View */}
+            {viewMode === 'table' ? (
+                /* Table View */
+                <div className="bg-white rounded-lg border">
+                    <Table>
+                        <TableHeader>
+                            <TableRow className="bg-[#001C43] hover:bg-[#001C43]">
+                                <TableHead className="text-white text-[12px] text-center font-semibold min-w-[80px] rounded-tl-[12px]">Request ID</TableHead>
+                                <TableHead className="text-white text-[12px] text-center font-semibold min-w-[180px]">Request Type</TableHead>
+                                <TableHead className="text-white text-[12px] text-center font-semibold min-w-[140px]">Date Requested</TableHead>
+                                <TableHead className="text-white text-[12px] text-center font-semibold min-w-[300px]">Description</TableHead>
+                                <TableHead className="text-white text-[12px] text-center font-semibold min-w-[100px]">Amount</TableHead>
+                                <TableHead className="text-white text-[12px] text-center font-semibold min-w-[140px]">Status</TableHead>
+                                <TableHead className="text-white text-[12px] text-center font-semibold min-w-[80px] rounded-tr-[12px]">Action</TableHead>
                             </TableRow>
-                        ) : (
-                            filteredRequests.map((request) => (
-                                <TableRow key={request.id}>
-                                    <TableCell className="text-[12px] text-center">{request.id}</TableCell>
-                                    <TableCell className="text-[12px] text-center">{request.requestType}</TableCell>
-                                    <TableCell className="text-[12px] text-center">{request.dateRequested}</TableCell>
-                                    <TableCell className="text-[12px] text-center">{request.description}</TableCell>
-                                    <TableCell className="text-[12px] text-center">
-                                        {request.currency} {request.amount}
-                                    </TableCell>
-                                    <TableCell className="text-center">
-                                        <StatusBadge status={request.status} />
-                                    </TableCell>
-                                    <TableCell className="text-center">
-                                        <Button variant="ghost" size="icon">
-                                            <Eye className="h-4 w-4" />
-                                        </Button>
+                        </TableHeader>
+                        <TableBody>
+                            {filteredRequests.length === 0 ? (
+                                <TableRow>
+                                    <TableCell colSpan={7} className="text-center py-8 text-gray-500">
+                                        No requests found.
                                     </TableCell>
                                 </TableRow>
-                            ))
-                        )}
-                    </TableBody>
-                </Table>
-            </div>
+                            ) : (
+                                filteredRequests.map((request) => (
+                                    <TableRow key={request.id}>
+                                        <TableCell className="text-[12px] text-center">{request.id}</TableCell>
+                                        <TableCell className="text-[12px] text-center">{request.requestType}</TableCell>
+                                        <TableCell className="text-[12px] text-center">{request.dateRequested}</TableCell>
+                                        <TableCell className="text-[12px] text-center">{request.description}</TableCell>
+                                        <TableCell className="text-[12px] text-center">
+                                            {request.currency} {request.amount}
+                                        </TableCell>
+                                        <TableCell className="text-center">
+                                            <StatusBadge status={request.status} />
+                                        </TableCell>
+                                        <TableCell className="text-center">
+                                            <Button variant="ghost" size="icon">
+                                                <Eye className="h-4 w-4" />
+                                            </Button>
+                                        </TableCell>
+                                    </TableRow>
+                                ))
+                            )}
+                        </TableBody>
+                    </Table>
+                </div>
+            ) : (
+                /* Card Grid View */
+                <div className="min-h-[400px]">
+                    {filteredRequests.length === 0 ? (
+                        <div className="flex items-center justify-center py-16">
+                            <p className="text-center text-gray-500 text-[14px]">
+                                No requests found.
+                            </p>
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                            {filteredRequests.map((request) => (
+                                <RequestCard key={request.id} request={request} />
+                            ))}
+                        </div>
+                    )}
+                </div>
+            )}
         </div>
     )
 }
