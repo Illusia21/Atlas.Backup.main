@@ -59,9 +59,9 @@ function MyRequests() {
     }
 
     return (
-        <div className="space-y-6 max-w-full">
+        <div className="space-y-6 w-full overflow-x-hidden">
             {/* View Toggle, Filter, and Search Bar */}
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between gap-4">
                 {/* Left Section - View Toggle */}
                 <div className="flex w-[84px] items-center rounded-[6px] bg-[#fcfcfc] p-[4px]">
                     <button
@@ -81,14 +81,14 @@ function MyRequests() {
                 </div>
 
                 {/* Right Section - Filter and Search Bar grouped together */}
-                <div className="flex items-center gap-5">
+                <div className="flex items-center gap-3 flex-1 justify-end min-w-0">
                     {/* Filter Button */}
-                    <button className="relative cursor-pointer hover:bg-gray-100 p-2 rounded-md transition-colors">
+                    <button className="relative cursor-pointer hover:bg-gray-100 p-2 rounded-md transition-colors flex-shrink-0">
                         <ListFilterPlus className="h-6 w-6 text-[#001c43]" />
                     </button>
 
                     {/* Search Bar */}
-                    <div className="relative w-[438px]">
+                    <div className="relative w-full max-w-[438px]">
                         <input
                             ref={searchInputRef}
                             type="text"
@@ -106,13 +106,13 @@ function MyRequests() {
             </div>
 
             {/* Horizontal Tab Bar */}
-            <div className="flex items-center justify-center">
+            <div className="flex items-center justify-center overflow-x-auto">
                 <div className="flex items-center rounded-[6px] bg-[#fcfcfc] p-[4px] w-full">
                     {tabs.map((tab) => (
                         <button
                             key={tab}
                             onClick={() => setActiveTab(tab)}
-                            className={`w-[196px] cursor-pointer px-[12px] py-[6px] text-center font-['Montserrat'] text-[12px] font-normal leading-5 transition-colors ${activeTab === tab
+                            className={`flex-1 min-w-[120px] cursor-pointer px-[12px] py-[6px] text-center font-['Montserrat'] text-[12px] font-normal leading-5 transition-colors ${activeTab === tab
                                 ? 'rounded-[4px] bg-white text-[#09090b] shadow-sm'
                                 : 'text-[#71717a]'
                                 }`}
@@ -126,7 +126,7 @@ function MyRequests() {
             {/* Conditional Rendering: Table or Card View */}
             {viewMode === 'table' ? (
                 /* Table View */
-                <div className="bg-white rounded-lg border">
+                <div className="bg-white rounded-lg border overflow-x-auto">
                     <Table>
                         <TableHeader>
                             <TableRow className="bg-[#001C43] hover:bg-[#001C43]">
@@ -180,7 +180,7 @@ function MyRequests() {
                             </p>
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 auto-rows-fr">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
                             {filteredRequests.map((request) => (
                                 <RequestCard key={request.id} request={request} />
                             ))}
