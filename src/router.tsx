@@ -6,10 +6,11 @@ import ResetPassword from "./routes/public-layout/pages/ResetPassword";
 import ProtectedLayout from "./routes/protected-layout";
 import PublicLayout from "./routes/public-layout";
 import MyRequests from "./routes/protected-layout/pages/MyRequests";
+import { logout } from './utils/auth';
 
 function Logout() {
-  localStorage.clear();
-  return <Navigate to="/login" />;
+  logout();
+  return null;
 }
 
 const Router = createBrowserRouter([
