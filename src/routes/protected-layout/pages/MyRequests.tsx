@@ -59,7 +59,7 @@ function MyRequests() {
     }
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6 max-w-full">
             {/* View Toggle, Filter, and Search Bar */}
             <div className="flex items-center justify-between">
                 {/* Left Section - View Toggle */}
@@ -172,7 +172,7 @@ function MyRequests() {
                 </div>
             ) : (
                 /* Card Grid View */
-                <div className="min-h-[400px]">
+                <div className="min-h-[400px] w-full">
                     {filteredRequests.length === 0 ? (
                         <div className="flex items-center justify-center py-16">
                             <p className="text-center text-gray-500 text-[14px]">
@@ -180,7 +180,7 @@ function MyRequests() {
                             </p>
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 auto-rows-fr">
                             {filteredRequests.map((request) => (
                                 <RequestCard key={request.id} request={request} />
                             ))}
