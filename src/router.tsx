@@ -1,6 +1,5 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
 import AuthCallback from "./routes/public-layout/pages/AuthCallback";
-import Dashboard from "./routes/protected-layout/pages/Dashboard";
 import ForgotPassword from "./routes/public-layout/pages/ForgotPassword";
 import Login from "./routes/public-layout/pages/Login";
 import ResetPassword from "./routes/public-layout/pages/ResetPassword";
