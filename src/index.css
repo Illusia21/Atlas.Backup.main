@@ -121,7 +121,3 @@
     @apply bg-background text-foreground;
   }
 }
-
-* {
-  font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-}
