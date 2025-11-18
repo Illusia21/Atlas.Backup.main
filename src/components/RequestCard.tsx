@@ -32,19 +32,19 @@ export function RequestCard({ request }: RequestCardProps) {
             <CardContent className="space-y-3 px-4">
 
                 {/* Date Requested */}
-                <p className="text-[12px] text-[#001C43] font-['Montserrat']">
+                <p className="text-[14px] text-[#001C43] font-['Montserrat']">
                     <span className="font-bold">Date Requested:</span>{' '}
                     <span className="font-normal">{request.dateRequested}</span>
                 </p>
 
                 {/* Description */}
-                <p className="text-[12px] text-[#001C43] font-['Montserrat']">
+                <p className="text-[14px] text-[#001C43] font-['Montserrat']">
                     <span className="font-bold">Description:</span>{' '}
                     <span className="font-normal">{request.description}</span>
                 </p>
 
                 {/* Amount */}
-                <p className="text-[12px] text-[#001C43] font-['Montserrat']">
+                <p className="text-[14px] text-[#001C43] font-['Montserrat']">
                     <span className="font-bold">Amount:</span>{' '}
                     <span className="font-normal">
                         {request.currency} {request.amount}
