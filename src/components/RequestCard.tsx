@@ -26,7 +26,7 @@ export function RequestCard({ request }: RequestCardProps) {
                     <StatusBadge status={request.status} className="flex-shrink-0" />
                 </div>
                 {/* Separator under Request Type */}
-                <Separator className="bg-gray-200 mt-3" />
+                <Separator className="bg-gray-200 mt-3 mb-2" />
             </CardHeader>
 
             <CardContent className="space-y-3 px-4">
@@ -53,7 +53,7 @@ export function RequestCard({ request }: RequestCardProps) {
             </CardContent>
 
             {/* Footer: View Button */}
-            <CardFooter className="justify-end pt-1 px-4">
+            <CardFooter className="justify-end pt-6 px-4">
                 <Button
                     variant="ghost"
                     size="icon"

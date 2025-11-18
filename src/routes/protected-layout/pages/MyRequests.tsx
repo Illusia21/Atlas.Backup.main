@@ -88,14 +88,14 @@ function MyRequests() {
                     </button>
 
                     {/* Search Bar */}
-                    <div className="relative w-full max-w-[438px]">
+                    <div className="relative min-w-[438px] max-w-[438px]">
                         <input
                             ref={searchInputRef}
                             type="text"
                             placeholder="Search by Request Type, Description, ID, etc."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="text-[12px] w-full rounded-[20px] border border-[#b1b1b1] bg-white px-[20px] py-[13px] font-['Montserrat'] font-normal leading-5 text-[#001c43] placeholder:text-[#b1b1b1] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="text-[12px] w-full rounded-[20px] border border-[#b1b1b1] bg-white px-[20px] py-[13px] font-['Montserrat'] font-normal leading-5 text-[#001c43] placeholder:text-[#b1b1b1] focus:outline-none focus:border-[#001c43]"
                         />
                         <Search
                             onClick={handleSearchIconClick}
