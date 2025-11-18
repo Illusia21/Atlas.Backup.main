@@ -9,6 +9,7 @@ import {
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
+    useSidebar,
 } from "@/components/ui/sidebar"
 import { Separator } from "@/components/ui/separator"
 
@@ -48,6 +49,7 @@ const bottomMenuItems = [
 export function AppSidebar() {
     const location = useLocation();
     const isActive = (path: string) => location.pathname === path;
+    const { state } = useSidebar(); // Get sidebar state (collapsed/expanded)
 
     return (
         <Sidebar collapsible="icon">
@@ -62,14 +64,14 @@ export function AppSidebar() {
                 </div>
 
                 {/* First Separator */}
-                <Separator className="bg-[#b1b1b1] my-[30px] w-full" />
+                <Separator className="bg-[#b1b1b1] my-[10px] w-full" />
 
                 {/* Main Navigation */}
                 <SidebarGroup className="w-full flex flex-col items-center">
                     <SidebarGroupContent className="w-full flex flex-col items-center">
                         <SidebarMenu className="gap-[20px] w-full flex flex-col items-center">
                             {menuItems.map((item) => (
-                                <SidebarMenuItem key={item.title} className="w-auto list-none">
+                                <SidebarMenuItem key={item.title} className="w-auto list-none h-[45px] flex flex-col items-center justify-center gap-[6px]">
                                     {item.isPrimary ? (
                                         <SidebarMenuButton asChild className="w-auto h-auto p-0">
                                             <Link
@@ -80,18 +82,21 @@ export function AppSidebar() {
                                             </Link>
                                         </SidebarMenuButton>
                                     ) : (
-                                        <SidebarMenuButton asChild className="w-auto h-auto p-0">
-                                            <Link
-                                                to={item.url}
-                                                className={`flex h-[45px] w-[45px] flex-col items-center justify-center rounded-[10px] p-[6px] ${isActive(item.url) ? '' : 'hover:bg-gray-100'
-                                                    }`}
-                                            >
-                                                <item.icon className="h-6 w-6 text-[#001c43]" />
-                                                {isActive(item.url) && (
-                                                    <div className="mt-[10px] h-[2px] w-[39px] bg-[#e50019]" />
-                                                )}
-                                            </Link>
-                                        </SidebarMenuButton>
+                                        <>
+                                            <SidebarMenuButton asChild className="w-auto h-auto p-0">
+                                                <Link
+                                                    to={item.url}
+                                                    className={`flex h-[36px] w-[36px] items-center justify-center rounded-[10px] ${isActive(item.url) ? '' : 'hover:bg-gray-100'
+                                                        }`}
+                                                >
+                                                    <item.icon className="h-6 w-6 text-[#001c43]" />
+                                                </Link>
+                                            </SidebarMenuButton>
+                                            {/* Show red line ONLY when collapsed AND active - OUTSIDE the button */}
+                                            {isActive(item.url) && state === "collapsed" && (
+                                                <div className="h-[2px] w-[39px] bg-[#e50019]" />
+                                            )}
+                                        </>
                                     )}
                                 </SidebarMenuItem>
                             ))}
@@ -100,26 +105,27 @@ export function AppSidebar() {
                 </SidebarGroup>
 
                 {/* Second Separator */}
-                <Separator className="bg-[#b1b1b1] my-[30px] w-full" />
+                <Separator className="bg-[#b1b1b1] my-[10px] w-full" />
 
                 {/* Bottom Navigation */}
                 <SidebarGroup className="w-full flex flex-col items-center">
                     <SidebarGroupContent className="w-full flex flex-col items-center">
                         <SidebarMenu className="gap-[20px] w-full flex flex-col items-center">
                             {bottomMenuItems.map((item) => (
-                                <SidebarMenuItem key={item.title} className="w-auto list-none">
+                                <SidebarMenuItem key={item.title} className="w-auto list-none h-[45px] flex flex-col items-center justify-center gap-[6px]">
                                     <SidebarMenuButton asChild className="w-auto h-auto p-0">
                                         <Link
                                             to={item.url}
-                                            className={`flex h-[40px] w-[40px] flex-col items-center justify-center rounded-[10px] p-[10px] ${isActive(item.url) ? '' : 'hover:bg-gray-100'
+                                            className={`flex h-[36px] w-[36px] items-center justify-center rounded-[10px] ${isActive(item.url) ? '' : 'hover:bg-gray-100'
                                                 }`}
                                         >
                                             <item.icon className="h-6 w-6 text-[#001c43]" />
-                                            {isActive(item.url) && (
-                                                <div className="mt-[10px] h-[2px] w-[39px] bg-[#e50019]" />
-                                            )}
                                         </Link>
                                     </SidebarMenuButton>
+                                    {/* Show red line ONLY when collapsed AND active - OUTSIDE the button */}
+                                    {isActive(item.url) && state === "collapsed" && (
+                                        <div className="h-[2px] w-[39px] bg-[#e50019]" />
+                                    )}
                                 </SidebarMenuItem>
                             ))}
                         </SidebarMenu>
