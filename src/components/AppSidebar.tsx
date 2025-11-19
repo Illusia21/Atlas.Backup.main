@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import mmcmLogo from "@/assets/images/mmcmLogo.png"
 import acoLogo from "@/assets/images/ACO.png"
 import { Plus, FileChartColumnIncreasing, Repeat, BookText, CircleHelp } from 'lucide-react';
@@ -59,6 +59,7 @@ export function AppSidebar() {
     const isActive = (path: string) => location.pathname === path;
     const { state } = useSidebar();
     const [isNewRequestOpen, setIsNewRequestOpen] = useState(false);
+    const dropdownRef = useRef<HTMLDivElement>(null);
 
     // Reset dropdown when sidebar collapses
     useEffect(() => {
@@ -66,6 +67,25 @@ export function AppSidebar() {
             setIsNewRequestOpen(false);
         }
     }, [state]);
+
+    // Close dropdown when route changes (after navigation)
+    useEffect(() => {
+        setIsNewRequestOpen(false);
+    }, [location.pathname]);
+
+    // Close dropdown when clicking outside
+    useEffect(() => {
+        function handleClickOutside(event: MouseEvent) {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+                setIsNewRequestOpen(false);
+            }
+        }
+
+        if (isNewRequestOpen) {
+            document.addEventListener('mousedown', handleClickOutside);
+            return () => document.removeEventListener('mousedown', handleClickOutside);
+        }
+    }, [isNewRequestOpen]);
 
     const isCollapsed = state === "collapsed";
 
@@ -124,7 +144,8 @@ export function AppSidebar() {
                                                             <SidebarMenuButton asChild className="w-auto h-auto p-0">
                                                                 <Link
                                                                     to={item.url}
-                                                                    className="flex h-[36px] w-[36px] items-center justify-center rounded-[10px] bg-[#001c43] hover:bg-[#bbb] transition-all duration-300"
+                                                                    className="flex h-[36px] w-[36px] items-center justify-center rounded-[10px] bg-[#001c43] hover:bg-[#002856] transition-all duration-300"
+                                                                    aria-label={item.title}
                                                                 >
                                                                     <item.icon className="h-6 w-6 text-white" />
                                                                 </Link>
@@ -136,10 +157,13 @@ export function AppSidebar() {
                                                     </Tooltip>
                                                 ) : (
                                                     // Expanded: Button with dropdown
-                                                    <div className="w-full">
+                                                    <div className="w-full" ref={dropdownRef}>
                                                         <button
                                                             onClick={() => setIsNewRequestOpen(!isNewRequestOpen)}
-                                                            className="w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-[#001c43] text-white hover:bg-[#bbb] transition-all duration-300"
+                                                            aria-expanded={isNewRequestOpen}
+                                                            aria-haspopup="true"
+                                                            aria-controls="new-request-dropdown"
+                                                            className="w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-[#001c43] text-white hover:bg-[#002856] transition-all duration-300"
                                                         >
                                                             <Plus className="h-5 w-5 flex-shrink-0" />
                                                             <span className="text-[12px] font-medium whitespace-nowrap">New Request</span>
@@ -154,29 +178,53 @@ export function AppSidebar() {
                                                         </button>
 
                                                         {/* Dropdown Options */}
-                                                        <div className={`overflow-hidden transition-all duration-300 ${isNewRequestOpen ? 'max-h-[200px] opacity-100' : 'max-h-0 opacity-0'}`}>
+                                                        <div
+                                                            id="new-request-dropdown"
+                                                            role="menu"
+                                                            className={`overflow-hidden transition-all duration-300 ${isNewRequestOpen ? 'max-h-[200px] opacity-100' : 'max-h-0 opacity-0'}`}
+                                                        >
                                                             <div className="mt-2 ml-4 border-l-2 border-gray-200 pl-4">
                                                                 <Link
                                                                     to="/request/reimbursement"
-                                                                    className="block px-3 py-2 text-[12px] text-[#001c43] hover:bg-gray-100 rounded-md transition-colors"
+                                                                    role="menuitem"
+                                                                    aria-label="Create Reimbursement Request"
+                                                                    className={`block px-3 py-2 text-[12px] rounded-md transition-colors ${isActive('/request/reimbursement')
+                                                                            ? 'bg-[#e50019] text-white font-semibold'
+                                                                            : 'text-[#001c43] hover:bg-gray-100'
+                                                                        }`}
                                                                 >
                                                                     Reimbursement
                                                                 </Link>
                                                                 <Link
                                                                     to="/request/non-trade-payable"
-                                                                    className="block px-3 py-2 text-[12px] text-[#001c43] hover:bg-gray-100 rounded-md transition-colors"
+                                                                    role="menuitem"
+                                                                    aria-label="Create Non-Trade Payable Request"
+                                                                    className={`block px-3 py-2 text-[12px] rounded-md transition-colors ${isActive('/request/non-trade-payable')
+                                                                            ? 'bg-[#e50019] text-white font-semibold'
+                                                                            : 'text-[#001c43] hover:bg-gray-100'
+                                                                        }`}
                                                                 >
                                                                     Non-Trade Payable
                                                                 </Link>
                                                                 <Link
                                                                     to="/request/trade-payable"
-                                                                    className="block px-3 py-2 text-[12px] text-[#001c43] hover:bg-gray-100 rounded-md transition-colors"
+                                                                    role="menuitem"
+                                                                    aria-label="Create Trade Payable Request"
+                                                                    className={`block px-3 py-2 text-[12px] rounded-md transition-colors ${isActive('/request/trade-payable')
+                                                                            ? 'bg-[#e50019] text-white font-semibold'
+                                                                            : 'text-[#001c43] hover:bg-gray-100'
+                                                                        }`}
                                                                 >
                                                                     Trade Payable
                                                                 </Link>
                                                                 <Link
                                                                     to="/request/cash-advance"
-                                                                    className="block px-3 py-2 text-[12px] text-[#001c43] hover:bg-gray-100 rounded-md transition-colors"
+                                                                    role="menuitem"
+                                                                    aria-label="Create Cash Advance Request"
+                                                                    className={`block px-3 py-2 text-[12px] rounded-md transition-colors ${isActive('/request/cash-advance')
+                                                                            ? 'bg-[#e50019] text-white font-semibold'
+                                                                            : 'text-[#001c43] hover:bg-gray-100'
+                                                                        }`}
                                                                 >
                                                                     Cash Advance
                                                                 </Link>
@@ -193,6 +241,7 @@ export function AppSidebar() {
                                                                 <SidebarMenuButton asChild className="w-auto h-auto p-0">
                                                                     <Link
                                                                         to={item.url}
+                                                                        aria-label={item.title}
                                                                         className="flex h-[36px] w-[36px] items-center justify-center rounded-[10px] hover:bg-gray-100 transition-all duration-300"
                                                                     >
                                                                         <item.icon className="h-6 w-6 text-[#001c43]" />
@@ -255,6 +304,7 @@ export function AppSidebar() {
                                                             <SidebarMenuButton asChild className="w-auto h-auto p-0">
                                                                 <Link
                                                                     to={item.url}
+                                                                    aria-label={item.title}
                                                                     className="flex h-[36px] w-[36px] items-center justify-center rounded-[10px] hover:bg-gray-100 transition-all duration-300"
                                                                 >
                                                                     <item.icon className="h-6 w-6 text-[#001c43]" />
