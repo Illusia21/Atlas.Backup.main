@@ -87,7 +87,14 @@ export function AppSidebar() {
                 </div>
 
                 {/* First Separator */}
-                <Separator className={`bg-[#b1b1b1] w-full transition-all duration-300 ${isCollapsed ? 'my-[10px] mx-[15px]' : 'mb-4'}`} style={{ width: isCollapsed ? 'calc(100% - 30px)' : '100%' }} />
+                <Separator
+                    className={`bg-[#b1b1b1] w-full transition-all duration-300 ${isCollapsed ? 'my-[10px] mx-[15px]' : 'mb-1 mx-8'
+                        }`}
+                    style={{
+                        width: isCollapsed ? 'calc(100% - 30px)' : 'calc(100% - 64px)'
+                    }}
+                />
+
 
                 {/* Main Navigation */}
                 <div className={`flex flex-col transition-all duration-300 ${isCollapsed ? 'items-center px-[15px]' : 'px-4'}`}>
@@ -98,8 +105,8 @@ export function AppSidebar() {
                                     <SidebarMenuItem
                                         key={item.title}
                                         className={`transition-all duration-300 ${isCollapsed
-                                                ? 'w-auto list-none h-[45px] flex flex-col items-center justify-center gap-[6px]'
-                                                : 'w-full'
+                                            ? 'w-auto list-none h-[45px] flex flex-col items-center justify-center gap-[6px]'
+                                            : 'w-full'
                                             }`}
                                     >
                                         {item.isPrimary ? (
@@ -197,7 +204,14 @@ export function AppSidebar() {
                 </div>
 
                 {/* Second Separator */}
-                <Separator className={`bg-[#b1b1b1] w-full transition-all duration-300 ${isCollapsed ? 'my-[10px] mx-[15px]' : 'my-2'}`} style={{ width: isCollapsed ? 'calc(100% - 30px)' : '100%' }} />
+                <Separator
+                    className={`bg-[#b1b1b1] w-full transition-all duration-300 ${isCollapsed ? 'my-[10px] mx-[15px]' : 'mb-1 mx-8'
+                        }`}
+                    style={{
+                        width: isCollapsed ? 'calc(100% - 30px)' : 'calc(100% - 64px)'
+                    }}
+                />
+
 
                 {/* Bottom Navigation */}
                 <div className={`flex flex-col transition-all duration-300 ${isCollapsed ? 'items-center px-[15px]' : 'px-4'}`}>
@@ -208,8 +222,8 @@ export function AppSidebar() {
                                     <SidebarMenuItem
                                         key={item.title}
                                         className={`transition-all duration-300 ${isCollapsed
-                                                ? 'w-auto list-none h-[45px] flex flex-col items-center justify-center gap-[6px]'
-                                                : 'w-full'
+                                            ? 'w-auto list-none h-[45px] flex flex-col items-center justify-center gap-[6px]'
+                                            : 'w-full'
                                             }`}
                                     >
                                         {isCollapsed ? (
