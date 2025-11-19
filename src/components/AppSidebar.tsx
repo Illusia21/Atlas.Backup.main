@@ -21,7 +21,7 @@ const menuItems = [
         title: "Add New Request",
         url: "/new-request",
         icon: Plus,
-        isPrimary: true, // Special styling for the plus button
+        isPrimary: true,
     },
     {
         title: "My Requests",
@@ -51,7 +51,7 @@ const bottomMenuItems = [
 export function AppSidebar() {
     const location = useLocation();
     const isActive = (path: string) => location.pathname === path;
-    const { state } = useSidebar(); // Get sidebar state (collapsed/expanded)
+    const { state } = useSidebar();
     const [isNewRequestOpen, setIsNewRequestOpen] = useState(false);
 
     // Reset dropdown when sidebar collapses
@@ -61,218 +61,187 @@ export function AppSidebar() {
         }
     }, [state]);
 
+    const isCollapsed = state === "collapsed";
+
     return (
         <Sidebar collapsible="icon">
             <SidebarContent className="bg-[#fcfcfc]">
-                {/* COLLAPSED VIEW */}
-                {state === "collapsed" && (
-                    <div className="flex flex-col items-center px-[15px] pt-[20px]">
-                        {/* Logo */}
-                        <div className="h-[40px] w-[40px] flex items-center justify-center">
-                            <img
-                                src={mmcmLogo}
-                                alt="MCM Logo"
-                                className="h-full w-full object-contain"
-                            />
-                        </div>
+                {/* Logo Section - Always visible */}
+                <div className={`flex flex-col items-center transition-all duration-300 ${isCollapsed ? 'px-[15px] pt-[20px]' : 'p-4'}`}>
+                    <div className={`flex items-center justify-center transition-all duration-300 ${isCollapsed ? 'h-[40px] w-[40px]' : 'h-[60px] w-[60px] mb-2'}`}>
+                        <img
+                            src={mmcmLogo}
+                            alt="MCM Logo"
+                            className="h-full w-full object-contain"
+                        />
+                    </div>
 
-                        {/* First Separator */}
-                        <Separator className="bg-[#b1b1b1] my-[10px] w-full" />
+                    {/* ACO Logo - only in expanded */}
+                    <div className={`overflow-hidden transition-all duration-300 ${isCollapsed ? 'h-0 opacity-0' : 'h-[60px] opacity-100'}`}>
+                        <img
+                            src={acoLogo}
+                            alt="Accounting Office"
+                            className="h-full w-auto object-contain"
+                        />
+                    </div>
+                </div>
 
-                        {/* Main Navigation */}
-                        <SidebarGroup className="w-full flex flex-col items-center">
-                            <SidebarGroupContent className="w-full flex flex-col items-center">
-                                <SidebarMenu className="gap-[20px] w-full flex flex-col items-center">
-                                    {menuItems.map((item) => (
-                                        <SidebarMenuItem key={item.title} className="w-auto list-none h-[45px] flex flex-col items-center justify-center gap-[6px]">
-                                            {item.isPrimary ? (
+                {/* First Separator */}
+                <Separator className={`bg-[#b1b1b1] w-full transition-all duration-300 ${isCollapsed ? 'my-[10px] mx-[15px]' : 'mb-4'}`} style={{ width: isCollapsed ? 'calc(100% - 30px)' : '100%' }} />
+
+                {/* Main Navigation */}
+                <div className={`flex flex-col transition-all duration-300 ${isCollapsed ? 'items-center px-[15px]' : 'px-4'}`}>
+                    <SidebarGroup className={`w-full transition-all duration-300 ${isCollapsed ? 'flex flex-col items-center' : ''}`}>
+                        <SidebarGroupContent className={`w-full transition-all duration-300 ${isCollapsed ? 'flex flex-col items-center' : ''}`}>
+                            <SidebarMenu className={`w-full flex flex-col transition-all duration-300 ${isCollapsed ? 'gap-[20px] items-center' : 'space-y-3'}`}>
+                                {menuItems.map((item) => (
+                                    <SidebarMenuItem
+                                        key={item.title}
+                                        className={`transition-all duration-300 ${isCollapsed
+                                                ? 'w-auto list-none h-[45px] flex flex-col items-center justify-center gap-[6px]'
+                                                : 'w-full'
+                                            }`}
+                                    >
+                                        {item.isPrimary ? (
+                                            isCollapsed ? (
+                                                // Collapsed: Icon only
                                                 <SidebarMenuButton asChild className="w-auto h-auto p-0">
                                                     <Link
                                                         to={item.url}
-                                                        className="flex h-[36px] w-[36px] items-center justify-center rounded-[10px] bg-[#001c43] hover:bg-[#002856]"
+                                                        className="flex h-[36px] w-[36px] items-center justify-center rounded-[10px] bg-[#001c43] hover:bg-[#002856] transition-all duration-300"
                                                     >
                                                         <item.icon className="h-6 w-6 text-white" />
                                                     </Link>
                                                 </SidebarMenuButton>
                                             ) : (
+                                                // Expanded: Button with dropdown
+                                                <div className="w-full">
+                                                    <button
+                                                        onClick={() => setIsNewRequestOpen(!isNewRequestOpen)}
+                                                        className="w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-[#001c43] text-white hover:bg-[#002856] transition-all duration-300"
+                                                    >
+                                                        <Plus className="h-5 w-5 flex-shrink-0" />
+                                                        <span className="text-[12px] font-medium whitespace-nowrap">New Request</span>
+                                                        <svg
+                                                            className={`ml-auto h-4 w-4 flex-shrink-0 transition-transform duration-300 ${isNewRequestOpen ? 'rotate-180' : ''}`}
+                                                            fill="none"
+                                                            stroke="currentColor"
+                                                            viewBox="0 0 24 24"
+                                                        >
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                                        </svg>
+                                                    </button>
+
+                                                    {/* Dropdown Options */}
+                                                    <div className={`overflow-hidden transition-all duration-300 ${isNewRequestOpen ? 'max-h-[200px] opacity-100' : 'max-h-0 opacity-0'}`}>
+                                                        <div className="mt-2 ml-4 border-l-2 border-gray-200 pl-4">
+                                                            <Link
+                                                                to="/request/reimbursement"
+                                                                className="block px-3 py-2 text-[12px] text-[#001c43] hover:bg-gray-100 rounded-md transition-colors"
+                                                            >
+                                                                Reimbursement
+                                                            </Link>
+                                                            <Link
+                                                                to="/request/non-trade-payable"
+                                                                className="block px-3 py-2 text-[12px] text-[#001c43] hover:bg-gray-100 rounded-md transition-colors"
+                                                            >
+                                                                Non-Trade Payable
+                                                            </Link>
+                                                            <Link
+                                                                to="/request/trade-payable"
+                                                                className="block px-3 py-2 text-[12px] text-[#001c43] hover:bg-gray-100 rounded-md transition-colors"
+                                                            >
+                                                                Trade Payable
+                                                            </Link>
+                                                            <Link
+                                                                to="/request/cash-advance"
+                                                                className="block px-3 py-2 text-[12px] text-[#001c43] hover:bg-gray-100 rounded-md transition-colors"
+                                                            >
+                                                                Cash Advance
+                                                            </Link>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            )
+                                        ) : (
+                                            isCollapsed ? (
+                                                // Collapsed: Icon only
                                                 <>
                                                     <SidebarMenuButton asChild className="w-auto h-auto p-0">
                                                         <Link
                                                             to={item.url}
-                                                            className={`flex h-[36px] w-[36px] items-center justify-center rounded-[10px] ${isActive(item.url) ? '' : 'hover:bg-gray-100'
-                                                                }`}
+                                                            className="flex h-[36px] w-[36px] items-center justify-center rounded-[10px] hover:bg-gray-100 transition-all duration-300"
                                                         >
                                                             <item.icon className="h-6 w-6 text-[#001c43]" />
                                                         </Link>
                                                     </SidebarMenuButton>
-                                                    {/* Show red line ONLY when collapsed AND active - OUTSIDE the button */}
                                                     {isActive(item.url) && (
                                                         <div className="h-[2px] w-[39px] bg-[#e50019]" />
                                                     )}
                                                 </>
-                                            )}
-                                        </SidebarMenuItem>
-                                    ))}
-                                </SidebarMenu>
-                            </SidebarGroupContent>
-                        </SidebarGroup>
+                                            ) : (
+                                                // Expanded: Icon + Text
+                                                <SidebarMenuButton asChild isActive={isActive(item.url)} className="h-auto">
+                                                    <Link to={item.url} className="flex items-center gap-2 py-2 transition-all duration-300">
+                                                        <item.icon className="h-4 w-4 flex-shrink-0" />
+                                                        <span className="text-[12px] whitespace-nowrap">{item.title}</span>
+                                                    </Link>
+                                                </SidebarMenuButton>
+                                            )
+                                        )}
+                                    </SidebarMenuItem>
+                                ))}
+                            </SidebarMenu>
+                        </SidebarGroupContent>
+                    </SidebarGroup>
+                </div>
 
-                        {/* Second Separator */}
-                        <Separator className="bg-[#b1b1b1] my-[10px] w-full" />
+                {/* Second Separator */}
+                <Separator className={`bg-[#b1b1b1] w-full transition-all duration-300 ${isCollapsed ? 'my-[10px] mx-[15px]' : 'my-2'}`} style={{ width: isCollapsed ? 'calc(100% - 30px)' : '100%' }} />
 
-                        {/* Bottom Navigation */}
-                        <SidebarGroup className="w-full flex flex-col items-center">
-                            <SidebarGroupContent className="w-full flex flex-col items-center">
-                                <SidebarMenu className="gap-[20px] w-full flex flex-col items-center">
-                                    {bottomMenuItems.map((item) => (
-                                        <SidebarMenuItem key={item.title} className="w-auto list-none h-[45px] flex flex-col items-center justify-center gap-[6px]">
-                                            <SidebarMenuButton asChild className="w-auto h-auto p-0">
-                                                <Link
-                                                    to={item.url}
-                                                    className={`flex h-[36px] w-[36px] items-center justify-center rounded-[10px] ${isActive(item.url) ? '' : 'hover:bg-gray-100'
-                                                        }`}
-                                                >
-                                                    <item.icon className="h-6 w-6 text-[#001c43]" />
+                {/* Bottom Navigation */}
+                <div className={`flex flex-col transition-all duration-300 ${isCollapsed ? 'items-center px-[15px]' : 'px-4'}`}>
+                    <SidebarGroup className={`w-full transition-all duration-300 ${isCollapsed ? 'flex flex-col items-center' : ''}`}>
+                        <SidebarGroupContent className={`w-full transition-all duration-300 ${isCollapsed ? 'flex flex-col items-center' : ''}`}>
+                            <SidebarMenu className={`w-full flex flex-col transition-all duration-300 ${isCollapsed ? 'gap-[20px] items-center' : 'space-y-3'}`}>
+                                {bottomMenuItems.map((item) => (
+                                    <SidebarMenuItem
+                                        key={item.title}
+                                        className={`transition-all duration-300 ${isCollapsed
+                                                ? 'w-auto list-none h-[45px] flex flex-col items-center justify-center gap-[6px]'
+                                                : 'w-full'
+                                            }`}
+                                    >
+                                        {isCollapsed ? (
+                                            // Collapsed: Icon only
+                                            <>
+                                                <SidebarMenuButton asChild className="w-auto h-auto p-0">
+                                                    <Link
+                                                        to={item.url}
+                                                        className="flex h-[36px] w-[36px] items-center justify-center rounded-[10px] hover:bg-gray-100 transition-all duration-300"
+                                                    >
+                                                        <item.icon className="h-6 w-6 text-[#001c43]" />
+                                                    </Link>
+                                                </SidebarMenuButton>
+                                                {isActive(item.url) && (
+                                                    <div className="h-[2px] w-[39px] bg-[#e50019]" />
+                                                )}
+                                            </>
+                                        ) : (
+                                            // Expanded: Icon + Text
+                                            <SidebarMenuButton asChild isActive={isActive(item.url)} className="h-auto">
+                                                <Link to={item.url} className="flex items-center gap-2 py-2 transition-all duration-300">
+                                                    <item.icon className="h-4 w-4 flex-shrink-0" />
+                                                    <span className="text-[12px] whitespace-nowrap">{item.title}</span>
                                                 </Link>
                                             </SidebarMenuButton>
-                                            {/* Show red line ONLY when collapsed AND active - OUTSIDE the button */}
-                                            {isActive(item.url) && (
-                                                <div className="h-[2px] w-[39px] bg-[#e50019]" />
-                                            )}
-                                        </SidebarMenuItem>
-                                    ))}
-                                </SidebarMenu>
-                            </SidebarGroupContent>
-                        </SidebarGroup>
-                    </div>
-                )}
-
-                {/* EXPANDED VIEW */}
-                {state === "expanded" && (
-                    <div className="flex flex-col p-4">
-                        {/* Header with Logo */}
-                        <div className="flex flex-col items-center mb-4">
-                            <img
-                                src={mmcmLogo}
-                                alt="MCM Logo"
-                                className="h-[60px] w-[60px] object-contain mb-2"
-                            />
-                            <img
-                                src={acoLogo}
-                                alt="Accounting Office"
-                                className="h-[60px] w-auto object-contain"
-                            />
-                        </div>
-
-                        {/* Separator after logo */}
-                        <Separator className="mb-4" />
-
-                        {/* Main Navigation Group */}
-                        <SidebarGroup>
-                            <SidebarGroupContent>
-                                <SidebarMenu className="space-y-3">
-                                    {/* New Request Button with Dropdown */}
-                                    <div>
-                                        <button
-                                            onClick={() => setIsNewRequestOpen(!isNewRequestOpen)}
-                                            className="w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-[#001c43] text-white hover:bg-[#002856] transition-colors"
-                                        >
-                                            <Plus className="h-5 w-5" />
-                                            <span className="text-[12px] font-medium">New Request</span>
-                                            <svg
-                                                className={`ml-auto h-4 w-4 transition-transform ${isNewRequestOpen ? 'rotate-180' : ''}`}
-                                                fill="none"
-                                                stroke="currentColor"
-                                                viewBox="0 0 24 24"
-                                            >
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                            </svg>
-                                        </button>
-
-                                        {/* Dropdown Options */}
-                                        {isNewRequestOpen && (
-                                            <div className="mt-2 ml-4 border-l-2 border-gray-200 pl-4">
-                                                <Link
-                                                    to="/request/reimbursement"
-                                                    className="block px-3 py-2 text-[12px] text-[#001c43] hover:bg-gray-100 rounded-md transition-colors"
-                                                >
-                                                    Reimbursement
-                                                </Link>
-                                                <Link
-                                                    to="/request/non-trade-payable"
-                                                    className="block px-3 py-2 text-[12px] text-[#001c43] hover:bg-gray-100 rounded-md transition-colors"
-                                                >
-                                                    Non-Trade Payable
-                                                </Link>
-                                                <Link
-                                                    to="/request/trade-payable"
-                                                    className="block px-3 py-2 text-[12px] text-[#001c43] hover:bg-gray-100 rounded-md transition-colors"
-                                                >
-                                                    Trade Payable
-                                                </Link>
-                                                <Link
-                                                    to="/request/cash-advance"
-                                                    className="block px-3 py-2 text-[12px] text-[#001c43] hover:bg-gray-100 rounded-md transition-colors"
-                                                >
-                                                    Cash Advance
-                                                </Link>
-                                            </div>
                                         )}
-                                    </div>
-
-                                    {/* My Request */}
-                                    <SidebarMenuItem>
-                                        <SidebarMenuButton asChild isActive={isActive('/my-requests')}>
-                                            <Link to="/my-requests" className="flex items-center gap-2">
-                                                <FileChartColumnIncreasing className="h-4 w-4" />
-                                                <span className="text-[12px]">My Request</span>
-                                            </Link>
-                                        </SidebarMenuButton>
                                     </SidebarMenuItem>
-
-                                    {/* Liquidation */}
-                                    <SidebarMenuItem>
-                                        <SidebarMenuButton asChild isActive={isActive('/transactions')}>
-                                            <Link to="/transactions" className="flex items-center gap-2">
-                                                <Repeat className="h-4 w-4" />
-                                                <span className="text-[12px]">Liquidation</span>
-                                            </Link>
-                                        </SidebarMenuButton>
-                                    </SidebarMenuItem>
-                                </SidebarMenu>
-                            </SidebarGroupContent>
-                        </SidebarGroup>
-
-                        <Separator className="my-2" />
-
-                        {/* Bottom Navigation Group */}
-                        <SidebarGroup>
-                            <SidebarGroupContent>
-                                <SidebarMenu className="space-y-3">
-                                    {/* Guidelines */}
-                                    <SidebarMenuItem>
-                                        <SidebarMenuButton asChild isActive={isActive('/docs')}>
-                                            <Link to="/docs" className="flex items-center gap-2">
-                                                <BookText className="h-4 w-4" />
-                                                <span className="text-[12px]">Guidelines</span>
-                                            </Link>
-                                        </SidebarMenuButton>
-                                    </SidebarMenuItem>
-
-                                    {/* Help & FAQs */}
-                                    <SidebarMenuItem>
-                                        <SidebarMenuButton asChild isActive={isActive('/help')}>
-                                            <Link to="/help" className="flex items-center gap-2">
-                                                <CircleHelp className="h-4 w-4" />
-                                                <span className="text-[12px]">Help & FAQs</span>
-                                            </Link>
-                                        </SidebarMenuButton>
-                                    </SidebarMenuItem>
-                                </SidebarMenu>
-                            </SidebarGroupContent>
-                        </SidebarGroup>
-                    </div>
-                )}
+                                ))}
+                            </SidebarMenu>
+                        </SidebarGroupContent>
+                    </SidebarGroup>
+                </div>
             </SidebarContent>
         </Sidebar>
     )
