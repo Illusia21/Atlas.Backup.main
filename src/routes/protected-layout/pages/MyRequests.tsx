@@ -1,4 +1,5 @@
 import { useState, useMemo, useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Eye, Search, Table as TableIcon, LayoutGrid, ListFilterPlus, ArrowUpDown } from 'lucide-react'
 import { mockRequests } from '@/data/mockRequests'
 import { StatusBadge } from '@/components/StatusBadge'
@@ -17,6 +18,8 @@ import {
 import type { RequestStatus } from '@/types'
 
 function MyRequests() {
+    const navigate = useNavigate()
+
     // State for filters
     const [activeTab, setActiveTab] = useState<RequestStatus | 'All'>('All')
     const [searchQuery, setSearchQuery] = useState('')
@@ -148,6 +151,11 @@ function MyRequests() {
         searchInputRef.current?.focus()
     }
 
+    // Handle view request details
+    const handleViewRequest = (requestId: string) => {
+        navigate(`/my-requests/${requestId}`)
+    }
+
     return (
         <div className="space-y-6 w-full overflow-x-hidden">
             {/* View Toggle, Filter, and Search Bar */}
@@ -273,7 +281,11 @@ function MyRequests() {
                                             <StatusBadge status={request.status} />
                                         </TableCell>
                                         <TableCell className="text-center">
-                                            <Button variant="ghost" size="icon">
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                onClick={() => handleViewRequest(request.id)}
+                                            >
                                                 <Eye className="h-4 w-4" />
                                             </Button>
                                         </TableCell>
@@ -286,7 +298,7 @@ function MyRequests() {
                     {/* Pagination Controls */}
                     {filteredRequests.length > 0 && totalPages > 1 && (
                         <div className="flex items-center justify-between px-6 py-4 border-t">
-                            <div className="text-sm text-gray-600">
+                            <div className="text-[12px] text-gray-600">
                                 Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, filteredRequests.length)} of {filteredRequests.length} requests
                             </div>
                             <div className="flex items-center gap-2">
