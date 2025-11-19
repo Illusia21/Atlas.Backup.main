@@ -1,9 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Navigate, Outlet } from "react-router-dom";
+import { Outlet, useLocation, /*Navigate*/ } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import api from "../../api";
 import { REFRESH_TOKEN, ACCESS_TOKEN } from "../../constants";
 import { useState, useEffect } from "react";
+import { SidebarProvider } from '@/components/ui/sidebar'
+import { AppSidebar } from '@/components/AppSidebar'
+import { Topbar } from '@/components/Topbar'
 
 interface JWTPayload {
   exp?: number;
@@ -11,8 +14,16 @@ interface JWTPayload {
   [key: string]: any;
 }
 
+// Page titles for different routes
+const routeTitles: Record<string, string> = {
+  '/': 'Dashboard',
+  '/my-requests': 'My Requests',
+}
+
 export default function ProtectedLayout() {
   const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null);
+  const location = useLocation()
+  const pageTitle = routeTitles[location.pathname] || 'Dashboard'
 
   useEffect(() => {
     auth().catch(() => setIsAuthorized(false));
@@ -77,5 +88,34 @@ export default function ProtectedLayout() {
     return <div>Loading...</div>;
   }
 
-  return isAuthorized ? <Outlet /> : <Navigate to="/login" />;
+  // ==========================================
+  // AUTH ENABLED
+  // ==========================================
+  // return isAuthorized ? (
+  //   <SidebarProvider defaultOpen={false}>
+  //     <AppSidebar />
+  //     <div className="flex flex-col w-full">
+  //       <Topbar pageTitle={pageTitle} />
+  //       <main className="flex-1 bg-[#F5F5F5] p-6">
+  //         <Outlet />
+  //       </main>
+  //     </div>
+  //   </SidebarProvider>
+  // ) : <Navigate to="/login" />;
+
+  // ==========================================
+  // AUTH BYPASS (For development/testing UI)
+  // Uncomment this and comment out the above when working on UI tickets
+  // ==========================================
+  return (
+    <SidebarProvider defaultOpen={false}>
+      <AppSidebar />
+      <div className="flex flex-col w-full">
+        <Topbar pageTitle={pageTitle} />
+        <main className="flex-1 bg-[#F5F5F5] p-6">
+          <Outlet />
+        </main>
+      </div>
+    </SidebarProvider>
+  );
 }
