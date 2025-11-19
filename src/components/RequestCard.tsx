@@ -7,9 +7,10 @@ import type { Request } from '@/types'
 
 interface RequestCardProps {
     request: Request
+    onViewClick?: () => void
 }
 
-export function RequestCard({ request }: RequestCardProps) {
+export function RequestCard({ request, onViewClick }: RequestCardProps) {
     return (
         <Card className="hover:shadow-md transition-shadow py-4">
             {/* Header: Request ID + Status Badge */}
@@ -58,6 +59,7 @@ export function RequestCard({ request }: RequestCardProps) {
                     variant="ghost"
                     size="icon"
                     className="hover:bg-gray-100 !h-8 !w-8"
+                    onClick={onViewClick}
                 >
                     <Eye className="!h-5 !w-5 text-[#114B9F]" />
                 </Button>

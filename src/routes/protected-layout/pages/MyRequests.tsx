@@ -349,7 +349,11 @@ function MyRequests() {
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
                             {paginatedRequests.map((request) => (
-                                <RequestCard key={request.id} request={request} />
+                                <RequestCard
+                                    key={request.id}
+                                    request={request}
+                                    onViewClick={() => handleViewRequest(request.id)}
+                                />
                             ))}
                         </div>
                     )}
