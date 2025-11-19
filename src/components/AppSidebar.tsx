@@ -164,10 +164,13 @@ export function AppSidebar() {
                             />
                         </div>
 
+                        {/* Separator after logo */}
+                        <Separator className="mb-4" />
+
                         {/* Main Navigation Group */}
                         <SidebarGroup>
                             <SidebarGroupContent>
-                                <SidebarMenu>
+                                <SidebarMenu className="space-y-3">
                                     {/* New Request Button with Dropdown */}
                                     <div>
                                         <button
@@ -175,7 +178,7 @@ export function AppSidebar() {
                                             className="w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-[#001c43] text-white hover:bg-[#002856] transition-colors"
                                         >
                                             <Plus className="h-5 w-5" />
-                                            <span className="text-sm font-medium">New Request</span>
+                                            <span className="text-[12px] font-medium">New Request</span>
                                             <svg
                                                 className={`ml-auto h-4 w-4 transition-transform ${isNewRequestOpen ? 'rotate-180' : ''}`}
                                                 fill="none"
@@ -188,28 +191,28 @@ export function AppSidebar() {
 
                                         {/* Dropdown Options */}
                                         {isNewRequestOpen && (
-                                            <div className="mt-2 ml-4 space-y-1 border-l-2 border-gray-200 pl-4">
+                                            <div className="mt-2 ml-4 border-l-2 border-gray-200 pl-4">
                                                 <Link
                                                     to="/request/reimbursement"
-                                                    className="block px-3 py-2 text-sm text-[#001c43] hover:bg-gray-100 rounded-md transition-colors"
+                                                    className="block px-3 py-2 text-[12px] text-[#001c43] hover:bg-gray-100 rounded-md transition-colors"
                                                 >
                                                     Reimbursement
                                                 </Link>
                                                 <Link
                                                     to="/request/non-trade-payable"
-                                                    className="block px-3 py-2 text-sm text-[#001c43] hover:bg-gray-100 rounded-md transition-colors"
+                                                    className="block px-3 py-2 text-[12px] text-[#001c43] hover:bg-gray-100 rounded-md transition-colors"
                                                 >
                                                     Non-Trade Payable
                                                 </Link>
                                                 <Link
                                                     to="/request/trade-payable"
-                                                    className="block px-3 py-2 text-sm text-[#001c43] hover:bg-gray-100 rounded-md transition-colors"
+                                                    className="block px-3 py-2 text-[12px] text-[#001c43] hover:bg-gray-100 rounded-md transition-colors"
                                                 >
                                                     Trade Payable
                                                 </Link>
                                                 <Link
                                                     to="/request/cash-advance"
-                                                    className="block px-3 py-2 text-sm text-[#001c43] hover:bg-gray-100 rounded-md transition-colors"
+                                                    className="block px-3 py-2 text-[12px] text-[#001c43] hover:bg-gray-100 rounded-md transition-colors"
                                                 >
                                                     Cash Advance
                                                 </Link>
@@ -222,7 +225,7 @@ export function AppSidebar() {
                                         <SidebarMenuButton asChild isActive={isActive('/my-requests')}>
                                             <Link to="/my-requests" className="flex items-center gap-2">
                                                 <FileChartColumnIncreasing className="h-4 w-4" />
-                                                <span>My Request</span>
+                                                <span className="text-[12px]">My Request</span>
                                             </Link>
                                         </SidebarMenuButton>
                                     </SidebarMenuItem>
@@ -232,7 +235,7 @@ export function AppSidebar() {
                                         <SidebarMenuButton asChild isActive={isActive('/transactions')}>
                                             <Link to="/transactions" className="flex items-center gap-2">
                                                 <Repeat className="h-4 w-4" />
-                                                <span>Liquidation</span>
+                                                <span className="text-[12px]">Liquidation</span>
                                             </Link>
                                         </SidebarMenuButton>
                                     </SidebarMenuItem>
@@ -240,18 +243,18 @@ export function AppSidebar() {
                             </SidebarGroupContent>
                         </SidebarGroup>
 
-                        <Separator className="my-4" />
+                        <Separator className="my-2" />
 
                         {/* Bottom Navigation Group */}
                         <SidebarGroup>
                             <SidebarGroupContent>
-                                <SidebarMenu>
+                                <SidebarMenu className="space-y-3">
                                     {/* Guidelines */}
                                     <SidebarMenuItem>
                                         <SidebarMenuButton asChild isActive={isActive('/docs')}>
                                             <Link to="/docs" className="flex items-center gap-2">
                                                 <BookText className="h-4 w-4" />
-                                                <span>Guidelines</span>
+                                                <span className="text-[12px]">Guidelines</span>
                                             </Link>
                                         </SidebarMenuButton>
                                     </SidebarMenuItem>
@@ -261,7 +264,7 @@ export function AppSidebar() {
                                         <SidebarMenuButton asChild isActive={isActive('/help')}>
                                             <Link to="/help" className="flex items-center gap-2">
                                                 <CircleHelp className="h-4 w-4" />
-                                                <span>Help & FAQs</span>
+                                                <span className="text-[12px]">Help & FAQs</span>
                                             </Link>
                                         </SidebarMenuButton>
                                     </SidebarMenuItem>
