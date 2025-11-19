@@ -4,6 +4,8 @@ import { mockRequests } from '@/data/mockRequests'
 import { StatusBadge } from '@/components/StatusBadge'
 import { RequestCard } from '@/components/RequestCard'
 import { Button } from '@/components/ui/button'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { FilterPanel, type FilterValues } from '@/components/FilterPanel'
 import {
     Table,
     TableBody,
@@ -21,6 +23,13 @@ function MyRequests() {
     const [viewMode, setViewMode] = useState<'table' | 'grid'>('table')
     const searchInputRef = useRef<HTMLInputElement>(null)
 
+    // Filter panel state
+    const [isFilterOpen, setIsFilterOpen] = useState(false)
+    const [activeFilters, setActiveFilters] = useState<FilterValues>({
+        requestType: 'all',
+        dateRange: { from: undefined, to: undefined }
+    })
+
     // Filter tabs
     const tabs: Array<RequestStatus | 'All'> = [
         'All',
@@ -31,27 +40,54 @@ function MyRequests() {
         'Cancelled',
     ]
 
+    // Filter handlers
+    const handleApplyFilters = (filters: FilterValues) => {
+        setActiveFilters(filters)
+        setIsFilterOpen(false)
+    }
+
+    const handleResetFilters = () => {
+        setActiveFilters({
+            requestType: 'all',
+            dateRange: { from: undefined, to: undefined }
+        })
+        setIsFilterOpen(false)
+    }
+
+    // Filter logic
     // Filter logic
     const filteredRequests = useMemo(() => {
-        let filtered = mockRequests
+        return mockRequests.filter((request) => {
+            // Tab filter
+            const matchesTab = activeTab === 'All' || request.status === activeTab
 
-        // Filter by tab
-        if (activeTab !== 'All') {
-            filtered = filtered.filter((req) => req.status === activeTab)
-        }
+            // Search filter
+            const matchesSearch =
+                searchQuery === '' ||
+                request.requestType.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                request.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                request.id.toLowerCase().includes(searchQuery.toLowerCase())
 
-        // Filter by search query
-        if (searchQuery) {
-            filtered = filtered.filter(
-                (req) =>
-                    req.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                    req.requestType.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                    req.description.toLowerCase().includes(searchQuery.toLowerCase())
-            )
-        }
+            // Request Type filter
+            const matchesRequestType =
+                activeFilters.requestType === 'all' ||
+                request.requestType === activeFilters.requestType
 
-        return filtered
-    }, [activeTab, searchQuery])
+            // Date Range filter
+            let matchesDateRange = true
+            if (activeFilters.dateRange?.from || activeFilters.dateRange?.to) {
+                const requestDate = new Date(request.dateRequested)
+                if (activeFilters.dateRange?.from) {
+                    matchesDateRange = requestDate >= activeFilters.dateRange.from
+                }
+                if (activeFilters.dateRange?.to && matchesDateRange) {
+                    matchesDateRange = requestDate <= activeFilters.dateRange.to
+                }
+            }
+
+            return matchesTab && matchesSearch && matchesRequestType && matchesDateRange
+        })
+    }, [searchQuery, activeTab, activeFilters])
 
     // Focus search input when icon is clicked
     const handleSearchIconClick = () => {
@@ -83,9 +119,16 @@ function MyRequests() {
                 {/* Right Section - Filter and Search Bar grouped together */}
                 <div className="flex items-center gap-3 flex-1 justify-end min-w-0">
                     {/* Filter Button */}
-                    <button className="relative cursor-pointer hover:bg-gray-100 p-2 rounded-md transition-colors flex-shrink-0">
-                        <ListFilterPlus className="h-6 w-6 text-[#001c43]" />
-                    </button>
+                    <Popover open={isFilterOpen} onOpenChange={setIsFilterOpen}>
+                        <PopoverTrigger asChild>
+                            <button className="relative cursor-pointer hover:bg-gray-100 p-2 rounded-md transition-colors flex-shrink-0">
+                                <ListFilterPlus className="h-6 w-6 text-[#001c43]" />
+                            </button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="end">
+                            <FilterPanel onApply={handleApplyFilters} onReset={handleResetFilters} />
+                        </PopoverContent>
+                    </Popover>
 
                     {/* Search Bar */}
                     <div className="relative min-w-[438px] max-w-[438px]">
@@ -143,7 +186,7 @@ function MyRequests() {
                             {filteredRequests.length === 0 ? (
                                 <TableRow>
                                     <TableCell colSpan={7} className="text-center py-8 text-gray-500">
-                                        No requests found.
+                                        No requests found for the selected filters.
                                     </TableCell>
                                 </TableRow>
                             ) : (
@@ -176,7 +219,7 @@ function MyRequests() {
                     {filteredRequests.length === 0 ? (
                         <div className="flex items-center justify-center py-16">
                             <p className="text-center text-gray-500 text-[14px]">
-                                No requests found.
+                                No requests found for the selected filters.
                             </p>
                         </div>
                     ) : (
