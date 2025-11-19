@@ -88,10 +88,10 @@ export function AppSidebar() {
 
                 {/* First Separator */}
                 <Separator
-                    className={`bg-[#b1b1b1] w-full transition-all duration-300 ${isCollapsed ? 'my-[10px] mx-[15px]' : 'mb-1 mx-8'
+                    className={`bg-[#b1b1b1] w-full transition-all duration-300 ${isCollapsed ? 'my-[10px] mx-[15px]' : 'mb-1 mx-6'
                         }`}
                     style={{
-                        width: isCollapsed ? 'calc(100% - 30px)' : 'calc(100% - 64px)'
+                        width: isCollapsed ? 'calc(100% - 30px)' : 'calc(100% - 48px)'
                     }}
                 />
 
@@ -205,10 +205,10 @@ export function AppSidebar() {
 
                 {/* Second Separator */}
                 <Separator
-                    className={`bg-[#b1b1b1] w-full transition-all duration-300 ${isCollapsed ? 'my-[10px] mx-[15px]' : 'mb-1 mx-8'
+                    className={`bg-[#b1b1b1] w-full transition-all duration-300 ${isCollapsed ? 'my-[10px] mx-[15px]' : 'mb-1 mx-6'
                         }`}
                     style={{
-                        width: isCollapsed ? 'calc(100% - 30px)' : 'calc(100% - 64px)'
+                        width: isCollapsed ? 'calc(100% - 30px)' : 'calc(100% - 48px)'
                     }}
                 />
 
