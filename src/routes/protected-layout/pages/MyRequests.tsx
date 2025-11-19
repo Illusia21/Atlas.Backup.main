@@ -406,3 +406,19 @@ function MyRequests() {
 }
 
 export default MyRequests
+
+/*
+⚠️ WHAT'S MISSING (Not Blocking for AC-7)
+The 5% missing are:
+Real-time updates - Requires backend (WebSocket/polling)
+Request detail page - Eye icon works but target page doesn't exist
+
+|            Feature           | Priority | Why Not Blocking                                 | Implementation Time     |
+|-----------------------------|----------|--------------------------------------------------|-------------------------|
+| Real-time updates          | LOW      | Requires backend WebSocket or polling            | Separate ticket         |
+| Backend API integration   | LOW      | Currently using mockData (correct approach)      | When backend is ready   |
+| Request detail page      | MEDIUM   | Eye icon navigates, but page doesn't exist yet   | Separate ticket (AC-8?) |
+| Loading spinner         | LOW      | Using instant mock data, add when API is ready   | 5 minutes               |
+
+
+*/
