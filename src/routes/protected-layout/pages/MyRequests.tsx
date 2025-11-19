@@ -30,6 +30,14 @@ function MyRequests() {
         dateRange: { from: undefined, to: undefined }
     })
 
+    // Sorting state
+    const [sortBy, setSortBy] = useState<'date' | 'amount' | null>(null)
+    const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
+
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1)
+    const itemsPerPage = 20
+
     // Filter tabs
     const tabs: Array<RequestStatus | 'All'> = [
         'All',
@@ -54,10 +62,22 @@ function MyRequests() {
         setIsFilterOpen(false)
     }
 
-    // Filter logic
-    // Filter logic
+    // Sort handler
+    const handleSort = (column: 'date' | 'amount') => {
+        if (sortBy === column) {
+            // Toggle sort order if clicking the same column
+            setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')
+        } else {
+            // Set new column and default to ascending
+            setSortBy(column)
+            setSortOrder('asc')
+        }
+    }
+
+    // Filter and Sort logic
     const filteredRequests = useMemo(() => {
-        return mockRequests.filter((request) => {
+        // First, filter the requests
+        let filtered = mockRequests.filter((request) => {
             // Tab filter
             const matchesTab = activeTab === 'All' || request.status === activeTab
 
@@ -87,7 +107,41 @@ function MyRequests() {
 
             return matchesTab && matchesSearch && matchesRequestType && matchesDateRange
         })
-    }, [searchQuery, activeTab, activeFilters])
+
+        // Then, sort the filtered results
+        if (sortBy) {
+            filtered = [...filtered].sort((a, b) => {
+                let comparison = 0
+
+                if (sortBy === 'date') {
+                    const dateA = new Date(a.dateRequested).getTime()
+                    const dateB = new Date(b.dateRequested).getTime()
+                    comparison = dateA - dateB
+                } else if (sortBy === 'amount') {
+                    const amountA = parseFloat(a.amount.replace(/,/g, ''))
+                    const amountB = parseFloat(b.amount.replace(/,/g, ''))
+                    comparison = amountA - amountB
+                }
+
+                return sortOrder === 'asc' ? comparison : -comparison
+            })
+        }
+
+        return filtered
+    }, [searchQuery, activeTab, activeFilters, sortBy, sortOrder])
+
+    // Pagination logic
+    const totalPages = Math.ceil(filteredRequests.length / itemsPerPage)
+    const paginatedRequests = useMemo(() => {
+        const startIndex = (currentPage - 1) * itemsPerPage
+        const endIndex = startIndex + itemsPerPage
+        return filteredRequests.slice(startIndex, endIndex)
+    }, [filteredRequests, currentPage, itemsPerPage])
+
+    // Reset to page 1 when filters change
+    useMemo(() => {
+        setCurrentPage(1)
+    }, [searchQuery, activeTab, activeFilters, sortBy, sortOrder])
 
     // Focus search input when icon is clicked
     const handleSearchIconClick = () => {
@@ -175,22 +229,38 @@ function MyRequests() {
                             <TableRow className="bg-[#001C43] hover:bg-[#001C43]">
                                 <TableHead className="text-white text-[12px] text-center font-semibold min-w-[80px] rounded-tl-[12px]">Request ID</TableHead>
                                 <TableHead className="text-white text-[12px] text-center font-semibold min-w-[180px]">Request Type</TableHead>
-                                <TableHead className="text-white text-[12px] text-center font-semibold min-w-[140px]">Date Requested</TableHead>
+                                <TableHead
+                                    className="text-white text-[12px] text-center font-semibold min-w-[140px] cursor-pointer hover:bg-[#002856] transition-colors"
+                                    onClick={() => handleSort('date')}
+                                >
+                                    <div className="flex items-center justify-center gap-1">
+                                        Date Requested
+                                        <ArrowUpDown className="h-3 w-3" />
+                                    </div>
+                                </TableHead>
                                 <TableHead className="text-white text-[12px] text-center font-semibold min-w-[300px]">Description</TableHead>
-                                <TableHead className="text-white text-[12px] text-center font-semibold min-w-[100px]">Amount</TableHead>
+                                <TableHead
+                                    className="text-white text-[12px] text-center font-semibold min-w-[100px] cursor-pointer hover:bg-[#002856] transition-colors"
+                                    onClick={() => handleSort('amount')}
+                                >
+                                    <div className="flex items-center justify-center gap-1">
+                                        Amount
+                                        <ArrowUpDown className="h-3 w-3" />
+                                    </div>
+                                </TableHead>
                                 <TableHead className="text-white text-[12px] text-center font-semibold min-w-[140px]">Status</TableHead>
                                 <TableHead className="text-white text-[12px] text-center font-semibold min-w-[80px] rounded-tr-[12px]">Action</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {filteredRequests.length === 0 ? (
+                            {paginatedRequests.length === 0 ? (
                                 <TableRow>
                                     <TableCell colSpan={7} className="text-center py-8 text-gray-500">
                                         No requests found for the selected filters.
                                     </TableCell>
                                 </TableRow>
                             ) : (
-                                filteredRequests.map((request) => (
+                                paginatedRequests.map((request) => (
                                     <TableRow key={request.id}>
                                         <TableCell className="text-[12px] text-center">{request.id}</TableCell>
                                         <TableCell className="text-[12px] text-center">{request.requestType}</TableCell>
@@ -212,11 +282,53 @@ function MyRequests() {
                             )}
                         </TableBody>
                     </Table>
+
+                    {/* Pagination Controls */}
+                    {filteredRequests.length > 0 && totalPages > 1 && (
+                        <div className="flex items-center justify-between px-6 py-4 border-t">
+                            <div className="text-sm text-gray-600">
+                                Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, filteredRequests.length)} of {filteredRequests.length} requests
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                                    disabled={currentPage === 1}
+                                    className="text-[12px]"
+                                >
+                                    Previous
+                                </Button>
+                                <div className="flex items-center gap-1">
+                                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                                        <Button
+                                            key={page}
+                                            variant={currentPage === page ? "default" : "outline"}
+                                            size="sm"
+                                            onClick={() => setCurrentPage(page)}
+                                            className={`w-8 h-8 p-0 text-[12px] ${currentPage === page ? 'bg-[#001c43] hover:bg-[#002856]' : ''}`}
+                                        >
+                                            {page}
+                                        </Button>
+                                    ))}
+                                </div>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                                    disabled={currentPage === totalPages}
+                                    className="text-[12px]"
+                                >
+                                    Next
+                                </Button>
+                            </div>
+                        </div>
+                    )}
                 </div>
             ) : (
                 /* Card Grid View */
                 <div className="min-h-[400px] w-full">
-                    {filteredRequests.length === 0 ? (
+                    {paginatedRequests.length === 0 ? (
                         <div className="flex items-center justify-center py-16">
                             <p className="text-center text-gray-500 text-[14px]">
                                 No requests found for the selected filters.
@@ -224,9 +336,51 @@ function MyRequests() {
                         </div>
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
-                            {filteredRequests.map((request) => (
+                            {paginatedRequests.map((request) => (
                                 <RequestCard key={request.id} request={request} />
                             ))}
+                        </div>
+                    )}
+
+                    {/* Pagination Controls for Card View */}
+                    {filteredRequests.length > 0 && totalPages > 1 && (
+                        <div className="flex items-center justify-between mt-6 px-4 py-4 bg-white rounded-lg border">
+                            <div className="text-sm text-gray-600">
+                                Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, filteredRequests.length)} of {filteredRequests.length} requests
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                                    disabled={currentPage === 1}
+                                    className="text-[12px]"
+                                >
+                                    Previous
+                                </Button>
+                                <div className="flex items-center gap-1">
+                                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                                        <Button
+                                            key={page}
+                                            variant={currentPage === page ? "default" : "outline"}
+                                            size="sm"
+                                            onClick={() => setCurrentPage(page)}
+                                            className={`w-8 h-8 p-0 text-[12px] ${currentPage === page ? 'bg-[#001c43] hover:bg-[#002856]' : ''}`}
+                                        >
+                                            {page}
+                                        </Button>
+                                    ))}
+                                </div>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                                    disabled={currentPage === totalPages}
+                                    className="text-[12px]"
+                                >
+                                    Next
+                                </Button>
+                            </div>
                         </div>
                     )}
                 </div>
