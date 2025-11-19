@@ -35,14 +35,14 @@ export function FilterPanel({ onApply, onReset }: FilterPanelProps) {
     }
 
     return (
-        <div className="w-[320px] bg-white rounded-lg shadow-lg p-6 space-y-6">
-            <h3 className="text-[16px] font-semibold text-[#001c43]">Filter by:</h3>
+        <div className="w-[200px] bg-white rounded-lg shadow-lg p-4 space-y-4"> {/* Changed from w-[260px] */}
+            <h3 className="text-[14px] font-semibold text-[#001c43]">Filter by:</h3>
 
             {/* Request Type */}
-            <div className="space-y-2">
-                <label className="text-[14px] font-medium text-[#001c43]">Request Type:</label>
+            <div className="space-y-1.5">
+                <label className="text-[12px] font-medium text-[#001c43]">Request Type:</label>
                 <Select value={requestType} onValueChange={setRequestType}>
-                    <SelectTrigger className="w-full">
+                    <SelectTrigger className="w-full h-9 text-[12px]">
                         <SelectValue placeholder="Select type" />
                     </SelectTrigger>
                     <SelectContent>
@@ -57,14 +57,14 @@ export function FilterPanel({ onApply, onReset }: FilterPanelProps) {
             </div>
 
             {/* Date Range Picker */}
-            <div className="space-y-2">
-                <label className="text-[14px] font-medium text-[#001c43]">Date Range:</label>
+            <div className="space-y-1.5">
+                <label className="text-[12px] font-medium text-[#001c43]">Date Range:</label>
 
                 <Popover>
                     <PopoverTrigger asChild>
                         <Button
                             variant="outline"
-                            className="w-full justify-start text-left font-normal"
+                            className="w-full h-9 justify-start text-left font-normal text-[12px]"
                         >
                             <CalendarIcon className="mr-2 h-4 w-4" />
                             {date?.from ? (
@@ -98,14 +98,14 @@ export function FilterPanel({ onApply, onReset }: FilterPanelProps) {
             <div className="space-y-2 pt-2">
                 <Button
                     onClick={handleApply}
-                    className="w-full bg-[#001c43] hover:bg-[#002856] text-white"
+                    className="w-full h-10 bg-[#001c43] hover:bg-[#002856] text-white text-[13px] font-medium"
                 >
                     Apply
                 </Button>
                 <Button
                     onClick={handleReset}
                     variant="outline"
-                    className="w-full border-[#001c43] text-[#001c43] hover:bg-gray-50"
+                    className="w-full h-10 border-[#001c43] text-[#001c43] hover:bg-gray-50 text-[13px] font-medium"
                 >
                     Reset
                 </Button>
