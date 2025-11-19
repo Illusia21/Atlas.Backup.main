@@ -45,13 +45,13 @@ export function FilterPanel({ onApply, onReset }: FilterPanelProps) {
                     <SelectTrigger className="w-full h-9 text-[12px]">
                         <SelectValue placeholder="Select type" />
                     </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="all">All Types</SelectItem>
-                        <SelectItem value="Reimbursement">Reimbursement</SelectItem>
-                        <SelectItem value="Vendor Payment">Vendor Payment</SelectItem>
-                        <SelectItem value="Cash Advance">Cash Advance</SelectItem>
-                        <SelectItem value="Travel Request">Travel Request</SelectItem>
-                        <SelectItem value="Purchase Request">Purchase Request</SelectItem>
+                    <SelectContent className="text-[12px]">
+                        <SelectItem value="all" className="text-[12px]">All Types</SelectItem>
+                        <SelectItem value="Reimbursement" className="text-[12px]">Reimbursement</SelectItem>
+                        <SelectItem value="Vendor Payment" className="text-[12px]">Vendor Payment</SelectItem>
+                        <SelectItem value="Cash Advance" className="text-[12px]">Cash Advance</SelectItem>
+                        <SelectItem value="Travel Request" className="text-[12px]">Travel Request</SelectItem>
+                        <SelectItem value="Purchase Request" className="text-[12px]">Purchase Request</SelectItem>
                     </SelectContent>
                 </Select>
             </div>
