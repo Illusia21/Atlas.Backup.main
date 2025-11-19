@@ -184,49 +184,53 @@ export function AppSidebar() {
                                                             className={`overflow-hidden transition-all duration-300 ${isNewRequestOpen ? 'max-h-[200px] opacity-100' : 'max-h-0 opacity-0'}`}
                                                         >
                                                             <div className="mt-2 ml-4 border-l-2 border-gray-200 pl-4">
+                                                                {/* Reimbursement */}
+                                                                {/* Reimbursement */}
                                                                 <Link
                                                                     to="/request/reimbursement"
                                                                     role="menuitem"
                                                                     aria-label="Create Reimbursement Request"
-                                                                    className={`block px-3 py-2 text-[12px] rounded-md transition-colors ${isActive('/request/reimbursement')
-                                                                            ? 'bg-[#e50019] text-white font-semibold'
-                                                                            : 'text-[#001c43] hover:bg-gray-100'
-                                                                        }`}
+                                                                    className="block px-3 py-2 text-[12px] text-[#001c43] hover:bg-gray-100 rounded-md transition-colors"
                                                                 >
-                                                                    Reimbursement
+                                                                    <span className={`${isActive('/request/reimbursement') ? 'border-b-2 border-[#e50019]' : ''}`}>
+                                                                        Reimbursement
+                                                                    </span>
                                                                 </Link>
+
+                                                                {/* Non-Trade Payable */}
                                                                 <Link
                                                                     to="/request/non-trade-payable"
                                                                     role="menuitem"
                                                                     aria-label="Create Non-Trade Payable Request"
-                                                                    className={`block px-3 py-2 text-[12px] rounded-md transition-colors ${isActive('/request/non-trade-payable')
-                                                                            ? 'bg-[#e50019] text-white font-semibold'
-                                                                            : 'text-[#001c43] hover:bg-gray-100'
-                                                                        }`}
+                                                                    className="block px-3 py-2 text-[12px] text-[#001c43] hover:bg-gray-100 rounded-md transition-colors"
                                                                 >
-                                                                    Non-Trade Payable
+                                                                    <span className={`${isActive('/request/non-trade-payable') ? 'border-b-2 border-[#e50019]' : ''}`}>
+                                                                        Non-Trade Payable
+                                                                    </span>
                                                                 </Link>
+
+                                                                {/* Trade Payable */}
                                                                 <Link
                                                                     to="/request/trade-payable"
                                                                     role="menuitem"
                                                                     aria-label="Create Trade Payable Request"
-                                                                    className={`block px-3 py-2 text-[12px] rounded-md transition-colors ${isActive('/request/trade-payable')
-                                                                            ? 'bg-[#e50019] text-white font-semibold'
-                                                                            : 'text-[#001c43] hover:bg-gray-100'
-                                                                        }`}
+                                                                    className="block px-3 py-2 text-[12px] text-[#001c43] hover:bg-gray-100 rounded-md transition-colors"
                                                                 >
-                                                                    Trade Payable
+                                                                    <span className={`${isActive('/request/trade-payable') ? 'border-b-2 border-[#e50019]' : ''}`}>
+                                                                        Trade Payable
+                                                                    </span>
                                                                 </Link>
+
+                                                                {/* Cash Advance */}
                                                                 <Link
                                                                     to="/request/cash-advance"
                                                                     role="menuitem"
                                                                     aria-label="Create Cash Advance Request"
-                                                                    className={`block px-3 py-2 text-[12px] rounded-md transition-colors ${isActive('/request/cash-advance')
-                                                                            ? 'bg-[#e50019] text-white font-semibold'
-                                                                            : 'text-[#001c43] hover:bg-gray-100'
-                                                                        }`}
+                                                                    className="block px-3 py-2 text-[12px] text-[#001c43] hover:bg-gray-100 rounded-md transition-colors"
                                                                 >
-                                                                    Cash Advance
+                                                                    <span className={`${isActive('/request/cash-advance') ? 'border-b-2 border-[#e50019]' : ''}`}>
+                                                                        Cash Advance
+                                                                    </span>
                                                                 </Link>
                                                             </div>
                                                         </div>
