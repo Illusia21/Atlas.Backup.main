@@ -82,7 +82,7 @@ export function FilterPanel({ onApply, onReset }: FilterPanelProps) {
                             )}
                         </Button>
                     </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
+                    <PopoverContent className="w-auto p-0" align="start" side="right">
                         <Calendar
                             initialFocus
                             mode="range"
