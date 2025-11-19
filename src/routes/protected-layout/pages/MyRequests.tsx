@@ -1,5 +1,5 @@
 import { useState, useMemo, useRef } from 'react'
-import { Eye, Search, Table as TableIcon, LayoutGrid, ListFilterPlus } from 'lucide-react'
+import { Eye, Search, Table as TableIcon, LayoutGrid, ListFilterPlus, ArrowUpDown } from 'lucide-react'
 import { mockRequests } from '@/data/mockRequests'
 import { StatusBadge } from '@/components/StatusBadge'
 import { RequestCard } from '@/components/RequestCard'
