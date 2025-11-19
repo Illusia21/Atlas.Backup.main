@@ -64,17 +64,18 @@ export function FilterPanel({ onApply, onReset }: FilterPanelProps) {
                     <PopoverTrigger asChild>
                         <Button
                             variant="outline"
-                            className="w-full h-9 justify-start text-left font-normal text-[12px]"
+                            className="w-full h-9 justify-start text-left font-normal text-[11px] overflow-hidden"
                         >
-                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            <CalendarIcon className="mr-2 h-4 w-4 flex-shrink-0" />
                             {date?.from ? (
                                 date.to ? (
-                                    <>
-                                        {format(date.from, 'LLL dd, y')} -{' '}
-                                        {format(date.to, 'LLL dd, y')}
-                                    </>
+                                    <span className="truncate">
+                                        {format(date.from, 'MM/dd/yy')} - {format(date.to, 'MM/dd/yy')}
+                                    </span>
                                 ) : (
-                                    format(date.from, 'LLL dd, y')
+                                    <span className="truncate">
+                                        {format(date.from, 'MM/dd/yy')}
+                                    </span>
                                 )
                             ) : (
                                 <span>Pick a date</span>
@@ -88,7 +89,7 @@ export function FilterPanel({ onApply, onReset }: FilterPanelProps) {
                             defaultMonth={date?.from}
                             selected={date}
                             onSelect={setDate}
-                            numberOfMonths={2}
+                            numberOfMonths={1}
                         />
                     </PopoverContent>
                 </Popover>
