@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { X, Send, MoveRight, Download, Link2 } from "lucide-react";
+import { X, Send, MoveRight, Download, Link2, HardDriveDownload } from "lucide-react";
 
 export default function RequestDetails() {
     const { id } = useParams();
@@ -17,9 +17,66 @@ export default function RequestDetails() {
             {/* Modal Container */}
             <div className="bg-[#fcfcfc] rounded-[20px] shadow-[0px_4px_20px_0px_rgba(0,0,0,0.25)] w-[95vw] max-w-[1393px] h-[90vh] max-h-[946px] grid grid-cols-[1fr_400px] grid-rows-[70px_1fr] overflow-hidden">
 
-                {/* PLACEHOLDER FOR MAIN CONTENT - We'll build this last */}
-                <div className="col-[1] row-[1_/_span_2] bg-gray-100 flex items-center justify-center">
-                    <p className="text-gray-400">Main Content Area - Coming Soon</p>
+                {/* LEFT PANEL - TABS (Header) */}
+                <div className="col-[1] row-[1] bg-[#f4f4f5] p-[4px] rounded-[6px] flex items-center self-start">
+                    {/* Tab Buttons */}
+                    <button
+                        onClick={() => setActiveTab("form")}
+                        className={`px-[12px] py-[6px] rounded-[4px] flex-1 font-montserrat text-[14px] leading-[20px] transition-all ${activeTab === "form"
+                                ? "bg-white text-[#09090b] shadow-[0px_1px_2px_-1px_rgba(0,0,0,0.1),0px_1px_3px_0px_rgba(0,0,0,0.1)]"
+                                : "text-[#71717a]"
+                            }`}
+                    >
+                        Form
+                    </button>
+                    <button
+                        onClick={() => setActiveTab("comments")}
+                        className={`px-[12px] py-[6px] rounded-[4px] flex-1 font-montserrat text-[14px] leading-[20px] transition-all ${activeTab === "comments"
+                                ? "bg-white text-[#09090b] shadow-[0px_1px_2px_-1px_rgba(0,0,0,0.1),0px_1px_3px_0px_rgba(0,0,0,0.1)]"
+                                : "text-[#71717a]"
+                            }`}
+                    >
+                        Comments
+                    </button>
+                    <button
+                        onClick={() => setActiveTab("journey")}
+                        className={`px-[12px] py-[6px] rounded-[4px] flex-1 font-montserrat text-[14px] leading-[20px] transition-all ${activeTab === "journey"
+                                ? "bg-white text-[#09090b] shadow-[0px_1px_2px_-1px_rgba(0,0,0,0.1),0px_1px_3px_0px_rgba(0,0,0,0.1)]"
+                                : "text-[#71717a]"
+                            }`}
+                    >
+                        Journey
+                    </button>
+                </div>
+
+                {/* LEFT PANEL - MAIN CONTENT */}
+                <div className="col-[1] row-[2] flex flex-col gap-[10px] items-center justify-center p-[20px] overflow-hidden">
+
+                    {/* Download Form Button - Positioned at top */}
+                    <div className="bg-[rgba(0,28,67,0.7)] flex items-center justify-end gap-[10px] px-[31px] py-[14px] rounded-tl-[20px] rounded-tr-[20px] w-full">
+                        <button className="bg-[#001c43] flex items-center gap-[10px] px-[10px] py-[2px] h-[30px] rounded-[10px] hover:bg-[#002855] transition-colors">
+                            <HardDriveDownload className="w-[18px] h-[18px] text-white" />
+                            <p className="font-montserrat text-[14px] text-white leading-[20px]">
+                                Download Form
+                            </p>
+                        </button>
+                    </div>
+
+                    {/* Form Preview Area - Placeholder */}
+                    <div className="bg-[#f5f5f5] border border-[#b1b1b1] rounded-[20px] flex-1 w-full flex items-center justify-center overflow-hidden">
+                        <div className="text-center p-8">
+                            <p className="text-gray-400 text-lg font-montserrat mb-2">
+                                Form Preview - Coming Soon
+                            </p>
+                            <p className="text-gray-500 text-sm font-montserrat">
+                                Waiting for clear design from UI/UX
+                            </p>
+                            <p className="text-gray-400 text-xs font-montserrat mt-4">
+                                Active Tab: <span className="font-semibold text-[#001c43]">{activeTab}</span>
+                            </p>
+                        </div>
+                    </div>
+
                 </div>
 
                 {/* RIGHT PANEL */}
