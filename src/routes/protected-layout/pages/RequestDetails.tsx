@@ -51,9 +51,36 @@ export default function RequestDetails() {
                         {/* Separator */}
                         <div className="w-full h-[2px] bg-[#b1b1b1]" />
 
-                        {/* PLACEHOLDER - More sections coming */}
+                        {/* Approver Section */}
+                        <div className="flex flex-col gap-[10px] p-[20px]">
+                            <p className="font-montserrat font-semibold text-[18px] text-[#001c43] leading-[24px]">
+                                Approver
+                            </p>
+                            <div className="flex items-center gap-[15px]">
+                                {/* Avatar */}
+                                <div className="w-[48px] h-[48px] rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center">
+                                    <span className="text-white font-montserrat font-semibold text-[20px]">
+                                        JD
+                                    </span>
+                                </div>
+                                {/* Name and Role */}
+                                <div className="flex flex-col gap-[2px]">
+                                    <p className="font-montserrat text-[14px] text-[#001c43] leading-[20px]">
+                                        John Doe
+                                    </p>
+                                    <p className="font-montserrat text-[14px] text-[#e50019] leading-[20px]">
+                                        Role
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Separator */}
+                        <div className="w-full h-[2px] bg-[#b1b1b1]" />
+
+                        {/* PLACEHOLDER - Comments section coming */}
                         <div className="p-4">
-                            <p className="text-gray-400 text-sm">More sections coming...</p>
+                            <p className="text-gray-400 text-sm">Comments section coming...</p>
                         </div>
 
                     </div>
