@@ -153,7 +153,7 @@ function MyRequests() {
 
     // Handle view request details
     const handleViewRequest = (requestId: string) => {
-        navigate(`/my-requests/${requestId}`)
+        navigate(`/request/${requestId}`)
     }
 
     return (
