@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { X, Send, MoveRight } from "lucide-react";
+import { X, Send, MoveRight, Download, Link2 } from "lucide-react";
 
 export default function RequestDetails() {
     const { id } = useParams();
@@ -140,9 +140,78 @@ export default function RequestDetails() {
                         {/* Separator */}
                         <div className="w-full h-[2px] bg-[#b1b1b1]" />
 
-                        {/* PLACEHOLDER - Attachments section coming */}
-                        <div className="p-4">
-                            <p className="text-gray-400 text-sm">Attachments section coming...</p>
+                        {/* Attachments Header */}
+                        <div className="bg-[#fcfcfc] flex items-center justify-center gap-[10px] px-[20px] py-[8px] rounded-[10px] w-fit">
+                            <Link2 className="w-[20px] h-[20px] text-[#001c43] shrink-0" />
+                            <p className="font-montserrat text-[14px] text-[#001c43] leading-[20px]">
+                                Attachments
+                            </p>
+                        </div>
+
+                        {/* Attachments List */}
+                        <div className="border border-[#b1b1b1] bg-white rounded-[10px] mx-[10px]">
+                            {/* Attachment Item 1 */}
+                            <div className="bg-[#fcfcfc] flex items-center gap-[16px] p-[16px] border-b border-[#e5e5e5]">
+                                <div className="flex items-center gap-[12px] flex-1">
+                                    {/* PDF Icon */}
+                                    <div className="w-[28px] h-[28px] bg-[#f14848] rounded-sm flex items-center justify-center">
+                                        <span className="text-white font-montserrat font-semibold text-[8px]">PDF</span>
+                                    </div>
+                                    {/* File Info */}
+                                    <div className="flex flex-col gap-[2px] flex-1">
+                                        <p className="font-montserrat text-[14px] text-[#001c43] leading-[20px]">
+                                            File Title.pdf
+                                        </p>
+                                        <p className="font-montserrat text-[14px] text-[#b1b1b1] leading-[20px]">
+                                            313 KB . 31 Aug, 2025
+                                        </p>
+                                    </div>
+                                </div>
+                                {/* Download Icon */}
+                                <button className="w-[16px] h-[16px] hover:opacity-70 transition-opacity">
+                                    <Download className="w-[16px] h-[16px] text-[#001c43]" />
+                                </button>
+                            </div>
+
+                            {/* Attachment Item 2 */}
+                            <div className="bg-[#fcfcfc] flex items-center gap-[16px] p-[16px] border-b border-[#e5e5e5]">
+                                <div className="flex items-center gap-[12px] flex-1">
+                                    <div className="w-[28px] h-[28px] bg-[#f14848] rounded-sm flex items-center justify-center">
+                                        <span className="text-white font-montserrat font-semibold text-[8px]">PDF</span>
+                                    </div>
+                                    <div className="flex flex-col gap-[2px] flex-1">
+                                        <p className="font-montserrat text-[14px] text-[#001c43] leading-[20px]">
+                                            File Title.pdf
+                                        </p>
+                                        <p className="font-montserrat text-[14px] text-[#b1b1b1] leading-[20px]">
+                                            313 KB . 31 Aug, 2025
+                                        </p>
+                                    </div>
+                                </div>
+                                <button className="w-[16px] h-[16px] hover:opacity-70 transition-opacity">
+                                    <Download className="w-[16px] h-[16px] text-[#001c43]" />
+                                </button>
+                            </div>
+
+                            {/* Attachment Item 3 */}
+                            <div className="bg-[#fcfcfc] flex items-center gap-[16px] p-[16px]">
+                                <div className="flex items-center gap-[12px] flex-1">
+                                    <div className="w-[28px] h-[28px] bg-[#f14848] rounded-sm flex items-center justify-center">
+                                        <span className="text-white font-montserrat font-semibold text-[8px]">PDF</span>
+                                    </div>
+                                    <div className="flex flex-col gap-[2px] flex-1">
+                                        <p className="font-montserrat text-[14px] text-[#001c43] leading-[20px]">
+                                            File Title.pdf
+                                        </p>
+                                        <p className="font-montserrat text-[14px] text-[#b1b1b1] leading-[20px]">
+                                            313 KB . 31 Aug, 2025
+                                        </p>
+                                    </div>
+                                </div>
+                                <button className="w-[16px] h-[16px] hover:opacity-70 transition-opacity">
+                                    <Download className="w-[16px] h-[16px] text-[#001c43]" />
+                                </button>
+                            </div>
                         </div>
 
                     </div>
