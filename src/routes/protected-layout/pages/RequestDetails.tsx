@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { X } from "lucide-react";
+import { X, Send, MoveRight } from "lucide-react";
 
 export default function RequestDetails() {
     const { id } = useParams();
@@ -78,9 +78,71 @@ export default function RequestDetails() {
                         {/* Separator */}
                         <div className="w-full h-[2px] bg-[#b1b1b1]" />
 
-                        {/* PLACEHOLDER - Comments section coming */}
+                        {/* Recent Comments Section */}
+                        <div className="flex flex-col gap-[10px] p-[10px]">
+                            <p className="font-montserrat text-[14px] text-[#001c43] leading-[20px]">
+                                Recent Comments:
+                            </p>
+
+                            {/* Separator */}
+                            <div className="w-full h-[2px] bg-[#d9d9d9]" />
+
+                            {/* Comment Item */}
+                            <div className="flex flex-col gap-[3px] px-[9px]">
+                                {/* Comment Header */}
+                                <div className="flex items-center justify-between px-[9px]">
+                                    <p className="font-montserrat text-[12px] text-[#001c43] leading-[20px]">
+                                        <span>John Doe - </span>
+                                        <span className="text-[#e50019]">Role</span>
+                                    </p>
+                                    <p className="font-montserrat text-[8px] text-[#b1b1b1] leading-[20px]">
+                                        Oct 8, 2025 9:24am
+                                    </p>
+                                </div>
+
+                                {/* Vertical Line */}
+                                <div className="w-[1px] h-[17px] bg-[#d9d9d9] ml-[9px]" />
+
+                                {/* Comment Text */}
+                                <div className="bg-[#f4f4f5] px-[16px] h-[49px] flex items-center rounded-sm">
+                                    <p className="font-montserrat text-[10px] text-black leading-[20px]">
+                                        Please revise the attached document
+                                    </p>
+                                </div>
+                            </div>
+
+                            {/* View Full Comments History Link */}
+                            <div className="flex flex-col items-start">
+                                <div className="flex items-center gap-[5px] cursor-pointer hover:opacity-70 transition-opacity">
+                                    <p className="font-montserrat text-[12px] text-[#b1b1b1] leading-[20px]">
+                                        View full comments history
+                                    </p>
+                                    <MoveRight className="w-[24px] h-[24px] text-[#b1b1b1]" />
+                                </div>
+                                <div className="w-[195px] h-[1px] bg-[#d9d9d9]" />
+                            </div>
+
+                            {/* Comment Input */}
+                            <div className="flex items-center gap-[10px] w-full">
+                                <div className="flex-1 border border-[#b1b1b1] rounded-[10px] h-[36px] px-[20px] flex items-center">
+                                    <input
+                                        type="text"
+                                        placeholder="Type your comment here"
+                                        className="w-full bg-transparent outline-none font-montserrat text-[14px] text-[#b1b1b1] placeholder:text-[#b1b1b1]"
+                                    />
+                                </div>
+                                <button className="w-[24px] h-[24px] flex items-center justify-center hover:bg-gray-100 rounded-full transition-colors">
+                                    <Send className="w-[18px] h-[18px] text-[#001c43]" />
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Separator */}
+                        <div className="w-full h-[2px] bg-[#b1b1b1]" />
+
+                        {/* PLACEHOLDER - Attachments section coming */}
                         <div className="p-4">
-                            <p className="text-gray-400 text-sm">Comments section coming...</p>
+                            <p className="text-gray-400 text-sm">Attachments section coming...</p>
                         </div>
 
                     </div>
