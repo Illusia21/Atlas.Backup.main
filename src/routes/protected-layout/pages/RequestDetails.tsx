@@ -216,9 +216,13 @@ export default function RequestDetails() {
 
                     </div>
 
-                    {/* PLACEHOLDER - Action buttons at bottom */}
-                    <div className="h-[110px] w-full">
-                        <p className="text-gray-400 text-sm p-4">Cancel button coming...</p>
+                    {/* Action Buttons at Bottom */}
+                    <div className="h-[110px] w-full px-[10px] flex items-end">
+                        <button className="bg-[#e50019] w-full h-[50px] rounded-[12px] flex items-center justify-center hover:bg-[#c40015] transition-colors">
+                            <p className="font-montserrat font-bold text-[16px] text-[#fcfcfc] leading-[24px]">
+                                Request to Cancel
+                            </p>
+                        </button>
                     </div>
 
                 </div>
