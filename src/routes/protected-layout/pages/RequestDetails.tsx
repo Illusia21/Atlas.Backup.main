@@ -23,8 +23,8 @@ export default function RequestDetails() {
                     <button
                         onClick={() => setActiveTab("form")}
                         className={`px-[12px] py-[6px] rounded-[4px] flex-1 font-montserrat text-[14px] leading-[20px] transition-all ${activeTab === "form"
-                                ? "bg-white text-[#09090b] shadow-[0px_1px_2px_-1px_rgba(0,0,0,0.1),0px_1px_3px_0px_rgba(0,0,0,0.1)]"
-                                : "text-[#71717a]"
+                            ? "bg-white text-[#09090b] shadow-[0px_1px_2px_-1px_rgba(0,0,0,0.1),0px_1px_3px_0px_rgba(0,0,0,0.1)]"
+                            : "text-[#71717a]"
                             }`}
                     >
                         Form
@@ -32,8 +32,8 @@ export default function RequestDetails() {
                     <button
                         onClick={() => setActiveTab("comments")}
                         className={`px-[12px] py-[6px] rounded-[4px] flex-1 font-montserrat text-[14px] leading-[20px] transition-all ${activeTab === "comments"
-                                ? "bg-white text-[#09090b] shadow-[0px_1px_2px_-1px_rgba(0,0,0,0.1),0px_1px_3px_0px_rgba(0,0,0,0.1)]"
-                                : "text-[#71717a]"
+                            ? "bg-white text-[#09090b] shadow-[0px_1px_2px_-1px_rgba(0,0,0,0.1),0px_1px_3px_0px_rgba(0,0,0,0.1)]"
+                            : "text-[#71717a]"
                             }`}
                     >
                         Comments
@@ -41,8 +41,8 @@ export default function RequestDetails() {
                     <button
                         onClick={() => setActiveTab("journey")}
                         className={`px-[12px] py-[6px] rounded-[4px] flex-1 font-montserrat text-[14px] leading-[20px] transition-all ${activeTab === "journey"
-                                ? "bg-white text-[#09090b] shadow-[0px_1px_2px_-1px_rgba(0,0,0,0.1),0px_1px_3px_0px_rgba(0,0,0,0.1)]"
-                                : "text-[#71717a]"
+                            ? "bg-white text-[#09090b] shadow-[0px_1px_2px_-1px_rgba(0,0,0,0.1),0px_1px_3px_0px_rgba(0,0,0,0.1)]"
+                            : "text-[#71717a]"
                             }`}
                     >
                         Journey
@@ -66,10 +66,10 @@ export default function RequestDetails() {
                     <div className="bg-[#f5f5f5] border border-[#b1b1b1] rounded-[20px] flex-1 w-full flex items-center justify-center overflow-hidden">
                         <div className="text-center p-8">
                             <p className="text-gray-400 text-lg font-montserrat mb-2">
-                                Form Preview - Coming Soon
+                                Form Preview
                             </p>
                             <p className="text-gray-500 text-sm font-montserrat">
-                                Waiting for clear design from UI/UX
+                                pota
                             </p>
                             <p className="text-gray-400 text-xs font-montserrat mt-4">
                                 Active Tab: <span className="font-semibold text-[#001c43]">{activeTab}</span>
