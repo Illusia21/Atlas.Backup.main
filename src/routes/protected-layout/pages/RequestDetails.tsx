@@ -1,6 +1,8 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { X, Send, MoveRight, Download, Link2, HardDriveDownload } from "lucide-react";
+import { useMemo } from "react";
+import { mockRequestDetails, type RequestDetail } from "@/data/mockRequestDetails";
 
 export default function RequestDetails() {
     const { id } = useParams();
@@ -10,6 +12,49 @@ export default function RequestDetails() {
     const handleClose = () => {
         navigate(-1);
     };
+
+    // Load request data by ID
+    const request = useMemo<RequestDetail | null>(() => {
+        if (!id) return null;
+        return mockRequestDetails[id] || null;
+    }, [id]);
+
+    // Handle request not found
+    if (!id) {
+        return (
+            <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50">
+                <div className="bg-white rounded-[20px] p-8 max-w-md">
+                    <h2 className="text-xl font-montserrat font-bold text-[#e50019] mb-4">Invalid Request</h2>
+                    <p className="font-montserrat text-[#001c43] mb-6">No request ID provided.</p>
+                    <button
+                        onClick={handleClose}
+                        className="bg-[#001c43] text-white px-6 py-2 rounded-lg hover:bg-[#002855] transition-colors font-montserrat"
+                    >
+                        Go Back
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
+    if (!request) {
+        return (
+            <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50">
+                <div className="bg-white rounded-[20px] p-8 max-w-md">
+                    <h2 className="text-xl font-montserrat font-bold text-[#e50019] mb-4">Request Not Found</h2>
+                    <p className="font-montserrat text-[#001c43] mb-6">
+                        Request with ID "{id}" could not be found.
+                    </p>
+                    <button
+                        onClick={handleClose}
+                        className="bg-[#001c43] text-white px-6 py-2 rounded-lg hover:bg-[#002855] transition-colors font-montserrat"
+                    >
+                        Go Back
+                    </button>
+                </div>
+            </div>
+        );
+    }
 
     return (
         // Modal Overlay
