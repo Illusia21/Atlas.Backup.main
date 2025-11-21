@@ -138,7 +138,7 @@ export default function RequestDetails() {
                                 </p>
                                 <div className="bg-[rgba(139,139,139,0.1)] border border-[#8c8b8b] rounded-[10px] px-[10px] h-[31px] flex items-center">
                                     <p className="font-montserrat text-[14px] text-[#8c8b8b]">
-                                        Submitted
+                                        {request.status}
                                     </p>
                                 </div>
                             </div>
@@ -162,16 +162,16 @@ export default function RequestDetails() {
                                 {/* Avatar */}
                                 <div className="w-[48px] h-[48px] rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center">
                                     <span className="text-white font-montserrat font-semibold text-[20px]">
-                                        JD
+                                        {request.approver.initials}
                                     </span>
                                 </div>
                                 {/* Name and Role */}
                                 <div className="flex flex-col gap-[2px]">
                                     <p className="font-montserrat text-[14px] text-[#001c43] leading-[20px]">
-                                        John Doe
+                                        {request.approver.name}
                                     </p>
                                     <p className="font-montserrat text-[14px] text-[#e50019] leading-[20px]">
-                                        Role
+                                        {request.approver.role}
                                     </p>
                                 </div>
                             </div>
@@ -189,29 +189,35 @@ export default function RequestDetails() {
                             {/* Separator */}
                             <div className="w-full h-[2px] bg-[#d9d9d9]" />
 
-                            {/* Comment Item */}
-                            <div className="flex flex-col gap-[3px] px-[9px]">
-                                {/* Comment Header */}
-                                <div className="flex items-center justify-between px-[9px]">
-                                    <p className="font-montserrat text-[12px] text-[#001c43] leading-[20px]">
-                                        <span>John Doe - </span>
-                                        <span className="text-[#e50019]">Role</span>
-                                    </p>
-                                    <p className="font-montserrat text-[8px] text-[#b1b1b1] leading-[20px]">
-                                        Oct 8, 2025 9:24am
-                                    </p>
-                                </div>
+                            {/* Comment Item - Show most recent comment */}
+                            {request.comments.length > 0 ? (
+                                <div className="flex flex-col gap-[3px] px-[9px]">
+                                    {/* Comment Header */}
+                                    <div className="flex items-center justify-between px-[9px]">
+                                        <p className="font-montserrat text-[12px] text-[#001c43] leading-[20px]">
+                                            <span>{request.comments[0].author} - </span>
+                                            <span className="text-[#e50019]">{request.comments[0].role}</span>
+                                        </p>
+                                        <p className="font-montserrat text-[8px] text-[#b1b1b1] leading-[20px]">
+                                            {request.comments[0].timestamp}
+                                        </p>
+                                    </div>
 
-                                {/* Vertical Line */}
-                                <div className="w-[1px] h-[17px] bg-[#d9d9d9] ml-[9px]" />
+                                    {/* Vertical Line */}
+                                    <div className="w-[1px] h-[17px] bg-[#d9d9d9] ml-[9px]" />
 
-                                {/* Comment Text */}
-                                <div className="bg-[#f4f4f5] px-[16px] h-[49px] flex items-center rounded-sm">
-                                    <p className="font-montserrat text-[10px] text-black leading-[20px]">
-                                        Please revise the attached document
-                                    </p>
+                                    {/* Comment Text */}
+                                    <div className="bg-[#f4f4f5] px-[16px] min-h-[49px] flex items-center rounded-sm py-2">
+                                        <p className="font-montserrat text-[10px] text-black leading-[20px]">
+                                            {request.comments[0].text}
+                                        </p>
+                                    </div>
                                 </div>
-                            </div>
+                            ) : (
+                                <p className="font-montserrat text-[12px] text-[#b1b1b1] px-[9px]">
+                                    No comments yet
+                                </p>
+                            )}
 
                             {/* View Full Comments History Link */}
                             <div className="flex flex-col items-start">
@@ -252,68 +258,35 @@ export default function RequestDetails() {
 
                         {/* Attachments List */}
                         <div className="border border-[#b1b1b1] bg-white rounded-[10px] mx-[10px]">
-                            {/* Attachment Item 1 */}
-                            <div className="bg-[#fcfcfc] flex items-center gap-[16px] p-[16px] border-b border-[#e5e5e5]">
-                                <div className="flex items-center gap-[12px] flex-1">
-                                    {/* PDF Icon */}
-                                    <div className="w-[28px] h-[28px] bg-[#f14848] rounded-sm flex items-center justify-center">
-                                        <span className="text-white font-montserrat font-semibold text-[8px]">PDF</span>
+                            {request.attachments.map((attachment, index) => (
+                                <div
+                                    key={attachment.id}
+                                    className={`bg-[#fcfcfc] flex items-center gap-[16px] p-[16px] ${index < request.attachments.length - 1 ? 'border-b border-[#e5e5e5]' : ''
+                                        }`}
+                                >
+                                    <div className="flex items-center gap-[12px] flex-1">
+                                        {/* PDF Icon */}
+                                        <div className="w-[28px] h-[28px] bg-[#f14848] rounded-sm flex items-center justify-center">
+                                            <span className="text-white font-montserrat font-semibold text-[8px]">
+                                                {attachment.type.toUpperCase()}
+                                            </span>
+                                        </div>
+                                        {/* File Info */}
+                                        <div className="flex flex-col gap-[2px] flex-1">
+                                            <p className="font-montserrat text-[14px] text-[#001c43] leading-[20px]">
+                                                {attachment.filename}
+                                            </p>
+                                            <p className="font-montserrat text-[14px] text-[#b1b1b1] leading-[20px]">
+                                                {attachment.size} . {attachment.date}
+                                            </p>
+                                        </div>
                                     </div>
-                                    {/* File Info */}
-                                    <div className="flex flex-col gap-[2px] flex-1">
-                                        <p className="font-montserrat text-[14px] text-[#001c43] leading-[20px]">
-                                            File Title.pdf
-                                        </p>
-                                        <p className="font-montserrat text-[14px] text-[#b1b1b1] leading-[20px]">
-                                            313 KB . 31 Aug, 2025
-                                        </p>
-                                    </div>
+                                    {/* Download Icon */}
+                                    <button className="w-[16px] h-[16px] hover:opacity-70 transition-opacity">
+                                        <Download className="w-[16px] h-[16px] text-[#001c43]" />
+                                    </button>
                                 </div>
-                                {/* Download Icon */}
-                                <button className="w-[16px] h-[16px] hover:opacity-70 transition-opacity">
-                                    <Download className="w-[16px] h-[16px] text-[#001c43]" />
-                                </button>
-                            </div>
-
-                            {/* Attachment Item 2 */}
-                            <div className="bg-[#fcfcfc] flex items-center gap-[16px] p-[16px] border-b border-[#e5e5e5]">
-                                <div className="flex items-center gap-[12px] flex-1">
-                                    <div className="w-[28px] h-[28px] bg-[#f14848] rounded-sm flex items-center justify-center">
-                                        <span className="text-white font-montserrat font-semibold text-[8px]">PDF</span>
-                                    </div>
-                                    <div className="flex flex-col gap-[2px] flex-1">
-                                        <p className="font-montserrat text-[14px] text-[#001c43] leading-[20px]">
-                                            File Title.pdf
-                                        </p>
-                                        <p className="font-montserrat text-[14px] text-[#b1b1b1] leading-[20px]">
-                                            313 KB . 31 Aug, 2025
-                                        </p>
-                                    </div>
-                                </div>
-                                <button className="w-[16px] h-[16px] hover:opacity-70 transition-opacity">
-                                    <Download className="w-[16px] h-[16px] text-[#001c43]" />
-                                </button>
-                            </div>
-
-                            {/* Attachment Item 3 */}
-                            <div className="bg-[#fcfcfc] flex items-center gap-[16px] p-[16px]">
-                                <div className="flex items-center gap-[12px] flex-1">
-                                    <div className="w-[28px] h-[28px] bg-[#f14848] rounded-sm flex items-center justify-center">
-                                        <span className="text-white font-montserrat font-semibold text-[8px]">PDF</span>
-                                    </div>
-                                    <div className="flex flex-col gap-[2px] flex-1">
-                                        <p className="font-montserrat text-[14px] text-[#001c43] leading-[20px]">
-                                            File Title.pdf
-                                        </p>
-                                        <p className="font-montserrat text-[14px] text-[#b1b1b1] leading-[20px]">
-                                            313 KB . 31 Aug, 2025
-                                        </p>
-                                    </div>
-                                </div>
-                                <button className="w-[16px] h-[16px] hover:opacity-70 transition-opacity">
-                                    <Download className="w-[16px] h-[16px] text-[#001c43]" />
-                                </button>
-                            </div>
+                            ))}
                         </div>
 
                     </div>
