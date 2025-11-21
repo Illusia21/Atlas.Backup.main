@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Outlet, useLocation, /*Navigate*/ } from "react-router-dom";
+import { Outlet, useLocation, Navigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import api from "../../api";
 import { REFRESH_TOKEN, ACCESS_TOKEN } from "../../constants";
@@ -91,23 +91,7 @@ export default function ProtectedLayout() {
   // ==========================================
   // AUTH ENABLED
   // ==========================================
-  // return isAuthorized ? (
-  //   <SidebarProvider defaultOpen={false}>
-  //     <AppSidebar />
-  //     <div className="flex flex-col w-full">
-  //       <Topbar pageTitle={pageTitle} />
-  //       <main className="flex-1 bg-[#F5F5F5] p-6">
-  //         <Outlet />
-  //       </main>
-  //     </div>
-  //   </SidebarProvider>
-  // ) : <Navigate to="/login" />;
-
-  // ==========================================
-  // AUTH BYPASS (For development/testing UI)
-  // Uncomment this and comment out the above when working on UI tickets
-  // ==========================================
-  return (
+  return isAuthorized ? (
     <SidebarProvider defaultOpen={false}>
       <AppSidebar />
       <div className="flex flex-col w-full">
@@ -117,5 +101,20 @@ export default function ProtectedLayout() {
         </main>
       </div>
     </SidebarProvider>
-  );
+  ) : <Navigate to="/login" />;
+
+  // ==========================================
+  // AUTH BYPASS
+  // ==========================================
+  // return (
+  //   <SidebarProvider defaultOpen={false}>
+  //     <AppSidebar />
+  //     <div className="flex flex-col w-full">
+  //       <Topbar pageTitle={pageTitle} />
+  //       <main className="flex-1 bg-[#F5F5F5] p-6">
+  //         <Outlet />
+  //       </main>
+  //     </div>
+  //   </SidebarProvider>
+  // );
 }
