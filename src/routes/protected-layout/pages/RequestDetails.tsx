@@ -26,10 +26,10 @@ function FormContent({ request }: { request: RequestDetail }) {
                     <img
                         src={mapuaLogo}
                         alt="MAPUA Logo"
-                        className="w-[120px] h-auto object-contain"
+                        className="w-[150px] h-[100px] object-contain"
                     />
                 </div>
-                <h1 className="text-[#001c43] font-bold text-2xl">{request.formTitle}</h1>
+                <h1 className="text-[#001c43] font-bold text-[32px]">{request.formTitle}</h1>
                 <p className="text-[#001c43] text-sm font-medium">{request.referenceNumber}</p>
             </div>
 
@@ -157,60 +157,49 @@ function FormContent({ request }: { request: RequestDetail }) {
                     <h2 className="text-[#001c43] font-bold text-lg">Payment Terms & Schedule</h2>
                 </div>
 
-                <div className="grid grid-cols-2 gap-x-8 gap-y-4 mb-6">
-                    <div>
-                        <p className="text-[#001c43] font-bold text-sm mb-1">Mode of Payment</p>
-                        <p className="text-[#001c43] text-sm">{request.paymentTerms.modeOfPayment}</p>
+                <div className="grid grid-cols-2 gap-x-8 gap-y-4">
+                    {/* Left Column */}
+                    <div className="space-y-4">
+                        <div>
+                            <p className="text-[#001c43] font-bold text-sm mb-1">Mode of Payment</p>
+                            <p className="text-[#001c43] text-sm">{request.paymentTerms.modeOfPayment}</p>
+                        </div>
+                        <div>
+                            <p className="text-[#001c43] font-bold text-sm mb-1">Tax Registration Type</p>
+                            <p className="text-[#001c43] text-sm">{request.paymentTerms.taxRegistrationType}</p>
+                        </div>
                     </div>
-                    <div>
-                        <p className="text-[#001c43] font-bold text-sm mb-1">Terms of Payment</p>
-                        <p className="text-[#001c43] text-sm">{request.paymentTerms.termsOfPayment}</p>
-                    </div>
-                    <div>
-                        <p className="text-[#001c43] font-bold text-sm mb-1">Tax Registration Type</p>
-                        <p className="text-[#001c43] text-sm">{request.paymentTerms.taxRegistrationType}</p>
-                    </div>
-                    <div>
-                        <p className="text-[#001c43] font-bold text-sm mb-1">Type of Business</p>
-                        <p className="text-[#001c43] text-sm">{request.paymentTerms.typeOfBusiness}</p>
-                    </div>
-                </div>
 
-                <div className="grid grid-cols-3 gap-x-8 gap-y-4">
-                    <div>
-                        <p className="text-[#001c43] font-bold text-sm mb-1">PO</p>
-                        <p className="text-[#001c43] text-sm">{request.paymentTerms.po}</p>
-                    </div>
-                    <div>
-                        <p className="text-[#001c43] font-bold text-sm mb-1">PR</p>
-                        <p className="text-[#001c43] text-sm">{request.paymentTerms.pr}</p>
-                    </div>
-                    <div>
-                        <p className="text-[#001c43] font-bold text-sm mb-1">RR</p>
-                        <p className="text-[#001c43] text-sm">{request.paymentTerms.rr}</p>
+                    {/* Right Column */}
+                    <div className="space-y-4">
+                        <div>
+                            <p className="text-[#001c43] font-bold text-sm mb-1">Terms of Payment</p>
+                            <p className="text-[#001c43] text-sm">{request.paymentTerms.termsOfPayment}</p>
+                        </div>
+                        <div>
+                            <p className="text-[#001c43] font-bold text-sm mb-1">Type of Business</p>
+                            <p className="text-[#001c43] text-sm">{request.paymentTerms.typeOfBusiness}</p>
+                        </div>
+
+                        {/* PO, PR, RR underneath Type of Business with spacing */}
+                        <div className="pt-5 space-y-4">
+                            <div>
+                                <p className="text-[#001c43] font-bold text-sm mb-1">PO</p>
+                                <p className="text-[#001c43] text-sm">{request.paymentTerms.po}</p>
+                            </div>
+                            <div>
+                                <p className="text-[#001c43] font-bold text-sm mb-1">PR</p>
+                                <p className="text-[#001c43] text-sm">{request.paymentTerms.pr}</p>
+                            </div>
+                            <div>
+                                <p className="text-[#001c43] font-bold text-sm mb-1">RR</p>
+                                <p className="text-[#001c43] text-sm">{request.paymentTerms.rr}</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            {/* Attachments Section */}
-            <div className="border-t border-gray-300 pt-6">
-                <div className="flex items-center gap-2 mb-4">
-                    <h3 className="text-[#001c43] font-bold text-base">Attachments</h3>
-                </div>
-                <div className="border border-gray-300 rounded-lg p-4">
-                    {request.attachments.length > 0 ? (
-                        <ul className="space-y-2">
-                            {request.attachments.map((attachment) => (
-                                <li key={attachment.id} className="text-[#001c43] text-sm">
-                                    □ {attachment.filename}
-                                </li>
-                            ))}
-                        </ul>
-                    ) : (
-                        <p className="text-gray-400 text-sm">No attachments</p>
-                    )}
-                </div>
-            </div>
         </div>
     );
 }

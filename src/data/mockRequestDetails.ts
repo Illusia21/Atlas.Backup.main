@@ -106,7 +106,7 @@ export const mockRequestDetails: Record<string, RequestDetail> = {
     '1': {
         id: '1',
         referenceNumber: 'RFP2025-October-CCIS-00123',
-        formTitle: 'Reimbursement',
+        formTitle: 'Request for Payment',
         requestType: 'Reimbursement',
         dateRequested: '2025-01-01',
         description: 'Travel expenses for Q1 client meeting',
@@ -220,7 +220,7 @@ export const mockRequestDetails: Record<string, RequestDetail> = {
     '2': {
         id: '2',
         referenceNumber: 'RFP2025-January-HR-00045',
-        formTitle: 'Reimbursement',
+        formTitle: 'Request for Payment',
         requestType: 'Reimbursement',
         dateRequested: '2025-01-01',
         description: 'Office supplies reimbursement',
@@ -325,7 +325,7 @@ export const mockRequestDetails: Record<string, RequestDetail> = {
     '3': {
         id: '3',
         referenceNumber: 'RFP2025-January-CCIS-00089',
-        formTitle: 'Reimbursement',
+        formTitle: 'Request for Payment',
         requestType: 'Reimbursement',
         dateRequested: '2025-01-01',
         description: 'Training seminar reimbursement',
@@ -578,7 +578,7 @@ export const mockRequestDetails: Record<string, RequestDetail> = {
     '5': {
         id: '5',
         referenceNumber: 'RFP2025-March-IT-00203',
-        formTitle: 'Reimbursement',
+        formTitle: 'Request for Payment',
         requestType: 'Reimbursement',
         dateRequested: '2025-01-01',
         description: 'Software subscription reimbursement',
