@@ -1,6 +1,7 @@
 import mapuaLogo from '@/assets/images/mapuaLogo.png'
 import { useParams, useNavigate } from "react-router-dom";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
+import { useReactToPrint } from "react-to-print";
 import { X, Send, MoveRight, Download, Link2, HardDriveDownload } from "lucide-react";
 import { mockRequestDetails, type RequestDetail } from "@/data/mockRequestDetails";
 import {
@@ -245,6 +246,9 @@ export default function MyRequestDetails() {
     const [showCancelDialog, setShowCancelDialog] = useState(false);
     const [commentText, setCommentText] = useState("");
 
+    // Ref for printing
+    const printRef = useRef<HTMLDivElement>(null);
+
     const handleClose = () => {
         navigate(-1);
     };
@@ -255,10 +259,48 @@ export default function MyRequestDetails() {
         return mockRequestDetails[id] || null;
     }, [id]);
 
-    // Handle Download Form (print)
-    const handleDownloadForm = () => {
-        window.print();
-    };
+    // Handle Download Form using react-to-print
+    const handleDownloadForm = useReactToPrint({
+        contentRef: printRef,
+        documentTitle: request?.referenceNumber || "Form",
+        pageStyle: `
+            @page {
+                size: A4;
+                margin: 15mm;
+            }
+            @media print {
+                body {
+                    -webkit-print-color-adjust: exact !important;
+                    print-color-adjust: exact !important;
+                }
+                table {
+                    width: 100% !important;
+                    border-collapse: collapse !important;
+                }
+                thead {
+                    display: table-header-group !important;
+                }
+                tr {
+                    page-break-inside: avoid !important;
+                }
+                thead tr {
+                    background-color: #001c43 !important;
+                }
+                th {
+                    color: white !important;
+                    padding: 12px 16px !important;
+                    border: 1px solid #e5e5e5 !important;
+                }
+                td {
+                    padding: 12px 16px !important;
+                    border: 1px solid #e5e5e5 !important;
+                }
+                .bg-gray-100 {
+                    background-color: #f3f4f6 !important;
+                }
+            }
+        `,
+    });
 
     // Handle Request to Cancel
     const handleRequestToCancel = () => {
@@ -309,7 +351,7 @@ export default function MyRequestDetails() {
             <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50">
                 <div className="bg-white rounded-[20px] p-8 max-w-md">
                     <h2 className="text-xl font-bold text-[#e50019] mb-4">Request Not Found</h2>
-                    <p className="font-montserrat text-[#001c43] mb-6">
+                    <p className="text-[#001c43] mb-6">
                         Request with ID "{id}" could not be found.
                     </p>
                     <button
@@ -326,7 +368,7 @@ export default function MyRequestDetails() {
     return (
         <TooltipProvider delayDuration={300}>
             {/* Modal Overlay */}
-            <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 print:hidden">
+            <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50">
                 {/* Modal Container */}
                 <div className="bg-[#fcfcfc] rounded-[20px] shadow-[0px_4px_20px_0px_rgba(0,0,0,0.25)] w-[95vw] max-w-[1393px] h-[90vh] max-h-[946px] grid grid-cols-[1fr_380px] grid-rows-[auto_1fr] overflow-hidden">
 
@@ -394,8 +436,8 @@ export default function MyRequestDetails() {
                             <Tooltip>
                                 <TooltipTrigger asChild>
                                     <button
-                                        onClick={handleDownloadForm}
-                                        className="bg-[#001c43] flex items-center gap-[10px] px-[10px] py-[2px] h-[30px] rounded-[10px] hover:bg-[#002855] transition-colors"
+                                        onClick={() => handleDownloadForm()}
+                                        className="bg-[#001c43] flex items-center gap-[10px] px-[16px] py-[6px] rounded-[10px] hover:bg-[#002855] transition-colors"
                                     >
                                         <HardDriveDownload className="w-[18px] h-[18px] text-white" />
                                         <p className="text-[14px] text-white leading-[20px]">
@@ -686,9 +728,11 @@ export default function MyRequestDetails() {
                 </div>
             )}
 
-            {/* Print-only content */}
-            <div className="hidden print:block">
-                <FormContent request={request} />
+            {/* Hidden Print Content - This is what gets printed */}
+            <div style={{ display: 'none' }}>
+                <div ref={printRef}>
+                    <FormContent request={request} />
+                </div>
             </div>
         </TooltipProvider>
     );
