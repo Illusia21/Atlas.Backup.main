@@ -1,13 +1,238 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { X, Send, MoveRight, Download, Link2, HardDriveDownload } from "lucide-react";
-import { useMemo } from "react";
 import { mockRequestDetails, type RequestDetail } from "@/data/mockRequestDetails";
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "@/components/ui/tooltip";
 
-export default function RequestDetails() {
+// Helper function to format numbers with commas
+const formatNumber = (num: number): string => {
+    return num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+};
+
+// Form Content Component - The actual reimbursement form display
+function FormContent({ request }: { request: RequestDetail }) {
+    return (
+        <div className="bg-white min-h-full p-8 font-montserrat">
+            {/* Header with Logo and Title */}
+            <div className="flex items-center justify-between border-b-2 border-[#001c43] pb-4 mb-6">
+                <div className="flex items-center gap-4">
+                    {/* MAPUA Logo Placeholder */}
+                    <div className="w-[60px] h-[60px] bg-[#001c43] rounded-full flex items-center justify-center">
+                        <span className="text-white font-bold text-xs">MAPUA</span>
+                    </div>
+                    <div>
+                        <p className="text-[#001c43] font-bold text-sm">MAPUA</p>
+                        <p className="text-[#001c43] text-[10px]">MALAYAN COLLEGES</p>
+                        <p className="text-[#001c43] text-[10px]">MINDANAO</p>
+                    </div>
+                </div>
+                <h1 className="text-[#001c43] font-bold text-2xl">{request.formTitle}</h1>
+                <p className="text-[#001c43] text-sm">{request.referenceNumber}</p>
+            </div>
+
+            {/* Requester Information Section */}
+            <div className="mb-6 border border-[#e5e5e5] rounded-lg p-4">
+                <h2 className="text-[#001c43] font-semibold text-base mb-4">Requester Information</h2>
+                <div className="grid grid-cols-2 gap-4">
+                    <div>
+                        <p className="text-[#001c43] font-semibold text-sm">Requested By</p>
+                        <p className="text-[#001c43] text-sm">{request.requesterInfo.requestedBy}</p>
+                    </div>
+                    <div>
+                        <p className="text-[#001c43] font-semibold text-sm">Department</p>
+                        <p className="text-[#001c43] text-sm">{request.requesterInfo.department}</p>
+                    </div>
+                </div>
+            </div>
+
+            {/* Request Details Section */}
+            <div className="mb-6 border border-[#e5e5e5] rounded-lg p-4">
+                <h2 className="text-[#001c43] font-semibold text-base mb-4">Request Details</h2>
+
+                <div className="mb-4">
+                    <p className="text-[#001c43] font-semibold text-sm">Request Type</p>
+                    <p className="text-[#001c43] text-sm">{request.requestDetailsInfo.requestType}</p>
+                </div>
+
+                <div className="mb-4">
+                    <p className="text-[#001c43] font-semibold text-sm">Description/Purpose</p>
+                    <p className="text-[#001c43] text-sm">{request.requestDetailsInfo.descriptionPurpose}</p>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <p className="text-[#001c43] font-semibold text-sm">Source of Fund</p>
+                        <p className="text-[#001c43] text-sm">{request.requestDetailsInfo.sourceOfFund}</p>
+                    </div>
+                    <div>
+                        <p className="text-[#001c43] font-semibold text-sm">Cost Center</p>
+                        <p className="text-[#001c43] text-sm">{request.requestDetailsInfo.costCenter}</p>
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                    <div>
+                        <p className="text-[#001c43] font-semibold text-sm">Date Requested</p>
+                        <p className="text-[#001c43] text-sm">{request.requestDetailsInfo.dateRequested}</p>
+                    </div>
+                    <div>
+                        <p className="text-[#001c43] font-semibold text-sm">Date Needed</p>
+                        <p className="text-[#001c43] text-sm">{request.requestDetailsInfo.dateNeeded}</p>
+                    </div>
+                </div>
+            </div>
+
+            {/* Line Items Table */}
+            <div className="mb-6">
+                <table className="w-full border-collapse">
+                    <thead>
+                        <tr className="bg-[#001c43] text-white text-sm">
+                            <th className="py-3 px-4 text-left font-semibold">Line/Item</th>
+                            <th className="py-3 px-4 text-left font-semibold">Category</th>
+                            <th className="py-3 px-4 text-left font-semibold">Activity/Description</th>
+                            <th className="py-3 px-4 text-center font-semibold">Quantity</th>
+                            <th className="py-3 px-4 text-center font-semibold">UOM</th>
+                            <th className="py-3 px-4 text-right font-semibold">Price</th>
+                            <th className="py-3 px-4 text-right font-semibold">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {request.lineItems.map((item, index) => (
+                            <tr key={index} className="border-b border-[#e5e5e5]">
+                                <td className="py-3 px-4 text-[#001c43] text-sm text-center">{item.lineNumber}</td>
+                                <td className="py-3 px-4 text-[#001c43] text-sm font-semibold">{item.category}</td>
+                                <td className="py-3 px-4 text-[#001c43] text-sm">{item.activityDescription}</td>
+                                <td className="py-3 px-4 text-[#001c43] text-sm text-center font-semibold">{item.quantity}</td>
+                                <td className="py-3 px-4 text-[#001c43] text-sm text-center font-semibold">{item.uom}</td>
+                                <td className="py-3 px-4 text-[#001c43] text-sm text-right">{formatNumber(item.price)}</td>
+                                <td className="py-3 px-4 text-[#001c43] text-sm text-right">{formatNumber(item.amount)}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+
+            {/* Amount Summary */}
+            <div className="border-t-2 border-b-2 border-[#001c43] py-4 mb-6">
+                <div className="flex justify-between items-start">
+                    <div>
+                        <p className="text-[#001c43] text-sm">
+                            <span className="font-semibold">Currency:</span> {request.amountSummary.currency}
+                        </p>
+                    </div>
+                    <div className="text-right space-y-2">
+                        <div className="flex justify-between gap-8">
+                            <span className="text-[#001c43] text-sm font-semibold">Amount</span>
+                            <span className="text-[#001c43] text-sm">{formatNumber(request.amountSummary.amount)}</span>
+                        </div>
+                        <div className="flex justify-between gap-8">
+                            <span className="text-[#001c43] text-sm font-semibold">Service Fee</span>
+                            <span className="text-[#001c43] text-sm">{formatNumber(request.amountSummary.serviceFee)}</span>
+                        </div>
+                        <div className="flex justify-between gap-8">
+                            <span className="text-[#001c43] text-sm font-semibold">Less: EWT</span>
+                            <span className="text-[#001c43] text-sm">
+                                ({request.amountSummary.ewtRate}%) {formatNumber(request.amountSummary.ewtAmount)}
+                            </span>
+                        </div>
+                        <div className="flex justify-between gap-8 border-t border-[#001c43] pt-2 mt-2">
+                            <span className="text-[#001c43] text-sm font-bold">Net Total Amount</span>
+                            <span className="text-[#001c43] text-sm font-bold">{formatNumber(request.amountSummary.netTotalAmount)}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Payment Terms & Schedule Section */}
+            <div className="border border-[#e5e5e5] rounded-lg p-4">
+                <h2 className="text-[#001c43] font-semibold text-base mb-4">Payment Terms & Schedule</h2>
+
+                <div className="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <p className="text-[#001c43] font-semibold text-sm">Mode of Payment</p>
+                        <p className="text-[#001c43] text-sm">{request.paymentTerms.modeOfPayment}</p>
+                    </div>
+                    <div>
+                        <p className="text-[#001c43] font-semibold text-sm">Terms of Payment</p>
+                        <p className="text-[#001c43] text-sm">{request.paymentTerms.termsOfPayment}</p>
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <p className="text-[#001c43] font-semibold text-sm">Tax Registration Type</p>
+                        <p className="text-[#001c43] text-sm">{request.paymentTerms.taxRegistrationType}</p>
+                    </div>
+                    <div>
+                        <p className="text-[#001c43] font-semibold text-sm">Type of Business</p>
+                        <p className="text-[#001c43] text-sm">{request.paymentTerms.typeOfBusiness}</p>
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-3 gap-4">
+                    <div>
+                        <p className="text-[#001c43] font-semibold text-sm">PO</p>
+                        <p className="text-[#001c43] text-sm">{request.paymentTerms.po}</p>
+                    </div>
+                    <div>
+                        <p className="text-[#001c43] font-semibold text-sm">PR</p>
+                        <p className="text-[#001c43] text-sm">{request.paymentTerms.pr}</p>
+                    </div>
+                    <div>
+                        <p className="text-[#001c43] font-semibold text-sm">RR</p>
+                        <p className="text-[#001c43] text-sm">{request.paymentTerms.rr}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+// Comments Tab Placeholder
+function CommentsContent() {
+    return (
+        <div className="flex-1 flex items-center justify-center">
+            <div className="text-center p-8">
+                <p className="text-gray-400 text-lg font-montserrat mb-2">Comments</p>
+                <p className="text-gray-500 text-sm font-montserrat">
+                    Full comments history will be displayed here.
+                </p>
+                <p className="text-gray-400 text-xs font-montserrat mt-4">
+                    (Coming soon - separate ticket)
+                </p>
+            </div>
+        </div>
+    );
+}
+
+// Journey Tab Placeholder
+function JourneyContent() {
+    return (
+        <div className="flex-1 flex items-center justify-center">
+            <div className="text-center p-8">
+                <p className="text-gray-400 text-lg font-montserrat mb-2">Journey</p>
+                <p className="text-gray-500 text-sm font-montserrat">
+                    Workflow timeline will be displayed here.
+                </p>
+                <p className="text-gray-400 text-xs font-montserrat mt-4">
+                    (Coming soon - separate ticket)
+                </p>
+            </div>
+        </div>
+    );
+}
+
+export default function MyRequestDetails() {
     const { id } = useParams();
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState<"form" | "comments" | "journey">("form");
+    const [showCancelDialog, setShowCancelDialog] = useState(false);
+    const [commentText, setCommentText] = useState("");
 
     const handleClose = () => {
         navigate(-1);
@@ -18,6 +243,37 @@ export default function RequestDetails() {
         if (!id) return null;
         return mockRequestDetails[id] || null;
     }, [id]);
+
+    // Handle Download Form (print)
+    const handleDownloadForm = () => {
+        window.print();
+    };
+
+    // Handle Request to Cancel
+    const handleRequestToCancel = () => {
+        setShowCancelDialog(true);
+    };
+
+    const confirmCancel = () => {
+        // TODO: Implement actual cancel logic
+        console.log("Request cancelled");
+        setShowCancelDialog(false);
+        navigate(-1);
+    };
+
+    // Handle comment submit
+    const handleCommentSubmit = () => {
+        if (commentText.trim()) {
+            // TODO: Implement actual comment posting
+            console.log("Comment submitted:", commentText);
+            setCommentText("");
+        }
+    };
+
+    // Handle View full comments history click
+    const handleViewFullComments = () => {
+        setActiveTab("comments");
+    };
 
     // Handle request not found
     if (!id) {
@@ -57,252 +313,382 @@ export default function RequestDetails() {
     }
 
     return (
-        // Modal Overlay
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50">
-            {/* Modal Container */}
-            <div className="bg-[#fcfcfc] rounded-[20px] shadow-[0px_4px_20px_0px_rgba(0,0,0,0.25)] w-[95vw] max-w-[1393px] h-[90vh] max-h-[946px] grid grid-cols-[1fr_400px] grid-rows-[70px_1fr] overflow-hidden">
+        <TooltipProvider delayDuration={300}>
+            {/* Modal Overlay */}
+            <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 print:hidden">
+                {/* Modal Container */}
+                <div className="bg-[#fcfcfc] rounded-[20px] shadow-[0px_4px_20px_0px_rgba(0,0,0,0.25)] w-[95vw] max-w-[1393px] h-[90vh] max-h-[946px] grid grid-cols-[1fr_380px] grid-rows-[auto_1fr] overflow-hidden">
 
-                {/* LEFT PANEL - TABS (Header) */}
-                <div className="col-[1] row-[1] bg-[#f4f4f5] p-[4px] rounded-[6px] flex items-center self-start">
-                    {/* Tab Buttons */}
-                    <button
-                        onClick={() => setActiveTab("form")}
-                        className={`px-[12px] py-[6px] rounded-[4px] flex-1 font-montserrat text-[14px] leading-[20px] transition-all ${activeTab === "form"
-                            ? "bg-white text-[#09090b] shadow-[0px_1px_2px_-1px_rgba(0,0,0,0.1),0px_1px_3px_0px_rgba(0,0,0,0.1)]"
-                            : "text-[#71717a]"
-                            }`}
-                    >
-                        Form
-                    </button>
-                    <button
-                        onClick={() => setActiveTab("comments")}
-                        className={`px-[12px] py-[6px] rounded-[4px] flex-1 font-montserrat text-[14px] leading-[20px] transition-all ${activeTab === "comments"
-                            ? "bg-white text-[#09090b] shadow-[0px_1px_2px_-1px_rgba(0,0,0,0.1),0px_1px_3px_0px_rgba(0,0,0,0.1)]"
-                            : "text-[#71717a]"
-                            }`}
-                    >
-                        Comments
-                    </button>
-                    <button
-                        onClick={() => setActiveTab("journey")}
-                        className={`px-[12px] py-[6px] rounded-[4px] flex-1 font-montserrat text-[14px] leading-[20px] transition-all ${activeTab === "journey"
-                            ? "bg-white text-[#09090b] shadow-[0px_1px_2px_-1px_rgba(0,0,0,0.1),0px_1px_3px_0px_rgba(0,0,0,0.1)]"
-                            : "text-[#71717a]"
-                            }`}
-                    >
-                        Journey
-                    </button>
-                </div>
+                    {/* LEFT PANEL - TABS (Header) */}
+                    <div className="col-[1] row-[1] p-4">
+                        <div className="bg-[#f4f4f5] p-[4px] rounded-[6px] flex items-center w-fit">
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <button
+                                        onClick={() => setActiveTab("form")}
+                                        className={`px-[24px] py-[6px] rounded-[4px] font-montserrat text-[14px] leading-[20px] transition-all ${activeTab === "form"
+                                            ? "bg-white text-[#09090b] shadow-[0px_1px_2px_-1px_rgba(0,0,0,0.1),0px_1px_3px_0px_rgba(0,0,0,0.1)]"
+                                            : "text-[#71717a]"
+                                            }`}
+                                    >
+                                        Form
+                                    </button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                    <p>View form details</p>
+                                </TooltipContent>
+                            </Tooltip>
 
-                {/* LEFT PANEL - MAIN CONTENT */}
-                <div className="col-[1] row-[2] flex flex-col gap-[10px] items-center justify-center p-[20px] overflow-hidden">
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <button
+                                        onClick={() => setActiveTab("comments")}
+                                        className={`px-[24px] py-[6px] rounded-[4px] font-montserrat text-[14px] leading-[20px] transition-all ${activeTab === "comments"
+                                            ? "bg-white text-[#09090b] shadow-[0px_1px_2px_-1px_rgba(0,0,0,0.1),0px_1px_3px_0px_rgba(0,0,0,0.1)]"
+                                            : "text-[#71717a]"
+                                            }`}
+                                    >
+                                        Comments
+                                    </button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                    <p>View all comments</p>
+                                </TooltipContent>
+                            </Tooltip>
 
-                    {/* Download Form Button - Positioned at top */}
-                    <div className="bg-[rgba(0,28,67,0.7)] flex items-center justify-end gap-[10px] px-[31px] py-[14px] rounded-tl-[20px] rounded-tr-[20px] w-full">
-                        <button className="bg-[#001c43] flex items-center gap-[10px] px-[10px] py-[2px] h-[30px] rounded-[10px] hover:bg-[#002855] transition-colors">
-                            <HardDriveDownload className="w-[18px] h-[18px] text-white" />
-                            <p className="font-montserrat text-[14px] text-white leading-[20px]">
-                                Download Form
-                            </p>
-                        </button>
-                    </div>
-
-                    {/* Form Preview Area - Placeholder */}
-                    <div className="bg-[#f5f5f5] border border-[#b1b1b1] rounded-[20px] flex-1 w-full flex items-center justify-center overflow-hidden">
-                        <div className="text-center p-8">
-                            <p className="text-gray-400 text-lg font-montserrat mb-2">
-                                Form Preview
-                            </p>
-                            <p className="text-gray-500 text-sm font-montserrat">
-                                pota
-                            </p>
-                            <p className="text-gray-400 text-xs font-montserrat mt-4">
-                                Active Tab: <span className="font-semibold text-[#001c43]">{activeTab}</span>
-                            </p>
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <button
+                                        onClick={() => setActiveTab("journey")}
+                                        className={`px-[24px] py-[6px] rounded-[4px] font-montserrat text-[14px] leading-[20px] transition-all ${activeTab === "journey"
+                                            ? "bg-white text-[#09090b] shadow-[0px_1px_2px_-1px_rgba(0,0,0,0.1),0px_1px_3px_0px_rgba(0,0,0,0.1)]"
+                                            : "text-[#71717a]"
+                                            }`}
+                                    >
+                                        Journey
+                                    </button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                    <p>View workflow journey</p>
+                                </TooltipContent>
+                            </Tooltip>
                         </div>
                     </div>
 
-                </div>
+                    {/* LEFT PANEL - MAIN CONTENT */}
+                    <div className="col-[1] row-[2] flex flex-col gap-[10px] p-[20px] pt-0 overflow-hidden">
 
-                {/* RIGHT PANEL */}
-                <div className="col-[2] row-[1_/_span_2] bg-[#fcfcfc] rounded-tr-[20px] flex flex-col justify-between p-[10px] pb-[20px] pt-[10px]">
+                        {/* Download Form Button Header */}
+                        <div className="bg-[rgba(0,28,67,0.7)] flex items-center justify-between gap-[10px] px-[31px] py-[14px] rounded-tl-[20px] rounded-tr-[20px]">
+                            <div className="flex items-center gap-4">
+                                {/* Logo placeholder for header */}
+                                <div className="w-[40px] h-[40px] bg-white rounded-full flex items-center justify-center">
+                                    <span className="text-[#001c43] font-bold text-[8px]">MAPUA</span>
+                                </div>
+                                <div>
+                                    <p className="text-white font-bold text-sm">{request.formTitle}</p>
+                                    <p className="text-white/70 text-xs">{request.referenceNumber}</p>
+                                </div>
+                            </div>
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <button
+                                        onClick={handleDownloadForm}
+                                        className="bg-[#001c43] flex items-center gap-[10px] px-[10px] py-[2px] h-[30px] rounded-[10px] hover:bg-[#002855] transition-colors"
+                                    >
+                                        <HardDriveDownload className="w-[18px] h-[18px] text-white" />
+                                        <p className="font-montserrat text-[14px] text-white leading-[20px]">
+                                            Download Form
+                                        </p>
+                                    </button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                    <p>Download or print this form</p>
+                                </TooltipContent>
+                            </Tooltip>
+                        </div>
 
-                    {/* Scrollable Content Area */}
-                    <div className="flex flex-col gap-0 overflow-y-auto">
+                        {/* Form Preview Area */}
+                        <div className="bg-white border border-[#b1b1b1] rounded-b-[20px] flex-1 overflow-y-auto">
+                            {activeTab === "form" && <FormContent request={request} />}
+                            {activeTab === "comments" && <CommentsContent />}
+                            {activeTab === "journey" && <JourneyContent />}
+                        </div>
 
-                        {/* Header: Workflow Status + Close Button */}
-                        <div className="flex items-center justify-between h-[67px] px-[5px] py-[10px]">
-                            <div className="flex items-center gap-[20px]">
-                                <p className="font-montserrat text-[14px] text-[#001c43]">
+                    </div>
+
+                    {/* RIGHT PANEL */}
+                    <div className="col-[2] row-[1_/_span_2] bg-[#fafafa] border-l border-[#e5e7eb] flex flex-col overflow-hidden">
+
+                        {/* Header with Workflow Status & Close Button */}
+                        <div className="p-4 border-b border-[#e5e7eb] flex items-center justify-between flex-shrink-0">
+                            <div className="flex items-center gap-3">
+                                <span className="text-[#001c43] font-montserrat text-sm font-medium">
                                     Workflow Status:
-                                </p>
-                                <div className="bg-[rgba(139,139,139,0.1)] border border-[#8c8b8b] rounded-[10px] px-[10px] h-[31px] flex items-center">
-                                    <p className="font-montserrat text-[14px] text-[#8c8b8b]">
-                                        {request.status}
-                                    </p>
-                                </div>
+                                </span>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <span className="bg-[#f0f0f0] border border-[#8b8b8b] text-[#6b7280] px-3 py-1 rounded-lg text-xs font-medium cursor-default">
+                                            {request.status}
+                                        </span>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        <p>Current status: {request.status}</p>
+                                    </TooltipContent>
+                                </Tooltip>
                             </div>
-                            <button
-                                onClick={handleClose}
-                                className="w-[24px] h-[24px] flex items-center justify-center hover:bg-gray-100 rounded-full transition-colors"
-                            >
-                                <X className="w-[18px] h-[18px] text-[#001c43]" />
-                            </button>
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <button
+                                        onClick={handleClose}
+                                        className="w-8 h-8 flex items-center justify-center hover:bg-gray-200 rounded-full transition-colors"
+                                    >
+                                        <X className="w-5 h-5 text-[#001c43]" />
+                                    </button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                    <p>Close</p>
+                                </TooltipContent>
+                            </Tooltip>
                         </div>
 
-                        {/* Separator */}
-                        <div className="w-full h-[2px] bg-[#b1b1b1]" />
+                        {/* Scrollable Content */}
+                        <div className="flex-1 overflow-y-auto">
 
-                        {/* Approver Section */}
-                        <div className="flex flex-col gap-[10px] p-[20px]">
-                            <p className="font-montserrat font-semibold text-[18px] text-[#001c43] leading-[24px]">
-                                Approver
-                            </p>
-                            <div className="flex items-center gap-[15px]">
-                                {/* Avatar */}
-                                <div className="w-[48px] h-[48px] rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center">
-                                    <span className="text-white font-montserrat font-semibold text-[20px]">
-                                        {request.approver.initials}
-                                    </span>
-                                </div>
-                                {/* Name and Role */}
-                                <div className="flex flex-col gap-[2px]">
-                                    <p className="font-montserrat text-[14px] text-[#001c43] leading-[20px]">
-                                        {request.approver.name}
-                                    </p>
-                                    <p className="font-montserrat text-[14px] text-[#e50019] leading-[20px]">
-                                        {request.approver.role}
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Separator */}
-                        <div className="w-full h-[2px] bg-[#b1b1b1]" />
-
-                        {/* Recent Comments Section */}
-                        <div className="flex flex-col gap-[10px] p-[10px]">
-                            <p className="font-montserrat text-[14px] text-[#001c43] leading-[20px]">
-                                Recent Comments:
-                            </p>
-
-                            {/* Separator */}
-                            <div className="w-full h-[2px] bg-[#d9d9d9]" />
-
-                            {/* Comment Item - Show most recent comment */}
-                            {request.comments.length > 0 ? (
-                                <div className="flex flex-col gap-[3px] px-[9px]">
-                                    {/* Comment Header */}
-                                    <div className="flex items-center justify-between px-[9px]">
-                                        <p className="font-montserrat text-[12px] text-[#001c43] leading-[20px]">
-                                            <span>{request.comments[0].author} - </span>
-                                            <span className="text-[#e50019]">{request.comments[0].role}</span>
+                            {/* Approver Section */}
+                            <div className="p-4 border-b border-[#e5e7eb]">
+                                <h3 className="font-montserrat font-semibold text-base text-[#001c43] mb-3">
+                                    Approver
+                                </h3>
+                                <div className="flex items-center gap-3">
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#3b82f6] to-[#1d4ed8] flex items-center justify-center flex-shrink-0 cursor-default">
+                                                <span className="text-white font-montserrat font-semibold text-lg">
+                                                    {request.approver.initials}
+                                                </span>
+                                            </div>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                            <p>{request.approver.name}</p>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                    <div className="flex flex-col">
+                                        <p className="font-montserrat text-sm text-[#001c43] font-medium">
+                                            {request.approver.name}
                                         </p>
-                                        <p className="font-montserrat text-[8px] text-[#b1b1b1] leading-[20px]">
-                                            {request.comments[0].timestamp}
-                                        </p>
-                                    </div>
-
-                                    {/* Vertical Line */}
-                                    <div className="w-[1px] h-[17px] bg-[#d9d9d9] ml-[9px]" />
-
-                                    {/* Comment Text */}
-                                    <div className="bg-[#f4f4f5] px-[16px] min-h-[49px] flex items-center rounded-sm py-2">
-                                        <p className="font-montserrat text-[10px] text-black leading-[20px]">
-                                            {request.comments[0].text}
+                                        <p className="font-montserrat text-sm text-[#e50019]">
+                                            {request.approver.role}
                                         </p>
                                     </div>
                                 </div>
-                            ) : (
-                                <p className="font-montserrat text-[12px] text-[#b1b1b1] px-[9px]">
-                                    No comments yet
-                                </p>
-                            )}
-
-                            {/* View Full Comments History Link */}
-                            <div className="flex flex-col items-start">
-                                <div className="flex items-center gap-[5px] cursor-pointer hover:opacity-70 transition-opacity">
-                                    <p className="font-montserrat text-[12px] text-[#b1b1b1] leading-[20px]">
-                                        View full comments history
-                                    </p>
-                                    <MoveRight className="w-[24px] h-[24px] text-[#b1b1b1]" />
-                                </div>
-                                <div className="w-[195px] h-[1px] bg-[#d9d9d9]" />
                             </div>
 
-                            {/* Comment Input */}
-                            <div className="flex items-center gap-[10px] w-full">
-                                <div className="flex-1 border border-[#b1b1b1] rounded-[10px] h-[36px] px-[20px] flex items-center">
+                            {/* Recent Comments Section */}
+                            <div className="p-4 border-b border-[#e5e7eb]">
+                                <p className="font-montserrat text-sm text-[#001c43] font-medium mb-2">
+                                    Recent Comments:
+                                </p>
+
+                                {/* Comment Item or No Comments */}
+                                {request.comments.length > 0 ? (
+                                    <div className="space-y-2 mb-3">
+                                        <div className="flex items-start justify-between">
+                                            <p className="font-montserrat text-xs text-[#001c43]">
+                                                <span className="font-medium">{request.comments[0].author}</span>
+                                                <span className="text-[#e50019]"> - {request.comments[0].role}</span>
+                                            </p>
+                                            <p className="font-montserrat text-[10px] text-[#9ca3af]">
+                                                {request.comments[0].timestamp}
+                                            </p>
+                                        </div>
+                                        <div className="pl-3 border-l-2 border-[#e5e7eb]">
+                                            <div className="bg-white border border-[#e5e7eb] rounded-lg px-3 py-2">
+                                                <p className="font-montserrat text-xs text-[#374151]">
+                                                    {request.comments[0].text}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <p className="font-montserrat text-xs text-[#9ca3af] mb-2">
+                                        No comments yet
+                                    </p>
+                                )}
+
+                                {/* View Full History Link */}
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <button
+                                            onClick={handleViewFullComments}
+                                            className="flex items-center gap-1 text-[#9ca3af] hover:text-[#6b7280] transition-colors mb-3"
+                                        >
+                                            <span className="font-montserrat text-xs">
+                                                View full comments history
+                                            </span>
+                                            <MoveRight className="w-4 h-4" />
+                                        </button>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        <p>View all comments</p>
+                                    </TooltipContent>
+                                </Tooltip>
+
+                                {/* Comment Input */}
+                                <div className="flex items-center gap-2">
                                     <input
                                         type="text"
+                                        value={commentText}
+                                        onChange={(e) => setCommentText(e.target.value)}
+                                        onKeyDown={(e) => e.key === 'Enter' && handleCommentSubmit()}
                                         placeholder="Type your comment here"
-                                        className="w-full bg-transparent outline-none font-montserrat text-[14px] text-[#b1b1b1] placeholder:text-[#b1b1b1]"
+                                        className="flex-1 border border-[#d1d5db] rounded-lg px-3 py-2 text-sm font-montserrat placeholder:text-[#9ca3af] focus:outline-none focus:border-[#001c43] focus:ring-1 focus:ring-[#001c43]"
                                     />
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <button
+                                                onClick={handleCommentSubmit}
+                                                className="w-9 h-9 flex items-center justify-center hover:bg-[#001c43] hover:text-white rounded-lg transition-colors text-[#001c43]"
+                                            >
+                                                <Send className="w-4 h-4" />
+                                            </button>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                            <p>Send comment</p>
+                                        </TooltipContent>
+                                    </Tooltip>
                                 </div>
-                                <button className="w-[24px] h-[24px] flex items-center justify-center hover:bg-gray-100 rounded-full transition-colors">
-                                    <Send className="w-[18px] h-[18px] text-[#001c43]" />
-                                </button>
                             </div>
-                        </div>
 
-                        {/* Separator */}
-                        <div className="w-full h-[2px] bg-[#b1b1b1]" />
-
-                        {/* Attachments Header */}
-                        <div className="bg-[#fcfcfc] flex items-center justify-center gap-[10px] px-[20px] py-[8px] rounded-[10px] w-fit">
-                            <Link2 className="w-[20px] h-[20px] text-[#001c43] shrink-0" />
-                            <p className="font-montserrat text-[14px] text-[#001c43] leading-[20px]">
-                                Attachments
-                            </p>
-                        </div>
-
-                        {/* Attachments List */}
-                        <div className="border border-[#b1b1b1] bg-white rounded-[10px] mx-[10px]">
-                            {request.attachments.map((attachment, index) => (
-                                <div
-                                    key={attachment.id}
-                                    className={`bg-[#fcfcfc] flex items-center gap-[16px] p-[16px] ${index < request.attachments.length - 1 ? 'border-b border-[#e5e5e5]' : ''
-                                        }`}
-                                >
-                                    <div className="flex items-center gap-[12px] flex-1">
-                                        {/* PDF Icon */}
-                                        <div className="w-[28px] h-[28px] bg-[#f14848] rounded-sm flex items-center justify-center">
-                                            <span className="text-white font-montserrat font-semibold text-[8px]">
-                                                {attachment.type.toUpperCase()}
-                                            </span>
-                                        </div>
-                                        {/* File Info */}
-                                        <div className="flex flex-col gap-[2px] flex-1">
-                                            <p className="font-montserrat text-[14px] text-[#001c43] leading-[20px]">
-                                                {attachment.filename}
-                                            </p>
-                                            <p className="font-montserrat text-[14px] text-[#b1b1b1] leading-[20px]">
-                                                {attachment.size} . {attachment.date}
-                                            </p>
-                                        </div>
-                                    </div>
-                                    {/* Download Icon */}
-                                    <button className="w-[16px] h-[16px] hover:opacity-70 transition-opacity">
-                                        <Download className="w-[16px] h-[16px] text-[#001c43]" />
-                                    </button>
+                            {/* Attachments Section */}
+                            <div className="p-4">
+                                <div className="flex items-center gap-2 mb-3">
+                                    <Link2 className="w-5 h-5 text-[#001c43]" />
+                                    <h3 className="font-montserrat text-sm text-[#001c43] font-medium">
+                                        Attachments
+                                    </h3>
                                 </div>
-                            ))}
+
+                                <div className="space-y-2">
+                                    {request.attachments.length > 0 ? (
+                                        request.attachments.map((attachment) => (
+                                            <div
+                                                key={attachment.id}
+                                                className="bg-white border border-[#e5e7eb] rounded-lg p-3 flex items-center gap-3 hover:border-[#001c43] transition-colors"
+                                            >
+                                                <Tooltip>
+                                                    <TooltipTrigger asChild>
+                                                        <div className="w-10 h-10 bg-[#ef4444] rounded flex items-center justify-center flex-shrink-0 cursor-default">
+                                                            <span className="text-white font-montserrat font-bold text-[10px]">
+                                                                {attachment.type.toUpperCase()}
+                                                            </span>
+                                                        </div>
+                                                    </TooltipTrigger>
+                                                    <TooltipContent>
+                                                        <p>{attachment.type.toUpperCase()} file</p>
+                                                    </TooltipContent>
+                                                </Tooltip>
+                                                <div className="flex-1 min-w-0">
+                                                    <p className="font-montserrat text-sm text-[#001c43] font-medium truncate">
+                                                        {attachment.filename}
+                                                    </p>
+                                                    <p className="font-montserrat text-xs text-[#9ca3af]">
+                                                        {attachment.size} • {attachment.date}
+                                                    </p>
+                                                </div>
+                                                <Tooltip>
+                                                    <TooltipTrigger asChild>
+                                                        <button
+                                                            onClick={() => window.open(attachment.url, '_blank')}
+                                                            className="w-8 h-8 flex items-center justify-center hover:bg-gray-100 rounded transition-colors flex-shrink-0"
+                                                        >
+                                                            <Download className="w-4 h-4 text-[#001c43]" />
+                                                        </button>
+                                                    </TooltipTrigger>
+                                                    <TooltipContent>
+                                                        <p>Download {attachment.filename}</p>
+                                                    </TooltipContent>
+                                                </Tooltip>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <p className="font-montserrat text-xs text-[#9ca3af]">
+                                            No attachments
+                                        </p>
+                                    )}
+                                </div>
+                            </div>
+
                         </div>
 
-                    </div>
+                        {/* Request to Cancel Button - Fixed at Bottom */}
+                        <div className="p-4 border-t border-[#e5e7eb] flex-shrink-0">
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <button
+                                        onClick={handleRequestToCancel}
+                                        className="w-full bg-[#e50019] hover:bg-[#c40015] text-white font-montserrat font-bold text-sm py-3 rounded-xl transition-colors"
+                                    >
+                                        Request to Cancel
+                                    </button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                    <p>Request to cancel this submission</p>
+                                </TooltipContent>
+                            </Tooltip>
+                        </div>
 
-                    {/* Action Buttons at Bottom */}
-                    <div className="h-[110px] w-full px-[10px] flex items-end">
-                        <button className="bg-[#e50019] w-full h-[50px] rounded-[12px] flex items-center justify-center hover:bg-[#c40015] transition-colors">
-                            <p className="font-montserrat font-bold text-[16px] text-[#fcfcfc] leading-[24px]">
-                                Request to Cancel
-                            </p>
-                        </button>
                     </div>
 
                 </div>
-
             </div>
-        </div>
+
+            {/* Cancel Confirmation Dialog */}
+            {showCancelDialog && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[60]">
+                    <div className="bg-white rounded-[20px] p-8 max-w-md mx-4 shadow-xl">
+                        <h2 className="text-xl font-montserrat font-bold text-[#001c43] mb-4">
+                            Confirm Cancellation
+                        </h2>
+                        <p className="font-montserrat text-[#001c43] mb-6">
+                            Are you sure you want to request cancellation for this reimbursement? This action cannot be undone.
+                        </p>
+                        <div className="flex gap-4">
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <button
+                                        onClick={() => setShowCancelDialog(false)}
+                                        className="flex-1 bg-gray-200 text-[#001c43] px-6 py-3 rounded-lg hover:bg-gray-300 transition-colors font-montserrat font-semibold"
+                                    >
+                                        No, Keep It
+                                    </button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                    <p>Keep this request</p>
+                                </TooltipContent>
+                            </Tooltip>
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <button
+                                        onClick={confirmCancel}
+                                        className="flex-1 bg-[#e50019] text-white px-6 py-3 rounded-lg hover:bg-[#c40015] transition-colors font-montserrat font-semibold"
+                                    >
+                                        Yes, Cancel
+                                    </button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                    <p>Confirm cancellation</p>
+                                </TooltipContent>
+                            </Tooltip>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Print-only content */}
+            <div className="hidden print:block">
+                <FormContent request={request} />
+            </div>
+        </TooltipProvider>
     );
 }
