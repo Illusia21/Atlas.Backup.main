@@ -88,7 +88,7 @@ export default function ProtectedLayout() {
     return <div>Loading...</div>;
   }
 
-  return !isAuthorized ? (
+  return isAuthorized ? (
     <SidebarProvider defaultOpen={false}>
       <AppSidebar />
       <div className="flex flex-col w-full min-w-0">
