@@ -12,6 +12,7 @@ import NonTradePayable from "./routes/protected-layout/pages/NonTradePayable";
 import TradePayable from "./routes/protected-layout/pages/TradePayable";
 import CashAdvance from "./routes/protected-layout/pages/CashAdvance";
 import RequestDetails from "./routes/protected-layout/pages/RequestDetails";
+import RFPStep1 from "./routes/public-layout/pages/Reimbursement/RFPStep1";
 
 function Logout() {
   logout();
@@ -74,6 +75,10 @@ const Router = createBrowserRouter([
       {
         path: "/auth/callback",
         element: <AuthCallback />,
+      },
+      {
+        path: "/reimbursement/step1",
+        element: <RFPStep1 />,
       },
     ],
   },
