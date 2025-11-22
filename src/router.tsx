@@ -7,6 +7,8 @@ import ProtectedLayout from "./routes/protected-layout";
 import PublicLayout from "./routes/public-layout";
 import { logout } from './utils/auth';
 import MyRequests from "./routes/protected-layout/pages/MyRequests";
+import MyRequests from "./routes/protected-layout/pages/MyRequests";
+import { logout } from './utils/auth';
 import Reimbursement from "./routes/protected-layout/pages/Reimbursement";
 import NonTradePayable from "./routes/protected-layout/pages/NonTradePayable";
 import TradePayable from "./routes/protected-layout/pages/TradePayable";

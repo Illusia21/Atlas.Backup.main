@@ -107,6 +107,7 @@ export default function ProtectedLayout() {
   // AUTH BYPASS
   // ==========================================
   // return (
+  // return isAuthorized ? (
   //   <SidebarProvider defaultOpen={false}>
   //     <AppSidebar />
   //     <div className="flex flex-col w-full">
