@@ -7,6 +7,7 @@ import ProtectedLayout from "./routes/protected-layout";
 import PublicLayout from "./routes/public-layout";
 import { logout } from './utils/auth';
 import MyRequests from "./routes/protected-layout/pages/MyRequests";
+import RFPStep1 from "./routes/public-layout/pages/Reimbursement/RFPStep1";
 
 function Logout() {
   logout();
@@ -49,6 +50,10 @@ const Router = createBrowserRouter([
       {
         path: "/auth/callback",
         element: <AuthCallback />,
+      },
+      {
+        path: "/reimbursement/step1",
+        element: <RFPStep1 />,
       },
     ],
   },
