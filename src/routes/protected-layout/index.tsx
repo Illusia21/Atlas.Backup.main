@@ -91,9 +91,9 @@ export default function ProtectedLayout() {
   return !isAuthorized ? (
     <SidebarProvider defaultOpen={false}>
       <AppSidebar />
-      <div className="flex flex-col w-full">
+      <div className="flex flex-col w-full min-w-0">
         <Topbar pageTitle={pageTitle} />
-        <main className="flex-1 bg-[#F5F5F5] p-6">
+        <main className="flex-1 bg-[#F5F5F5] p-6 overflow-x-hidden">
           <Outlet />
         </main>
       </div>
