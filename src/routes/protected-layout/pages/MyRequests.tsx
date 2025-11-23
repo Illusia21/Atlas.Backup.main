@@ -59,9 +59,9 @@ function MyRequests() {
     }
 
     return (
-        <div className="space-y-6 w-full overflow-x-hidden">
+        <div className="space-y-6">
             {/* View Toggle, Filter, and Search Bar */}
-            <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center justify-between">
                 {/* Left Section - View Toggle */}
                 <div className="flex w-[84px] items-center rounded-[6px] bg-[#fcfcfc] p-[4px]">
                     <button
@@ -81,21 +81,21 @@ function MyRequests() {
                 </div>
 
                 {/* Right Section - Filter and Search Bar grouped together */}
-                <div className="flex items-center gap-3 flex-1 justify-end min-w-0">
+                <div className="flex items-center gap-5">
                     {/* Filter Button */}
-                    <button className="relative cursor-pointer hover:bg-gray-100 p-2 rounded-md transition-colors flex-shrink-0">
+                    <button className="relative cursor-pointer hover:bg-gray-100 p-2 rounded-md transition-colors">
                         <ListFilterPlus className="h-6 w-6 text-[#001c43]" />
                     </button>
 
                     {/* Search Bar */}
-                    <div className="relative min-w-[438px] max-w-[438px]">
+                    <div className="relative w-[438px]">
                         <input
                             ref={searchInputRef}
                             type="text"
                             placeholder="Search by Request Type, Description, ID, etc."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="text-[12px] w-full rounded-[20px] border border-[#b1b1b1] bg-white px-[20px] py-[13px] font-['Montserrat'] font-normal leading-5 text-[#001c43] placeholder:text-[#b1b1b1] focus:outline-none focus:border-[#001c43]"
+                            className="text-[12px] w-full rounded-[20px] border border-[#b1b1b1] bg-white px-[20px] py-[13px] font-['Montserrat'] font-normal leading-5 text-[#001c43] placeholder:text-[#b1b1b1] focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                         <Search
                             onClick={handleSearchIconClick}
@@ -106,13 +106,13 @@ function MyRequests() {
             </div>
 
             {/* Horizontal Tab Bar */}
-            <div className="flex items-center justify-center overflow-x-auto">
+            <div className="flex items-center justify-center">
                 <div className="flex items-center rounded-[6px] bg-[#fcfcfc] p-[4px] w-full">
                     {tabs.map((tab) => (
                         <button
                             key={tab}
                             onClick={() => setActiveTab(tab)}
-                            className={`flex-1 min-w-[120px] cursor-pointer px-[12px] py-[6px] text-center font-['Montserrat'] text-[12px] font-normal leading-5 transition-colors ${activeTab === tab
+                            className={`w-[196px] cursor-pointer px-[12px] py-[6px] text-center font-['Montserrat'] text-[12px] font-normal leading-5 transition-colors ${activeTab === tab
                                 ? 'rounded-[4px] bg-white text-[#09090b] shadow-sm'
                                 : 'text-[#71717a]'
                                 }`}
@@ -126,7 +126,7 @@ function MyRequests() {
             {/* Conditional Rendering: Table or Card View */}
             {viewMode === 'table' ? (
                 /* Table View */
-                <div className="bg-white rounded-lg border overflow-x-auto">
+                <div className="bg-white rounded-[12px] overflow-x-auto">
                     <Table>
                         <TableHeader>
                             <TableRow className="bg-[#001C43] hover:bg-[#001C43]">
@@ -172,7 +172,7 @@ function MyRequests() {
                 </div>
             ) : (
                 /* Card Grid View */
-                <div className="min-h-[400px] w-full">
+                <div className="min-h-[400px]">
                     {filteredRequests.length === 0 ? (
                         <div className="flex items-center justify-center py-16">
                             <p className="text-center text-gray-500 text-[14px]">
@@ -180,7 +180,7 @@ function MyRequests() {
                             </p>
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                             {filteredRequests.map((request) => (
                                 <RequestCard key={request.id} request={request} />
                             ))}
