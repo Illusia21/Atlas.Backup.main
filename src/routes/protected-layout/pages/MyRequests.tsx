@@ -231,7 +231,7 @@ function MyRequests() {
             {/* Conditional Rendering: Table or Card View */}
             {viewMode === 'table' ? (
                 /* Table View */
-                <div className="bg-white rounded-lg border overflow-x-auto">
+                <div className="bg-white rounded-[12px] overflow-x-auto">
                     <Table>
                         <TableHeader>
                             <TableRow className="bg-[#001C43] hover:bg-[#001C43]">
