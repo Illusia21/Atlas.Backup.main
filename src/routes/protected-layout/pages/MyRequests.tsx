@@ -173,7 +173,7 @@ function MyRequests() {
                     <Table>
                         <TableHeader>
                             <TableRow className="bg-[#001C43] hover:bg-[#001C43]">
-                                <TableHead className="text-white text-[12px] text-center font-semibold min-w-[80px] rounded-tl-[12px]">Request ID</TableHead>
+                                <TableHead className="text-white text-[12px] text-center font-semibold min-w-[80px]">Request ID</TableHead>
                                 <TableHead className="text-white text-[12px] text-center font-semibold min-w-[180px]">Request Type</TableHead>
                                 <TableHead className="text-white text-[12px] text-center font-semibold min-w-[140px]">Date Requested</TableHead>
                                 <TableHead className="text-white text-[12px] text-center font-semibold min-w-[300px]">Description</TableHead>
