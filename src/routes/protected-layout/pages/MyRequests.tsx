@@ -95,7 +95,7 @@ function MyRequests() {
     }
 
     return (
-        <div className="space-y-6 w-full overflow-x-hidden">
+        <div className="space-y-6 w-full">
             {/* View Toggle, Filter, and Search Bar */}
             <div className="flex items-center justify-between gap-4">
                 {/* Left Section - View Toggle */}
