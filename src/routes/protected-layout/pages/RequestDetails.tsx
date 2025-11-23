@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useState, useMemo, useRef } from "react";
 import { useReactToPrint } from "react-to-print";
 import { X, Send, MoveRight, Download, Link2, HardDriveDownload } from "lucide-react";
-import { mockRequestDetails, type RequestDetail } from "@/data/mockRequestDetails";
+import { mockRequestDetails, type RequestDetail, type Comment } from "@/data/mockRequestDetails";
 import {
     Tooltip,
     TooltipContent,
@@ -376,18 +376,86 @@ function PrintFormContent({ request }: { request: RequestDetail }) {
     );
 }
 
-// Comments Tab Placeholder
-function CommentsContent() {
+// Comments Tab Content
+function CommentsContent({ comments, newComment, setNewComment, onSend }: {
+    comments: Comment[];
+    newComment: string;
+    setNewComment: (value: string) => void;
+    onSend: () => void;
+}) {
+    const commentsEndRef = useRef<HTMLDivElement>(null);
+
+    // Auto-scroll to newest comment
+    const scrollToBottom = () => {
+        commentsEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    };
+
+    // Scroll when comments change
+    useMemo(() => {
+        scrollToBottom();
+    }, [comments]);
+
     return (
-        <div className="flex-1 flex items-center justify-center">
-            <div className="text-center p-8">
-                <p className="text-gray-400 text-lg mb-2">Comments</p>
-                <p className="text-gray-500 text-sm">
-                    Full comments history will be displayed here.
-                </p>
-                <p className="text-gray-400 text-xs mt-4">
-                    (Coming soon - separate ticket)
-                </p>
+        <div className="flex flex-col h-full">
+            {/* Comments List - Scrollable */}
+            <div className="flex-1 overflow-y-auto p-6 space-y-4">
+                {comments.length === 0 ? (
+                    <div className="flex items-center justify-center h-full">
+                        <p className="text-gray-400 text-sm">No comments yet. Be the first to comment!</p>
+                    </div>
+                ) : (
+                    comments.map((comment) => (
+                        <div key={comment.id} className="flex flex-col gap-2">
+                            {/* Comment Header */}
+                            <div className="flex items-center gap-2">
+                                <p className="font-bold text-[#001c43] text-sm">{comment.author}</p>
+                                <span
+                                    className={`px-2 py-0.5 rounded-full text-xs font-medium ${comment.role === "Approver"
+                                        ? "bg-blue-100 text-blue-700"
+                                        : comment.role === "Requester"
+                                            ? "bg-green-100 text-green-700"
+                                            : "bg-gray-100 text-gray-700"
+                                        }`}
+                                >
+                                    {comment.role}
+                                </span>
+                                <p className="text-xs text-gray-400">{comment.timestamp}</p>
+                            </div>
+
+                            {/* Comment Body */}
+                            <div className="bg-gray-50 rounded-lg p-4">
+                                <p className="text-sm text-[#001c43]">{comment.text}</p>
+                            </div>
+                        </div>
+                    ))
+                )}
+                <div ref={commentsEndRef} />
+            </div>
+
+            {/* Comment Input - Fixed at Bottom */}
+            <div className="border-t border-gray-200 p-4 bg-white">
+                <div className="flex items-center gap-3">
+                    <input
+                        type="text"
+                        value={newComment}
+                        onChange={(e) => setNewComment(e.target.value)}
+                        onKeyPress={(e) => {
+                            if (e.key === "Enter" && !e.shiftKey) {
+                                e.preventDefault();
+                                onSend();
+                            }
+                        }}
+                        placeholder="Type your comment here..."
+                        className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    <button
+                        onClick={onSend}
+                        disabled={!newComment.trim()}
+                        className="p-2 bg-[#001c43] text-white rounded-lg hover:bg-[#002856] disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+                    >
+                        <Send className="h-5 w-5" />
+                    </button>
+                </div>
             </div>
         </div>
     );
@@ -416,6 +484,8 @@ export default function MyRequestDetails() {
     const [activeTab, setActiveTab] = useState<"form" | "comments" | "journey">("form");
     const [showCancelDialog, setShowCancelDialog] = useState(false);
     const [commentText, setCommentText] = useState("");
+    const [newComment, setNewComment] = useState("");
+    const [comments, setComments] = useState<Comment[]>([]);
 
     // Ref for printing
     const printRef = useRef<HTMLDivElement>(null);
@@ -429,6 +499,13 @@ export default function MyRequestDetails() {
         if (!id) return null;
         return mockRequestDetails[id] || null;
     }, [id]);
+
+    // Initialize comments when request loads
+    useMemo(() => {
+        if (request?.comments) {
+            setComments(request.comments);
+        }
+    }, [request]);
 
     // Handle Download Form using react-to-print
     const handleDownloadForm = useReactToPrint({
@@ -528,6 +605,21 @@ export default function MyRequestDetails() {
         );
     }
 
+    const handleSendComment = () => {
+        if (!newComment.trim() || !request) return;
+
+        const newCommentObj = {
+            id: `c${comments.length + 1}`,
+            author: "Current User", // Replace with actual user name later
+            role: "Requester",
+            timestamp: new Date().toLocaleString(),
+            text: newComment.trim(),
+        };
+
+        setComments([...comments, newCommentObj]);
+        setNewComment("");
+    };
+
     return (
         <TooltipProvider delayDuration={300}>
             {/* Modal Overlay */}
@@ -617,7 +709,14 @@ export default function MyRequestDetails() {
                         {/* Form Preview Area */}
                         <div className="bg-white border border-[#b1b1b1] rounded-b-[20px] flex-1 overflow-y-auto">
                             {activeTab === "form" && <FormContent request={request} />}
-                            {activeTab === "comments" && <CommentsContent />}
+                            {activeTab === "comments" && (
+                                <CommentsContent
+                                    comments={comments}
+                                    newComment={newComment}
+                                    setNewComment={setNewComment}
+                                    onSend={handleSendComment}
+                                />
+                            )}
                             {activeTab === "journey" && <JourneyContent />}
                         </div>
 
@@ -697,21 +796,21 @@ export default function MyRequestDetails() {
                                 </p>
 
                                 {/* Comment Item or No Comments */}
-                                {request.comments.length > 0 ? (
+                                {comments.length > 0 ? (
                                     <div className="space-y-2 mb-3">
                                         <div className="flex items-start justify-between">
                                             <p className="text-xs text-[#001c43]">
-                                                <span className="font-medium">{request.comments[0].author}</span>
-                                                <span className="text-[#e50019]"> - {request.comments[0].role}</span>
+                                                <span className="font-medium">{comments[comments.length - 1].author}</span>
+                                                <span className="text-[#e50019]"> - {comments[comments.length - 1].role}</span>
                                             </p>
                                             <p className="text-[10px] text-[#9ca3af]">
-                                                {request.comments[0].timestamp}
+                                                {comments[comments.length - 1].timestamp}
                                             </p>
                                         </div>
                                         <div className="pl-3 border-l-2 border-[#e5e7eb]">
                                             <div className="bg-white border border-[#e5e7eb] rounded-lg px-3 py-2">
                                                 <p className="text-xs text-[#374151]">
-                                                    {request.comments[0].text}
+                                                    {comments[comments.length - 1].text}
                                                 </p>
                                             </div>
                                         </div>
