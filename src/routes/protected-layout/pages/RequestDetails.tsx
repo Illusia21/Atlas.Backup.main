@@ -16,7 +16,7 @@ const formatNumber = (num: number): string => {
     return num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 };
 
-// Form Content Component - The actual reimbursement form display
+// Form Content Component - The actual reimbursement form display (for screen)
 function FormContent({ request }: { request: RequestDetail }) {
     return (
         <div className="bg-white min-h-full p-8">
@@ -30,7 +30,7 @@ function FormContent({ request }: { request: RequestDetail }) {
                         className="w-[150px] h-[100px] object-contain"
                     />
                 </div>
-                <h1 className="text-[#001c43] font-bold text-[32px]">{request.formTitle}</h1>
+                <h1 className="text-[#001c43] font-bold text-[20px]">{request.formTitle}</h1>
                 <p className="text-[#001c43] text-sm font-medium">{request.referenceNumber}</p>
             </div>
 
@@ -92,26 +92,26 @@ function FormContent({ request }: { request: RequestDetail }) {
                 <div className="overflow-hidden border border-gray-200 rounded-lg">
                     <table className="w-full border-collapse">
                         <thead>
-                            <tr className="bg-[#001c43] text-white text-sm">
-                                <th className="py-3 px-4 text-center font-bold">Line/Item</th>
-                                <th className="py-3 px-4 text-left font-bold">Category</th>
-                                <th className="py-3 px-4 text-left font-bold">Activity/Description</th>
-                                <th className="py-3 px-4 text-center font-bold">Quantity</th>
-                                <th className="py-3 px-4 text-center font-bold">UOM</th>
-                                <th className="py-3 px-4 text-right font-bold">Price</th>
-                                <th className="py-3 px-4 text-right font-bold">Amount</th>
+                            <tr className="bg-[#001c43] text-white text-xs">
+                                <th className="py-2 px-2 text-center font-bold whitespace-nowrap">Line/Item</th>
+                                <th className="py-2 px-2 text-left font-bold whitespace-nowrap">Category</th>
+                                <th className="py-2 px-2 text-left font-bold">Activity/Description</th>
+                                <th className="py-2 px-2 text-center font-bold whitespace-nowrap">Quantity</th>
+                                <th className="py-2 px-2 text-center font-bold whitespace-nowrap">UOM</th>
+                                <th className="py-2 px-2 text-right font-bold whitespace-nowrap">Price</th>
+                                <th className="py-2 px-2 text-right font-bold whitespace-nowrap">Amount</th>
                             </tr>
                         </thead>
                         <tbody>
                             {request.lineItems.map((item, index) => (
                                 <tr key={index} className="border-b border-gray-200 last:border-b-0 bg-white font-bold">
-                                    <td className="py-3 px-4 text-[#001c43] text-sm text-center">{item.lineNumber}</td>
-                                    <td className="py-3 px-4 text-[#001c43] text-sm">{item.category}</td>
-                                    <td className="py-3 px-4 text-[#001c43] text-sm">{item.activityDescription}</td>
-                                    <td className="py-3 px-4 text-[#001c43] text-sm text-center">{item.quantity}</td>
-                                    <td className="py-3 px-4 text-[#001c43] text-sm text-center">{item.uom}</td>
-                                    <td className="py-3 px-4 text-[#001c43] text-sm text-right">{formatNumber(item.price)}</td>
-                                    <td className="py-3 px-4 text-[#001c43] text-sm text-right">{formatNumber(item.amount)}</td>
+                                    <td className="py-2 px-2 text-[#001c43] text-xs text-center">{item.lineNumber}</td>
+                                    <td className="py-2 px-2 text-[#001c43] text-xs">{item.category}</td>
+                                    <td className="py-2 px-2 text-[#001c43] text-xs">{item.activityDescription}</td>
+                                    <td className="py-2 px-2 text-[#001c43] text-xs text-center">{item.quantity}</td>
+                                    <td className="py-2 px-2 text-[#001c43] text-xs text-center">{item.uom}</td>
+                                    <td className="py-2 px-2 text-[#001c43] text-xs text-right whitespace-nowrap">{formatNumber(item.price)}</td>
+                                    <td className="py-2 px-2 text-[#001c43] text-xs text-right whitespace-nowrap">{formatNumber(item.amount)}</td>
                                 </tr>
                             ))}
                         </tbody>
@@ -205,6 +205,177 @@ function FormContent({ request }: { request: RequestDetail }) {
     );
 }
 
+// Print-optimized Form Content - Compact for 1 page
+function PrintFormContent({ request }: { request: RequestDetail }) {
+    return (
+        <div className="bg-white p-4 text-[9px]">
+            {/* Header */}
+            <div className="flex items-center justify-between pb-2 mb-3 border-b border-gray-300">
+                <img src={mapuaLogo} alt="MAPUA Logo" className="w-[60px] h-auto object-contain" />
+                <h1 className="text-[#001c43] font-bold text-[14px]">{request.formTitle}</h1>
+                <p className="text-[#001c43] text-[9px] font-medium">{request.referenceNumber}</p>
+            </div>
+
+            {/* Requester Information */}
+            <div className="mb-3">
+                <h2 className="text-[#001c43] font-bold text-[11px] mb-2">Requester Information</h2>
+                <div className="grid grid-cols-2 gap-x-4 gap-y-1">
+                    <div>
+                        <p className="text-[#001c43] font-bold">Requested By</p>
+                        <p className="text-[#001c43]">{request.requesterInfo.requestedBy}</p>
+                    </div>
+                    <div>
+                        <p className="text-[#001c43] font-bold">Department</p>
+                        <p className="text-[#001c43]">{request.requesterInfo.department}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div className="border-b border-gray-300 mb-3" />
+
+            {/* Request Details */}
+            <div className="mb-3">
+                <h2 className="text-[#001c43] font-bold text-[11px] mb-2">Request Details</h2>
+
+                <div className="mb-2">
+                    <p className="text-[#001c43] font-bold">Request Type</p>
+                    <p className="text-[#001c43]">{request.requestDetailsInfo.requestType}</p>
+                </div>
+
+                <div className="mb-2">
+                    <p className="text-[#001c43] font-bold">Description/Purpose</p>
+                    <p className="text-[#001c43]">{request.requestDetailsInfo.descriptionPurpose}</p>
+                </div>
+
+                <div className="grid grid-cols-4 gap-x-4 gap-y-1 mb-2">
+                    <div>
+                        <p className="text-[#001c43] font-bold">Source of Fund</p>
+                        <p className="text-[#001c43]">{request.requestDetailsInfo.sourceOfFund}</p>
+                    </div>
+                    <div>
+                        <p className="text-[#001c43] font-bold">Cost Center</p>
+                        <p className="text-[#001c43]">{request.requestDetailsInfo.costCenter}</p>
+                    </div>
+                    <div>
+                        <p className="text-[#001c43] font-bold">Date Requested</p>
+                        <p className="text-[#001c43]">{request.requestDetailsInfo.dateRequested}</p>
+                    </div>
+                    <div>
+                        <p className="text-[#001c43] font-bold">Date Needed</p>
+                        <p className="text-[#001c43]">{request.requestDetailsInfo.dateNeeded}</p>
+                    </div>
+                </div>
+
+                {/* Line Items Table */}
+                <table className="w-full border-collapse text-[8px] border border-gray-200">
+                    <thead>
+                        <tr className="bg-[#001c43] text-white">
+                            <th className="py-1 px-1 text-center font-bold border border-gray-300">Line/Item</th>
+                            <th className="py-1 px-1 text-left font-bold border border-gray-300">Category</th>
+                            <th className="py-1 px-1 text-left font-bold border border-gray-300">Activity/Description</th>
+                            <th className="py-1 px-1 text-center font-bold border border-gray-300">Quantity</th>
+                            <th className="py-1 px-1 text-center font-bold border border-gray-300">UOM</th>
+                            <th className="py-1 px-1 text-right font-bold border border-gray-300">Price</th>
+                            <th className="py-1 px-1 text-right font-bold border border-gray-300">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {request.lineItems.map((item, index) => (
+                            <tr key={index} className="border-b border-gray-200">
+                                <td className="py-1 px-1 text-[#001c43] text-center border border-gray-200">{item.lineNumber}</td>
+                                <td className="py-1 px-1 text-[#001c43] border border-gray-200">{item.category}</td>
+                                <td className="py-1 px-1 text-[#001c43] border border-gray-200">{item.activityDescription}</td>
+                                <td className="py-1 px-1 text-[#001c43] text-center border border-gray-200">{item.quantity}</td>
+                                <td className="py-1 px-1 text-[#001c43] text-center border border-gray-200">{item.uom}</td>
+                                <td className="py-1 px-1 text-[#001c43] text-right border border-gray-200">{formatNumber(item.price)}</td>
+                                <td className="py-1 px-1 text-[#001c43] text-right border border-gray-200">{formatNumber(item.amount)}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+
+            <div className="border-b border-gray-300 mb-3" />
+
+            {/* Amount Summary */}
+            <div className="mb-3 bg-gray-100 p-3 rounded">
+                <div className="flex justify-between items-start">
+                    <p className="text-[#001c43] font-bold">Currency: {request.amountSummary.currency}</p>
+                    <div className="text-right space-y-1">
+                        <div className="flex justify-between gap-4">
+                            <span className="text-[#001c43] font-bold">Amount</span>
+                            <span className="text-[#001c43]">{formatNumber(request.amountSummary.amount)}</span>
+                        </div>
+                        <div className="flex justify-between gap-4">
+                            <span className="text-[#001c43] font-bold">Service Fee</span>
+                            <span className="text-[#001c43]">{formatNumber(request.amountSummary.serviceFee)}</span>
+                        </div>
+                        <div className="flex justify-between gap-4">
+                            <span className="text-[#001c43] font-bold">Less: EWT</span>
+                            <span className="text-[#001c43]">({request.amountSummary.ewtRate}%) {formatNumber(request.amountSummary.ewtAmount)}</span>
+                        </div>
+                        <div className="border-t border-gray-300 pt-1 mt-1">
+                            <div className="flex justify-between gap-4">
+                                <span className="text-[#001c43] font-bold text-[10px]">Net Total Amount</span>
+                                <span className="text-[#001c43] font-bold text-[10px]">{formatNumber(request.amountSummary.netTotalAmount)}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div className="border-b border-gray-300 mb-3" />
+
+            {/* Payment Terms - Updated to match Screenshot 1 layout */}
+            <div>
+                <h2 className="text-[#001c43] font-bold text-[11px] mb-2">Payment Terms & Schedule</h2>
+
+                <div className="grid grid-cols-2 gap-x-8 gap-y-2 text-[8px]">
+                    {/* Left Column */}
+                    <div className="space-y-2">
+                        <div>
+                            <p className="text-[#001c43] font-bold">Mode of Payment</p>
+                            <p className="text-[#001c43]">{request.paymentTerms.modeOfPayment}</p>
+                        </div>
+                        <div>
+                            <p className="text-[#001c43] font-bold">Tax Registration Type</p>
+                            <p className="text-[#001c43]">{request.paymentTerms.taxRegistrationType}</p>
+                        </div>
+                    </div>
+
+                    {/* Right Column */}
+                    <div className="space-y-2">
+                        <div>
+                            <p className="text-[#001c43] font-bold">Terms of Payment</p>
+                            <p className="text-[#001c43]">{request.paymentTerms.termsOfPayment}</p>
+                        </div>
+                        <div>
+                            <p className="text-[#001c43] font-bold">Type of Business</p>
+                            <p className="text-[#001c43]">{request.paymentTerms.typeOfBusiness}</p>
+                        </div>
+
+                        {/* PO, PR, RR underneath Type of Business */}
+                        <div className="pt-2 space-y-2">
+                            <div>
+                                <p className="text-[#001c43] font-bold">PO</p>
+                                <p className="text-[#001c43]">{request.paymentTerms.po}</p>
+                            </div>
+                            <div>
+                                <p className="text-[#001c43] font-bold">PR</p>
+                                <p className="text-[#001c43]">{request.paymentTerms.pr}</p>
+                            </div>
+                            <div>
+                                <p className="text-[#001c43] font-bold">RR</p>
+                                <p className="text-[#001c43]">{request.paymentTerms.rr}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
 // Comments Tab Placeholder
 function CommentsContent() {
     return (
@@ -266,34 +437,26 @@ export default function MyRequestDetails() {
         pageStyle: `
             @page {
                 size: A4;
-                margin: 15mm;
+                margin: 10mm;
             }
             @media print {
                 body {
                     -webkit-print-color-adjust: exact !important;
                     print-color-adjust: exact !important;
                 }
+                * {
+                    -webkit-print-color-adjust: exact !important;
+                    print-color-adjust: exact !important;
+                }
                 table {
-                    width: 100% !important;
                     border-collapse: collapse !important;
-                }
-                thead {
-                    display: table-header-group !important;
-                }
-                tr {
-                    page-break-inside: avoid !important;
                 }
                 thead tr {
                     background-color: #001c43 !important;
                 }
                 th {
                     color: white !important;
-                    padding: 12px 16px !important;
-                    border: 1px solid #e5e5e5 !important;
-                }
-                td {
-                    padding: 12px 16px !important;
-                    border: 1px solid #e5e5e5 !important;
+                    background-color: #001c43 !important;
                 }
                 .bg-gray-100 {
                     background-color: #f3f4f6 !important;
@@ -370,7 +533,7 @@ export default function MyRequestDetails() {
             {/* Modal Overlay */}
             <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50">
                 {/* Modal Container */}
-                <div className="bg-[#fcfcfc] rounded-[20px] shadow-[0px_4px_20px_0px_rgba(0,0,0,0.25)] w-[95vw] max-w-[1393px] h-[90vh] max-h-[946px] grid grid-cols-[1fr_380px] grid-rows-[auto_1fr] overflow-hidden">
+                <div className="bg-[#fcfcfc] rounded-[20px] shadow-[0px_4px_20px_0px_rgba(0,0,0,0.25)] w-[95vw] max-w-[1393px] h-[90vh] max-h-[946px] grid grid-cols-1 lg:grid-cols-[1fr_320px] xl:grid-cols-[1fr_380px] grid-rows-[auto_1fr_auto] lg:grid-rows-[auto_1fr] overflow-hidden">
 
                     {/* LEFT PANEL - TABS (Header) */}
                     <div className="col-[1] row-[1] p-4 flex justify-center">
@@ -461,7 +624,7 @@ export default function MyRequestDetails() {
                     </div>
 
                     {/* RIGHT PANEL */}
-                    <div className="col-[2] row-[1_/_span_2] bg-[#fafafa] border-l border-[#e5e7eb] flex flex-col overflow-hidden">
+                    <div className="col-[1] row-[3] lg:col-[2] lg:row-[1_/_span_2] bg-[#fafafa] border-t lg:border-t-0 lg:border-l border-[#e5e7eb] flex flex-col overflow-hidden max-h-[300px] lg:max-h-none">
 
                         {/* Header with Workflow Status & Close Button */}
                         <div className="p-4 border-b border-[#e5e7eb] flex items-center justify-between flex-shrink-0">
@@ -731,7 +894,7 @@ export default function MyRequestDetails() {
             {/* Hidden Print Content - This is what gets printed */}
             <div style={{ display: 'none' }}>
                 <div ref={printRef}>
-                    <FormContent request={request} />
+                    <PrintFormContent request={request} />
                 </div>
             </div>
         </TooltipProvider>
