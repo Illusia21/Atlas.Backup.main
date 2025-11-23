@@ -405,27 +405,32 @@ function CommentsContent({ comments, newComment, setNewComment, onSend }: {
                     </div>
                 ) : (
                     comments.map((comment) => (
-                        <div key={comment.id} className="flex flex-col gap-2">
-                            {/* Comment Header */}
+                        <div key={comment.id} className="space-y-1">
+                            {/* Comment Author and Role - Single Line */}
                             <div className="flex items-center gap-2">
-                                <p className="font-bold text-[#001c43] text-sm">{comment.author}</p>
+                                <span className="font-semibold text-[#001c43] text-sm">
+                                    {comment.author}
+                                </span>
+                                <span className="text-sm">-</span>
                                 <span
-                                    className={`px-2 py-0.5 rounded-full text-xs font-medium ${comment.role === "Approver"
-                                        ? "bg-blue-100 text-blue-700"
-                                        : comment.role === "Requester"
-                                            ? "bg-green-100 text-green-700"
-                                            : "bg-gray-100 text-gray-700"
+                                    className={`text-sm font-medium ${comment.role === "Role" || comment.role === "Approver"
+                                        ? "text-[#e50019]"
+                                        : comment.role === "Requestor" || comment.role === "Requester"
+                                            ? "text-[#E50019]"
+                                            : "text-gray-600"
                                         }`}
                                 >
                                     {comment.role}
                                 </span>
-                                <p className="text-xs text-gray-400">{comment.timestamp}</p>
                             </div>
 
-                            {/* Comment Body */}
-                            <div className="bg-gray-50 rounded-lg p-4">
+                            {/* Comment Text - Gray Box */}
+                            <div className="bg-[#f5f5f5] rounded-md p-3 border border-gray-200">
                                 <p className="text-sm text-[#001c43]">{comment.text}</p>
                             </div>
+
+                            {/* Timestamp Below */}
+                            <p className="text-xs text-gray-400">{comment.timestamp}</p>
                         </div>
                     ))
                 )}
@@ -434,7 +439,7 @@ function CommentsContent({ comments, newComment, setNewComment, onSend }: {
 
             {/* Comment Input - Fixed at Bottom */}
             <div className="border-t border-gray-200 p-4 bg-white">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2">
                     <input
                         type="text"
                         value={newComment}
@@ -445,16 +450,23 @@ function CommentsContent({ comments, newComment, setNewComment, onSend }: {
                                 onSend();
                             }
                         }}
-                        placeholder="Type your comment here..."
-                        className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="Type your comment here"
+                        className="flex-1 px-4 py-2.5 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#001c43] focus:border-transparent"
                     />
-                    <button
-                        onClick={onSend}
-                        disabled={!newComment.trim()}
-                        className="p-2 bg-[#001c43] text-white rounded-lg hover:bg-[#002856] disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
-                    >
-                        <Send className="h-5 w-5" />
-                    </button>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <button
+                                onClick={onSend}
+                                disabled={!newComment.trim()}
+                                className="p-2.5 bg-[#001c43] text-white rounded-md hover:bg-[#002856] disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+                            >
+                                <Send className="h-5 w-5" />
+                            </button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                            <p>Send comment</p>
+                        </TooltipContent>
+                    </Tooltip>
                 </div>
             </div>
         </div>
@@ -686,25 +698,27 @@ export default function MyRequestDetails() {
                     {/* LEFT PANEL - MAIN CONTENT */}
                     <div className="col-[1] row-[2] flex flex-col gap-[10px] p-[20px] pt-0 overflow-hidden">
 
-                        {/* Download Form Button Header */}
-                        <div className="bg-[rgba(0,28,67,0.7)] flex items-center justify-end px-[31px] py-[14px] rounded-tl-[20px] rounded-tr-[20px]">
-                            <Tooltip>
-                                <TooltipTrigger asChild>
-                                    <button
-                                        onClick={() => handleDownloadForm()}
-                                        className="bg-[#001c43] flex items-center gap-[10px] px-[16px] py-[6px] rounded-[10px] hover:bg-[#002855] transition-colors"
-                                    >
-                                        <HardDriveDownload className="w-[18px] h-[18px] text-white" />
-                                        <p className="text-[14px] text-white leading-[20px]">
-                                            Download Form
-                                        </p>
-                                    </button>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                    <p>Download or print this form</p>
-                                </TooltipContent>
-                            </Tooltip>
-                        </div>
+                        {/* Download Form Button Header - Only show on Form tab */}
+                        {activeTab === "form" && (
+                            <div className="bg-[rgba(0,28,67,0.7)] flex items-center justify-end px-[31px] py-[14px] rounded-tl-[20px] rounded-tr-[20px]">
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <button
+                                            onClick={() => handleDownloadForm()}
+                                            className="bg-[#001c43] flex items-center gap-[10px] px-[16px] py-[6px] rounded-[10px] hover:bg-[#002855] transition-colors"
+                                        >
+                                            <HardDriveDownload className="w-[18px] h-[18px] text-white" />
+                                            <p className="text-[14px] text-white leading-[20px]">
+                                                Download Form
+                                            </p>
+                                        </button>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        <p>Download or print this form</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
+                        )}
 
                         {/* Form Preview Area */}
                         <div className="bg-white border border-[#b1b1b1] rounded-b-[20px] flex-1 overflow-y-auto">
