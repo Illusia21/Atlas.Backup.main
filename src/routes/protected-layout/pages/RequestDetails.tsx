@@ -2,7 +2,7 @@ import mapuaLogo from '@/assets/images/mapuaLogo.png'
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useMemo, useRef } from "react";
 import { useReactToPrint } from "react-to-print";
-import { X, Send, MoveRight, Download, Link2, HardDriveDownload, Upload } from "lucide-react";
+import { X, Send, MoveRight, Download, Link2, HardDriveDownload, CloudUpload } from "lucide-react";
 import { mockRequestDetails, type RequestDetail, type Comment, type JourneyStep } from "@/data/mockRequestDetails";
 import {
     Tooltip,
@@ -1141,7 +1141,7 @@ export default function MyRequestDetails() {
                     <div className="bg-white rounded-[20px] p-8 max-w-md w-full mx-4 shadow-xl">
                         {/* Header with Close Button */}
                         <div className="flex items-center justify-between mb-6">
-                            <h2 className="text-xl font-bold text-[#e50019]">
+                            <h2 className="text-sm font-bold text-[#e50019]">
                                 Cancel Request
                             </h2>
                             <button
@@ -1174,7 +1174,7 @@ export default function MyRequestDetails() {
                         <div className="mb-6">
                             <div className="flex items-center gap-2 mb-3">
                                 <Link2 className="w-5 h-5 text-[#001c43]" />
-                                <span className="text-sm font-medium text-[#001c43]">Attachments</span>
+                                <span className="text-sm font-medium text-[#001C43]">Attachments</span>
                             </div>
 
                             {/* File Upload Area */}
@@ -1186,11 +1186,11 @@ export default function MyRequestDetails() {
                                     className="hidden"
                                     accept=".jpg,.jpeg,.png,.csv,.pdf"
                                 />
-                                <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                                <CloudUpload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
                                 <p className="text-sm text-gray-600">
-                                    <span className="text-blue-600 font-medium">Click to upload</span> or drag and drop
+                                    <span className="text-[#001C43] font-regular">Click to upload</span> or drag and drop
                                 </p>
-                                <p className="text-xs text-gray-400 mt-1">
+                                <p className="text-sm text-[#535862] mt-1 font-regular">
                                     JPEG, PNG, CSV, and PDF formats, up to 50MB
                                 </p>
                             </label>
@@ -1213,21 +1213,21 @@ export default function MyRequestDetails() {
                             )}
                         </div>
 
-                        {/* Action Buttons */}
-                        <div className="flex gap-3">
+                        {/* Action Buttons - Right Aligned */}
+                        <div className="flex gap-3 justify-end">
                             <button
                                 onClick={() => {
                                     setShowCancelDialog(false);
                                     setCancelReason("");
                                     setCancelAttachments([]);
                                 }}
-                                className="flex-1 bg-white border border-gray-300 text-[#001c43] px-6 py-3 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+                                className="w-[84px] h-[40px] bg-white border border-gray-300 text-[#001c43] rounded-lg hover:bg-gray-50 transition-colors font-medium text-sm"
                             >
                                 Cancel
                             </button>
                             <button
                                 onClick={confirmCancel}
-                                className="flex-1 bg-[#001c43] text-white px-6 py-3 rounded-lg hover:bg-[#002856] transition-colors font-medium"
+                                className="w-[84px] h-[40px] bg-[#001c43] text-white rounded-lg hover:bg-[#002856] transition-colors font-medium text-sm"
                             >
                                 Confirm
                             </button>
