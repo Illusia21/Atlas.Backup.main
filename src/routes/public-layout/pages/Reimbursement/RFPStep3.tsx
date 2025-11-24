@@ -15,7 +15,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/components/ui/selectRFPStep3";
 
 // Simple form components
 const FormField = ({ 
