@@ -701,7 +701,9 @@ export default function MyRequestDetails() {
                 borderRadius: '12px',
                 boxShadow: '0px 4px 16px rgba(0, 0, 0, 0.15)',
                 padding: '14px',
-                minWidth: '370px',
+                minWidth: '412px',
+                fontWeight: '600',
+                fontSize: '14px',
             },
         });
 
