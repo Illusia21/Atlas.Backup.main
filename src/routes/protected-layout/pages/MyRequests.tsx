@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef } from 'react'
+import { useState, useMemo, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Eye, Search, Table as TableIcon, LayoutGrid, ListFilterPlus, ArrowUpDown } from 'lucide-react'
 import { mockRequests } from '@/data/mockRequests'
@@ -19,6 +19,15 @@ import type { RequestStatus } from '@/types'
 
 function MyRequests() {
     const navigate = useNavigate()
+
+    // Track cancelled requests from localStorage
+    const [cancelledRequests, setCancelledRequests] = useState<string[]>([]);
+
+    // Load cancelled requests on mount
+    useEffect(() => {
+        const cancelled = JSON.parse(localStorage.getItem("cancelledRequests") || "[]");
+        setCancelledRequests(cancelled);
+    }, []);
 
     // State for filters
     const [activeTab, setActiveTab] = useState<RequestStatus | 'All'>('All')
@@ -79,8 +88,17 @@ function MyRequests() {
 
     // Filter and Sort logic
     const filteredRequests = useMemo(() => {
-        // First, filter the requests
-        let filtered = mockRequests.filter((request) => {
+        // First, map requests to update cancelled ones
+        let requests = mockRequests.map(request => {
+            // Check if request is cancelled
+            if (cancelledRequests.includes(request.id)) {
+                return { ...request, status: "Cancellation Requested" as RequestStatus };
+            }
+            return request;
+        });
+
+        // Then filter the requests
+        let filtered = requests.filter((request) => {
             // Tab filter
             const matchesTab = activeTab === 'All' || request.status === activeTab
 
@@ -131,7 +149,7 @@ function MyRequests() {
         }
 
         return filtered
-    }, [searchQuery, activeTab, activeFilters, sortBy, sortOrder])
+    }, [searchQuery, activeTab, activeFilters, sortBy, sortOrder, cancelledRequests])
 
     // Pagination logic
     const totalPages = Math.ceil(filteredRequests.length / itemsPerPage)

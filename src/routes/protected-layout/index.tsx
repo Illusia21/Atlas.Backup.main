@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import { SidebarProvider } from '@/components/ui/sidebar'
 import { AppSidebar } from '@/components/AppSidebar'
 import { Topbar } from '@/components/Topbar'
+import { Toaster } from "@/components/ui/sonner"
 
 interface JWTPayload {
   exp?: number;
@@ -97,6 +98,7 @@ export default function ProtectedLayout() {
           <Outlet />
         </main>
       </div>
+      <Toaster position="top-center" />
     </SidebarProvider>
   ) : <Navigate to="/login" />;
 }
