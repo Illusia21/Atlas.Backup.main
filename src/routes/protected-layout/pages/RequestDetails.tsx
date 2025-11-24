@@ -1,3 +1,4 @@
+import { toast } from "sonner"
 import mapuaLogo from '@/assets/images/mapuaLogo.png'
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useMemo, useRef } from "react";
@@ -682,16 +683,31 @@ export default function MyRequestDetails() {
 
     const confirmCancel = () => {
         if (!cancelReason.trim()) {
-            alert("Please provide a reason for cancellation");
+            toast.error("Please provide a reason for cancellation");
             return;
         }
-        // TODO: Implement actual cancel API call with reason and attachments
+
+        // TODO: Replace with actual API call
         console.log("Cancel reason:", cancelReason);
         console.log("Attachments:", cancelAttachments);
+
+        // Show success toast
+        toast.success("Request cancelation submitted Successfully!");
+
+        // Store cancellation in localStorage to update MyRequests page
+        const cancelledRequests = JSON.parse(localStorage.getItem("cancelledRequests") || "[]");
+        cancelledRequests.push(id);
+        localStorage.setItem("cancelledRequests", JSON.stringify(cancelledRequests));
+
+        // Close dialog and reset states
         setShowCancelDialog(false);
         setCancelReason("");
         setCancelAttachments([]);
-        navigate(-1);
+
+        // Navigate back after showing toast briefly
+        setTimeout(() => {
+            navigate(-1);
+        }, 1500);
     };
 
     // Handle comment submit
