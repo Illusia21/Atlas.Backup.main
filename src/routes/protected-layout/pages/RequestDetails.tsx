@@ -692,7 +692,15 @@ export default function MyRequestDetails() {
         console.log("Attachments:", cancelAttachments);
 
         // Show success toast
-        toast.success("Request cancelation submitted Successfully!");
+        toast.success("Request cancelation submitted Successfully!", {
+            duration: 3000,
+            style: {
+                background: 'white',
+                color: '#001c43',
+                border: '1px solid #e5e5e5',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+            },
+        });
 
         // Store cancellation in localStorage to update MyRequests page
         const cancelledRequests = JSON.parse(localStorage.getItem("cancelledRequests") || "[]");
