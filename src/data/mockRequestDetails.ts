@@ -4,6 +4,7 @@ export interface Comment {
     role: string;
     timestamp: string;
     text: string;
+    attachments?: Attachment[];
 }
 
 export interface Attachment {
