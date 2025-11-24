@@ -377,11 +377,22 @@ function PrintFormContent({ request }: { request: RequestDetail }) {
 }
 
 // Comments Tab Content
-function CommentsContent({ comments, newComment, setNewComment, onSend }: {
+function CommentsContent({
+    comments,
+    newComment,
+    setNewComment,
+    onSend,
+    attachedFiles,
+    onFileAttach,
+    onRemoveAttachment
+}: {
     comments: Comment[];
     newComment: string;
     setNewComment: (value: string) => void;
     onSend: () => void;
+    attachedFiles: File[];
+    onFileAttach: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    onRemoveAttachment: (index: number) => void;
 }) {
     const commentsEndRef = useRef<HTMLDivElement>(null);
 
@@ -405,7 +416,7 @@ function CommentsContent({ comments, newComment, setNewComment, onSend }: {
                     </div>
                 ) : (
                     comments.map((comment) => (
-                        <div key={comment.id} className="space-y-1">
+                        <div key={comment.id} className="space-y-1 animate-in fade-in-0 duration-300">
                             {/* Comment Author and Role - Single Line */}
                             <div className="flex items-center gap-2">
                                 <span className="font-semibold text-[#001c43] text-sm">
@@ -427,6 +438,29 @@ function CommentsContent({ comments, newComment, setNewComment, onSend }: {
                             {/* Comment Text - Gray Box */}
                             <div className="bg-[#f5f5f5] rounded-md p-3 border border-gray-200">
                                 <p className="text-sm text-[#001c43]">{comment.text}</p>
+
+                                {/* Comment Attachments */}
+                                {comment.attachments && comment.attachments.length > 0 && (
+                                    <div className="mt-3 space-y-2">
+                                        {comment.attachments.map((attachment) => (
+                                            <div key={attachment.id} className="flex items-center gap-2 bg-white border border-gray-200 rounded px-3 py-2">
+                                                <div className="w-6 h-6 bg-red-500 rounded flex items-center justify-center flex-shrink-0">
+                                                    <span className="text-white text-[8px] font-bold">
+                                                        {attachment.type.toUpperCase()}
+                                                    </span>
+                                                </div>
+                                                <span className="text-xs text-gray-700 flex-1 truncate">{attachment.filename}</span>
+                                                <span className="text-[10px] text-gray-400">{attachment.size}</span>
+                                                <button
+                                                    onClick={() => window.open(attachment.url, '_blank')}
+                                                    className="text-blue-600 hover:text-blue-800"
+                                                >
+                                                    <Download className="w-4 h-4" />
+                                                </button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
 
                             {/* Timestamp Below */}
@@ -439,7 +473,24 @@ function CommentsContent({ comments, newComment, setNewComment, onSend }: {
 
             {/* Comment Input - Fixed at Bottom */}
             <div className="border-t border-gray-200 p-4 bg-white">
-                <div className="flex items-center gap-2">
+                {/* Attached Files Preview */}
+                {attachedFiles && attachedFiles.length > 0 && (
+                    <div className="mb-3 space-y-2">
+                        {attachedFiles.map((file, index) => (
+                            <div key={index} className="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-lg">
+                                <span className="text-xs text-gray-600 flex-1 truncate">{file.name}</span>
+                                <button
+                                    onClick={() => onRemoveAttachment(index)}
+                                    className="text-red-500 hover:text-red-700 text-xs"
+                                >
+                                    ✕
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+                )}
+
+                <div className="flex items-center gap-3">
                     <input
                         type="text"
                         value={newComment}
@@ -450,23 +501,29 @@ function CommentsContent({ comments, newComment, setNewComment, onSend }: {
                                 onSend();
                             }
                         }}
-                        placeholder="Type your comment here"
-                        className="flex-1 px-4 py-2.5 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#001c43] focus:border-transparent"
+                        placeholder="Type your comment here..."
+                        className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
-                    <Tooltip>
-                        <TooltipTrigger asChild>
-                            <button
-                                onClick={onSend}
-                                disabled={!newComment.trim()}
-                                className="p-2.5 bg-[#001c43] text-white rounded-md hover:bg-[#002856] disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
-                            >
-                                <Send className="h-5 w-5" />
-                            </button>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                            <p>Send comment</p>
-                        </TooltipContent>
-                    </Tooltip>
+
+                    {/* File Attachment Button */}
+                    <label className="cursor-pointer p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                        <Link2 className="h-5 w-5 text-gray-600" />
+                        <input
+                            type="file"
+                            multiple
+                            onChange={onFileAttach}
+                            className="hidden"
+                            accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                        />
+                    </label>
+
+                    <button
+                        onClick={onSend}
+                        disabled={!newComment.trim() && (!attachedFiles || attachedFiles.length === 0)}
+                        className="p-2 bg-[#001c43] text-white rounded-lg hover:bg-[#002856] disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+                    >
+                        <Send className="h-5 w-5" />
+                    </button>
                 </div>
             </div>
         </div>
@@ -498,6 +555,7 @@ export default function MyRequestDetails() {
     const [commentText, setCommentText] = useState("");
     const [newComment, setNewComment] = useState("");
     const [comments, setComments] = useState<Comment[]>([]);
+    const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
 
     // Ref for printing
     const printRef = useRef<HTMLDivElement>(null);
@@ -617,19 +675,61 @@ export default function MyRequestDetails() {
         );
     }
 
+    // Helper function to map file extensions to allowed types
+    const getFileType = (filename: string): 'pdf' | 'doc' | 'xls' | 'jpg' | 'png' => {
+        const ext = filename.split('.').pop()?.toLowerCase();
+        switch (ext) {
+            case 'pdf':
+                return 'pdf';
+            case 'doc':
+            case 'docx':
+                return 'doc';
+            case 'xls':
+            case 'xlsx':
+                return 'xls';
+            case 'jpg':
+            case 'jpeg':
+                return 'jpg';
+            case 'png':
+                return 'png';
+            default:
+                return 'pdf';
+        }
+    };
+
     const handleSendComment = () => {
-        if (!newComment.trim() || !request) return;
+        if ((!newComment.trim() && attachedFiles.length === 0) || !request) return;
 
         const newCommentObj = {
             id: `c${comments.length + 1}`,
-            author: "Current User", // Replace with actual user name later
+            author: "Current User",
             role: "Requester",
             timestamp: new Date().toLocaleString(),
             text: newComment.trim(),
+            attachments: attachedFiles.map((file, index) => ({
+                id: `att${Date.now()}_${index}`,
+                filename: file.name,
+                size: `${(file.size / 1024).toFixed(2)} KB`,
+                type: getFileType(file.name),
+                url: URL.createObjectURL(file),
+                date: new Date().toLocaleDateString()
+            }))
         };
 
         setComments([...comments, newCommentObj]);
         setNewComment("");
+        setAttachedFiles([]);
+    };
+
+    const handleFileAttach = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = e.target.files;
+        if (files) {
+            setAttachedFiles(Array.from(files));
+        }
+    };
+
+    const removeAttachment = (index: number) => {
+        setAttachedFiles(attachedFiles.filter((_, i) => i !== index));
     };
 
     return (
@@ -729,6 +829,9 @@ export default function MyRequestDetails() {
                                     newComment={newComment}
                                     setNewComment={setNewComment}
                                     onSend={handleSendComment}
+                                    attachedFiles={attachedFiles}
+                                    onFileAttach={handleFileAttach}
+                                    onRemoveAttachment={removeAttachment}
                                 />
                             )}
                             {activeTab === "journey" && <JourneyContent />}
