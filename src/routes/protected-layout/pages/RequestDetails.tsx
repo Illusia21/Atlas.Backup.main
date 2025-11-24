@@ -696,9 +696,12 @@ export default function MyRequestDetails() {
             duration: 3000,
             style: {
                 background: 'white',
-                color: '#001c43',
-                border: '1px solid #e5e5e5',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                color: '#000000',
+                border: 'none',
+                borderRadius: '12px',
+                boxShadow: '0px 4px 16px rgba(0, 0, 0, 0.15)',
+                padding: '14px',
+                minWidth: '370px',
             },
         });
 
