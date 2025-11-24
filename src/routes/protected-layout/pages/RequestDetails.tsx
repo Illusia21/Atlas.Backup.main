@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useState, useMemo, useRef } from "react";
 import { useReactToPrint } from "react-to-print";
 import { X, Send, MoveRight, Download, Link2, HardDriveDownload } from "lucide-react";
-import { mockRequestDetails, type RequestDetail, type Comment } from "@/data/mockRequestDetails";
+import { mockRequestDetails, type RequestDetail, type Comment, type JourneyStep } from "@/data/mockRequestDetails";
 import {
     Tooltip,
     TooltipContent,
@@ -531,18 +531,90 @@ function CommentsContent({
 }
 
 // Journey Tab Placeholder
-function JourneyContent() {
+function JourneyContent({ journey }: { journey: JourneyStep[] }) {
     return (
-        <div className="flex-1 flex items-center justify-center">
-            <div className="text-center p-8">
-                <p className="text-gray-400 text-lg mb-2">Journey</p>
-                <p className="text-gray-500 text-sm">
-                    Workflow timeline will be displayed here.
-                </p>
-                <p className="text-gray-400 text-xs mt-4">
-                    (Coming soon - separate ticket)
-                </p>
-            </div>
+        <div className="flex-1 overflow-y-auto p-8">
+            {journey.length === 0 ? (
+                <div className="flex items-center justify-center h-full">
+                    <p className="text-gray-400 text-sm">No journey data available</p>
+                </div>
+            ) : (
+                <div className="relative max-w-2xl mx-auto">
+                    {journey.map((step, index) => {
+                        const isCompleted = step.action === 'Approved' || step.action === 'Submitted' || step.action === 'Completed';
+                        const isActive = step.action === 'Pending' && index === journey.findIndex(s => s.action === 'Pending');
+
+                        return (
+                            <div key={step.id} className="relative pb-12 last:pb-0">
+                                {/* Vertical Line - Only show if not last item */}
+                                {index < journey.length - 1 && (
+                                    <div
+                                        className={`absolute left-[23px] top-[48px] w-[2px] h-[calc(100%-48px)] ${isCompleted ? 'bg-[#001c43]' : 'bg-gray-300'
+                                            }`}
+                                    />
+                                )}
+
+                                <div className="flex gap-6">
+                                    {/* Left: Number Circle */}
+                                    <div className="flex-shrink-0">
+                                        <div
+                                            className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg ${isCompleted || isActive ? 'bg-[#001c43]' : 'bg-gray-300'
+                                                }`}
+                                        >
+                                            {index + 1}
+                                        </div>
+                                    </div>
+
+                                    {/* Right: Content */}
+                                    <div className="flex-1 bg-white rounded-lg border border-gray-200 p-6">
+                                        {/* Header: Title and Timestamp */}
+                                        <div className="flex items-center justify-between mb-4">
+                                            <h3 className="text-[#001c43] font-semibold text-lg">
+                                                {step.step}
+                                            </h3>
+                                            <span className="text-xs text-gray-500">
+                                                {step.timestamp}
+                                            </span>
+                                        </div>
+
+                                        {/* Body: Status and Details */}
+                                        <div className="space-y-2">
+                                            <div className="flex items-center justify-between">
+                                                <span className="text-sm text-gray-600">Form Received</span>
+                                                <span
+                                                    className={`px-3 py-1 rounded-full text-xs font-medium ${isCompleted
+                                                        ? 'bg-green-100 text-green-700'
+                                                        : isActive
+                                                            ? 'bg-blue-100 text-blue-700'
+                                                            : 'bg-gray-100 text-gray-500'
+                                                        }`}
+                                                >
+                                                    {step.action}
+                                                </span>
+                                            </div>
+
+                                            <div className="flex items-center justify-between">
+                                                <span className="text-sm text-gray-600">Assigned Approver:</span>
+                                                <span className="text-sm font-medium text-[#001c43]">
+                                                    {step.actor}
+                                                </span>
+                                            </div>
+
+                                            {/* Comment if exists */}
+                                            {step.comment && (
+                                                <div className="mt-4 p-3 bg-gray-50 rounded border border-gray-200">
+                                                    <p className="text-xs text-gray-600 mb-1">Comment:</p>
+                                                    <p className="text-sm text-gray-800">{step.comment}</p>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
+            )}
         </div>
     );
 }
@@ -834,7 +906,7 @@ export default function MyRequestDetails() {
                                     onRemoveAttachment={removeAttachment}
                                 />
                             )}
-                            {activeTab === "journey" && <JourneyContent />}
+                            {activeTab === "journey" && <JourneyContent journey={request?.journey || []} />}
                         </div>
 
                     </div>
