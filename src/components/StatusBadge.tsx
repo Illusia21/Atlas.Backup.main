@@ -18,7 +18,7 @@ export function StatusBadge({ status, className = '' }: StatusBadgeProps) {
     }
 
     return (
-        <Badge className={`w-[100px] justify-center ${statusStyles[status]} ${className}`}>
+        <Badge className={`${status === 'Cancellation Requested' ? 'w-[160px]' : 'w-[100px]'} justify-center ${statusStyles[status]} ${className}`}>
             {status}
         </Badge>
     )
