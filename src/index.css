@@ -139,3 +139,9 @@
 .animate-fade-in {
   animation: fade-in 0.3s ease-out;
 }
+
+/* ONLY apply custom styles to SUCCESS toasts */
+[data-sonner-toast][data-type="success"] [data-icon] {
+  flex-shrink: 0 !important;
+  margin-right: 28px !important;
+}
