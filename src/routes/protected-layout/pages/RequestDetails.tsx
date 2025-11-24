@@ -2,7 +2,7 @@ import mapuaLogo from '@/assets/images/mapuaLogo.png'
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useMemo, useRef } from "react";
 import { useReactToPrint } from "react-to-print";
-import { X, Send, MoveRight, Download, Link2, HardDriveDownload } from "lucide-react";
+import { X, Send, MoveRight, Download, Link2, HardDriveDownload, Upload } from "lucide-react";
 import { mockRequestDetails, type RequestDetail, type Comment, type JourneyStep } from "@/data/mockRequestDetails";
 import {
     Tooltip,
@@ -606,6 +606,8 @@ export default function MyRequestDetails() {
     const [newComment, setNewComment] = useState("");
     const [comments, setComments] = useState<Comment[]>([]);
     const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
+    const [cancelReason, setCancelReason] = useState("");
+    const [cancelAttachments, setCancelAttachments] = useState<File[]>([]);
 
     // Ref for printing
     const printRef = useRef<HTMLDivElement>(null);
@@ -667,10 +669,28 @@ export default function MyRequestDetails() {
         setShowCancelDialog(true);
     };
 
+    const handleCancelFileAttach = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = e.target.files;
+        if (files) {
+            setCancelAttachments(prev => [...prev, ...Array.from(files)]);
+        }
+    };
+
+    const removeCancelAttachment = (index: number) => {
+        setCancelAttachments(prev => prev.filter((_, i) => i !== index));
+    };
+
     const confirmCancel = () => {
-        // TODO: Implement actual cancel logic
-        console.log("Request cancelled");
+        if (!cancelReason.trim()) {
+            alert("Please provide a reason for cancellation");
+            return;
+        }
+        // TODO: Implement actual cancel API call with reason and attachments
+        console.log("Cancel reason:", cancelReason);
+        console.log("Attachments:", cancelAttachments);
         setShowCancelDialog(false);
+        setCancelReason("");
+        setCancelAttachments([]);
         navigate(-1);
     };
 
@@ -1115,43 +1135,102 @@ export default function MyRequestDetails() {
                 </div>
             </div>
 
-            {/* Cancel Confirmation Dialog */}
+            {/* Cancel Request Dialog */}
             {showCancelDialog && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[60]">
-                    <div className="bg-white rounded-[20px] p-8 max-w-md mx-4 shadow-xl">
-                        <h2 className="text-xl font-bold text-[#001c43] mb-4">
-                            Confirm Cancellation
-                        </h2>
-                        <p className="text-[#001c43] mb-6">
-                            Are you sure you want to request cancellation for this reimbursement? This action cannot be undone.
-                        </p>
-                        <div className="flex gap-4">
-                            <Tooltip>
-                                <TooltipTrigger asChild>
-                                    <button
-                                        onClick={() => setShowCancelDialog(false)}
-                                        className="flex-1 bg-gray-200 text-[#001c43] px-6 py-3 rounded-lg hover:bg-gray-300 transition-colors font-semibold"
-                                    >
-                                        No, Keep It
-                                    </button>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                    <p>Keep this request</p>
-                                </TooltipContent>
-                            </Tooltip>
-                            <Tooltip>
-                                <TooltipTrigger asChild>
-                                    <button
-                                        onClick={confirmCancel}
-                                        className="flex-1 bg-[#e50019] text-white px-6 py-3 rounded-lg hover:bg-[#c40015] transition-colors font-semibold"
-                                    >
-                                        Yes, Cancel
-                                    </button>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                    <p>Confirm cancellation</p>
-                                </TooltipContent>
-                            </Tooltip>
+                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[60]">
+                    <div className="bg-white rounded-[20px] p-8 max-w-md w-full mx-4 shadow-xl">
+                        {/* Header with Close Button */}
+                        <div className="flex items-center justify-between mb-6">
+                            <h2 className="text-xl font-bold text-[#e50019]">
+                                Cancel Request
+                            </h2>
+                            <button
+                                onClick={() => {
+                                    setShowCancelDialog(false);
+                                    setCancelReason("");
+                                    setCancelAttachments([]);
+                                }}
+                                className="text-gray-400 hover:text-gray-600 transition-colors"
+                            >
+                                <X className="w-6 h-6" />
+                            </button>
+                        </div>
+
+                        {/* Reason Text Area */}
+                        <div className="mb-6">
+                            <label className="block text-sm text-[#001c43] mb-2">
+                                Reason for Cancellation:
+                            </label>
+                            <textarea
+                                value={cancelReason}
+                                onChange={(e) => setCancelReason(e.target.value)}
+                                placeholder="Input..."
+                                rows={5}
+                                className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                            />
+                        </div>
+
+                        {/* Attachments Section */}
+                        <div className="mb-6">
+                            <div className="flex items-center gap-2 mb-3">
+                                <Link2 className="w-5 h-5 text-[#001c43]" />
+                                <span className="text-sm font-medium text-[#001c43]">Attachments</span>
+                            </div>
+
+                            {/* File Upload Area */}
+                            <label className="block border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-blue-500 transition-colors">
+                                <input
+                                    type="file"
+                                    multiple
+                                    onChange={handleCancelFileAttach}
+                                    className="hidden"
+                                    accept=".jpg,.jpeg,.png,.csv,.pdf"
+                                />
+                                <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                                <p className="text-sm text-gray-600">
+                                    <span className="text-blue-600 font-medium">Click to upload</span> or drag and drop
+                                </p>
+                                <p className="text-xs text-gray-400 mt-1">
+                                    JPEG, PNG, CSV, and PDF formats, up to 50MB
+                                </p>
+                            </label>
+
+                            {/* Attached Files List */}
+                            {cancelAttachments.length > 0 && (
+                                <div className="mt-3 space-y-2">
+                                    {cancelAttachments.map((file, index) => (
+                                        <div key={index} className="flex items-center justify-between bg-gray-50 px-3 py-2 rounded-lg">
+                                            <span className="text-sm text-gray-700 truncate flex-1">{file.name}</span>
+                                            <button
+                                                onClick={() => removeCancelAttachment(index)}
+                                                className="text-red-500 hover:text-red-700 ml-2"
+                                            >
+                                                <X className="w-4 h-4" />
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Action Buttons */}
+                        <div className="flex gap-3">
+                            <button
+                                onClick={() => {
+                                    setShowCancelDialog(false);
+                                    setCancelReason("");
+                                    setCancelAttachments([]);
+                                }}
+                                className="flex-1 bg-white border border-gray-300 text-[#001c43] px-6 py-3 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={confirmCancel}
+                                className="flex-1 bg-[#001c43] text-white px-6 py-3 rounded-lg hover:bg-[#002856] transition-colors font-medium"
+                            >
+                                Confirm
+                            </button>
                         </div>
                     </div>
                 </div>
