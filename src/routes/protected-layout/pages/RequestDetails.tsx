@@ -530,83 +530,61 @@ function CommentsContent({
     );
 }
 
-// Journey Tab Placeholder
+// Journey Tab Content
 function JourneyContent({ journey }: { journey: JourneyStep[] }) {
     return (
-        <div className="flex-1 overflow-y-auto p-8">
+        <div className="flex-1 overflow-y-auto p-8 border border-black">
             {journey.length === 0 ? (
                 <div className="flex items-center justify-center h-full">
                     <p className="text-gray-400 text-sm">No journey data available</p>
                 </div>
             ) : (
-                <div className="relative max-w-2xl mx-auto">
+                <div className="relative max-w-3xl mx-auto ml-[40px] border border-black">
+                    {/* Vertical Timeline Line */}
+                    <div className="absolute left-[35px] top-0 bottom-0 w-[2px] bg-[#d1d5db]" />
+
                     {journey.map((step, index) => {
                         const isCompleted = step.action === 'Approved' || step.action === 'Submitted' || step.action === 'Completed';
-                        const isActive = step.action === 'Pending' && index === journey.findIndex(s => s.action === 'Pending');
+                        const isActive = !isCompleted && step.action !== 'Pending';
 
                         return (
-                            <div key={step.id} className="relative pb-12 last:pb-0">
-                                {/* Vertical Line - Only show if not last item */}
-                                {index < journey.length - 1 && (
-                                    <div
-                                        className={`absolute left-[23px] top-[48px] w-[2px] h-[calc(100%-48px)] ${isCompleted ? 'bg-[#001c43]' : 'bg-gray-300'
-                                            }`}
-                                    />
-                                )}
+                            <div key={step.id} className="relative pb-8 last:pb-0   ">
+                                {/* Card - 20px padding all around */}
+                                <div className="w-[475px] bg-[#F0F0F0] rounded-r-2xl border border-[#8C8B8B] p-5 relative">
 
-                                <div className="flex gap-6">
-                                    {/* Left: Number Circle */}
-                                    <div className="flex-shrink-0">
+                                    {/* TOP SECTION - Circle + Step Name + Timestamp */}
+                                    <div className="flex items-center gap-4 mb-10">
+                                        {/* Circle */}
                                         <div
-                                            className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg ${isCompleted || isActive ? 'bg-[#001c43]' : 'bg-gray-300'
+                                            className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-base flex-shrink-0 ${isCompleted || isActive ? 'bg-[#114B9F]' : 'bg-gray-400'
                                                 }`}
                                         >
                                             {index + 1}
                                         </div>
-                                    </div>
 
-                                    {/* Right: Content */}
-                                    <div className="flex-1 bg-white rounded-lg border border-gray-200 p-6">
-                                        {/* Header: Title and Timestamp */}
-                                        <div className="flex items-center justify-between mb-4">
-                                            <h3 className="text-[#001c43] font-semibold text-lg">
+                                        {/* Step Name and Timestamp */}
+                                        <div className="flex items-center justify-between flex-1">
+                                            <h3 className="text-[#114B9F] font-semibold text-base">
                                                 {step.step}
                                             </h3>
-                                            <span className="text-xs text-gray-500">
+                                            <span className="text-xs font-medium text-[#001C43]">
                                                 {step.timestamp}
                                             </span>
                                         </div>
+                                    </div>
 
-                                        {/* Body: Status and Details */}
-                                        <div className="space-y-2">
-                                            <div className="flex items-center justify-between">
-                                                <span className="text-sm text-gray-600">Form Received</span>
-                                                <span
-                                                    className={`px-3 py-1 rounded-full text-xs font-medium ${isCompleted
-                                                        ? 'bg-green-100 text-green-700'
-                                                        : isActive
-                                                            ? 'bg-blue-100 text-blue-700'
-                                                            : 'bg-gray-100 text-gray-500'
-                                                        }`}
-                                                >
-                                                    {step.action}
-                                                </span>
-                                            </div>
+                                    {/* BOTTOM SECTION - Form Received & Assigned Approver (40px gap from top) */}
+                                    <div className="grid grid-cols-2 gap-4">
+                                        {/* LEFT COLUMN - Form Received */}
+                                        <div>
+                                            <p className="text-sm text-[#114B9F] mb-[10px]">Form Received</p>
+                                            <p className="text-sm font-bold text-[#001c43]">{step.action}</p>
+                                        </div>
 
-                                            <div className="flex items-center justify-between">
-                                                <span className="text-sm text-gray-600">Assigned Approver:</span>
-                                                <span className="text-sm font-medium text-[#001c43]">
-                                                    {step.actor}
-                                                </span>
-                                            </div>
-
-                                            {/* Comment if exists */}
-                                            {step.comment && (
-                                                <div className="mt-4 p-3 bg-gray-50 rounded border border-gray-200">
-                                                    <p className="text-xs text-gray-600 mb-1">Comment:</p>
-                                                    <p className="text-sm text-gray-800">{step.comment}</p>
-                                                </div>
-                                            )}
+                                        {/* RIGHT COLUMN - Assigned Approver */}
+                                        <div className="text-right">
+                                            <p className="text-sm text-[#114B9F] mb-[10px]">Assigned Approver:</p>
+                                            <p className="text-sm font-bold text-[#001c43]">{step.actor}</p>
                                         </div>
                                     </div>
                                 </div>
