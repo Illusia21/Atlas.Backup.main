@@ -533,13 +533,13 @@ function CommentsContent({
 // Journey Tab Content
 function JourneyContent({ journey }: { journey: JourneyStep[] }) {
     return (
-        <div className="flex-1 overflow-y-auto p-8 border border-black">
+        <div className="flex-1 overflow-y-auto p-8">
             {journey.length === 0 ? (
                 <div className="flex items-center justify-center h-full">
                     <p className="text-gray-400 text-sm">No journey data available</p>
                 </div>
             ) : (
-                <div className="relative max-w-3xl mx-auto ml-[40px] border border-black">
+                <div className="relative max-w-3xl mx-auto ml-[40px]">
                     {/* Vertical Timeline Line */}
                     <div className="absolute left-[35px] top-0 bottom-0 w-[2px] bg-[#d1d5db]" />
 
