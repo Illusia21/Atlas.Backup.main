@@ -16,7 +16,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/components/ui/selectRFPStep2";
 
 // Dummy schema
 const lineItemSchema = z.object({
@@ -542,9 +542,9 @@ export default function Step2MainLayout() {
                   <div style={{ width }}></div>
                   <div className="text-[14px] text-[#001C43] font-['Montserrat',sans-serif] text-center" style={{ width: '60px' }}>
                     {Array.isArray(label) ? (
-                      <div className="whitespace-nowrap">
-                        <p className="mb-0">{label[0]}</p>
-                        <p className="-mt-[10px]">{label[1]}</p>
+                      <div className="flex flex-col items-center gap-[2px]">
+                        <p className="mb-0 whitespace-nowrap">{label[0]}</p>
+                        <p className="mt-0 whitespace-nowrap">{label[1]}</p>
                       </div>
                     ) : (
                       <p className="whitespace-nowrap">{label}</p>
