@@ -8,6 +8,11 @@ import PublicLayout from "./routes/public-layout";
 import { logout } from './utils/auth';
 import MyRequests from "./routes/protected-layout/pages/MyRequests";
 import RFPStep1 from "./routes/public-layout/pages/Reimbursement/RFPStep1";
+import Reimbursement from "./routes/protected-layout/pages/Reimbursement";
+import NonTradePayable from "./routes/protected-layout/pages/NonTradePayable";
+import TradePayable from "./routes/protected-layout/pages/TradePayable";
+import CashAdvance from "./routes/protected-layout/pages/CashAdvance";
+import RequestDetails from "./routes/protected-layout/pages/RequestDetails";
 
 function Logout() {
   logout();
@@ -25,6 +30,26 @@ const Router = createBrowserRouter([
       {
         path: "/my-requests",
         element: <MyRequests />,
+      },
+      {
+        path: "/request/:id",
+        element: <RequestDetails />,
+      },
+      {
+        path: "/request/reimbursement",
+        element: <Reimbursement />,
+      },
+      {
+        path: "/request/non-trade-payable",
+        element: <NonTradePayable />,
+      },
+      {
+        path: "/request/trade-payable",
+        element: <TradePayable />,
+      },
+      {
+        path: "/request/cash-advance",
+        element: <CashAdvance />,
       },
       {
         path: "/logout",

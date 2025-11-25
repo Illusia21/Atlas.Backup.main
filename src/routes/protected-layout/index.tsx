@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import { SidebarProvider } from '@/components/ui/sidebar'
 import { AppSidebar } from '@/components/AppSidebar'
 import { Topbar } from '@/components/Topbar'
+import { Toaster } from "@/components/ui/sonner"
 
 interface JWTPayload {
   exp?: number;
@@ -88,34 +89,16 @@ export default function ProtectedLayout() {
     return <div>Loading...</div>;
   }
 
-  // ==========================================
-  // AUTH ENABLED
-  // ==========================================
   return isAuthorized ? (
     <SidebarProvider defaultOpen={false}>
       <AppSidebar />
-      <div className="flex flex-col w-full">
+      <div className="flex flex-col w-full min-w-0">
         <Topbar pageTitle={pageTitle} />
-        <main className="flex-1 bg-[#F5F5F5] p-6">
+        <main className="flex-1 bg-[#F5F5F5] p-6 overflow-x-hidden">
           <Outlet />
         </main>
       </div>
+      <Toaster position="top-center" />
     </SidebarProvider>
   ) : <Navigate to="/login" />;
-
-  // ==========================================
-  // AUTH BYPASS (For development/testing UI)
-  // Uncomment this and comment out the above when working on UI tickets
-  // ==========================================
-  // return (
-  //   <SidebarProvider defaultOpen={false}>
-  //     <AppSidebar />
-  //     <div className="flex flex-col w-full">
-  //       <Topbar pageTitle={pageTitle} />
-  //       <main className="flex-1 bg-[#F5F5F5] p-6">
-  //         <Outlet />
-  //       </main>
-  //     </div>
-  //   </SidebarProvider>
-  // );
 }

@@ -1,8 +1,12 @@
-import { useState, useMemo, useRef } from 'react'
-import { Eye, Search, Table as TableIcon, LayoutGrid, ListFilterPlus } from 'lucide-react'
+import { useState, useMemo, useRef, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { Eye, Search, Table as TableIcon, LayoutGrid, ListFilterPlus, ArrowUpDown } from 'lucide-react'
 import { mockRequests } from '@/data/mockRequests'
 import { StatusBadge } from '@/components/StatusBadge'
+import { RequestCard } from '@/components/RequestCard'
 import { Button } from '@/components/ui/button'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { FilterPanel, type FilterValues } from '@/components/FilterPanel'
 import {
     Table,
     TableBody,
@@ -14,11 +18,37 @@ import {
 import type { RequestStatus } from '@/types'
 
 function MyRequests() {
+    const navigate = useNavigate()
+
+    // Track cancelled requests from localStorage
+    const [cancelledRequests, setCancelledRequests] = useState<string[]>([]);
+
+    // Load cancelled requests on mount
+    useEffect(() => {
+        const cancelled = JSON.parse(localStorage.getItem("cancelledRequests") || "[]");
+        setCancelledRequests(cancelled);
+    }, []);
+
     // State for filters
     const [activeTab, setActiveTab] = useState<RequestStatus | 'All'>('All')
     const [searchQuery, setSearchQuery] = useState('')
     const [viewMode, setViewMode] = useState<'table' | 'grid'>('table')
     const searchInputRef = useRef<HTMLInputElement>(null)
+
+    // Filter panel state
+    const [isFilterOpen, setIsFilterOpen] = useState(false)
+    const [activeFilters, setActiveFilters] = useState<FilterValues>({
+        requestType: 'all',
+        dateRange: { from: undefined, to: undefined }
+    })
+
+    // Sorting state
+    const [sortBy, setSortBy] = useState<'date' | 'amount' | null>(null)
+    const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
+
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1)
+    const itemsPerPage = 20
 
     // Filter tabs
     const tabs: Array<RequestStatus | 'All'> = [
@@ -30,37 +60,129 @@ function MyRequests() {
         'Cancelled',
     ]
 
-    // Filter logic
-    const filteredRequests = useMemo(() => {
-        let filtered = mockRequests
+    // Filter handlers
+    const handleApplyFilters = (filters: FilterValues) => {
+        setActiveFilters(filters)
+        setIsFilterOpen(false)
+    }
 
-        // Filter by tab
-        if (activeTab !== 'All') {
-            filtered = filtered.filter((req) => req.status === activeTab)
+    const handleResetFilters = () => {
+        setActiveFilters({
+            requestType: 'all',
+            dateRange: { from: undefined, to: undefined }
+        })
+        setIsFilterOpen(false)
+    }
+
+    // Check if any filters are active
+    const hasActiveFilters = activeFilters.requestType !== 'all' ||
+        activeFilters.dateRange?.from !== undefined ||
+        activeFilters.dateRange?.to !== undefined
+
+    // Sort handler
+    const handleSort = (column: 'date' | 'amount') => {
+        if (sortBy === column) {
+            // Toggle sort order if clicking the same column
+            setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')
+        } else {
+            // Set new column and default to ascending
+            setSortBy(column)
+            setSortOrder('asc')
         }
+    }
 
-        // Filter by search query
-        if (searchQuery) {
-            filtered = filtered.filter(
-                (req) =>
-                    req.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                    req.requestType.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                    req.description.toLowerCase().includes(searchQuery.toLowerCase())
-            )
+    // Filter and Sort logic
+    const filteredRequests = useMemo(() => {
+        // First, map requests to update cancelled ones
+        let requests = mockRequests.map(request => {
+            // Check if request is cancelled
+            if (cancelledRequests.includes(request.id)) {
+                return { ...request, status: "Cancellation Requested" as RequestStatus };
+            }
+            return request;
+        });
+
+        // Then filter the requests
+        let filtered = requests.filter((request) => {
+            // Tab filter
+            const matchesTab = activeTab === 'All' || request.status === activeTab
+
+            // Search filter
+            const matchesSearch =
+                searchQuery === '' ||
+                request.requestType.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                request.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                request.id.toLowerCase().includes(searchQuery.toLowerCase())
+
+            // Request Type filter
+            const matchesRequestType =
+                activeFilters.requestType === 'all' ||
+                request.requestType === activeFilters.requestType
+
+            // Date Range filter
+            let matchesDateRange = true
+            if (activeFilters.dateRange?.from || activeFilters.dateRange?.to) {
+                const requestDate = new Date(request.dateRequested)
+                if (activeFilters.dateRange?.from) {
+                    matchesDateRange = requestDate >= activeFilters.dateRange.from
+                }
+                if (activeFilters.dateRange?.to && matchesDateRange) {
+                    matchesDateRange = requestDate <= activeFilters.dateRange.to
+                }
+            }
+
+            return matchesTab && matchesSearch && matchesRequestType && matchesDateRange
+        })
+
+        // Then, sort the filtered results
+        if (sortBy) {
+            filtered = [...filtered].sort((a, b) => {
+                let comparison = 0
+
+                if (sortBy === 'date') {
+                    const dateA = new Date(a.dateRequested).getTime()
+                    const dateB = new Date(b.dateRequested).getTime()
+                    comparison = dateA - dateB
+                } else if (sortBy === 'amount') {
+                    const amountA = parseFloat(a.amount.replace(/,/g, ''))
+                    const amountB = parseFloat(b.amount.replace(/,/g, ''))
+                    comparison = amountA - amountB
+                }
+
+                return sortOrder === 'asc' ? comparison : -comparison
+            })
         }
 
         return filtered
-    }, [activeTab, searchQuery])
+    }, [searchQuery, activeTab, activeFilters, sortBy, sortOrder, cancelledRequests])
+
+    // Pagination logic
+    const totalPages = Math.ceil(filteredRequests.length / itemsPerPage)
+    const paginatedRequests = useMemo(() => {
+        const startIndex = (currentPage - 1) * itemsPerPage
+        const endIndex = startIndex + itemsPerPage
+        return filteredRequests.slice(startIndex, endIndex)
+    }, [filteredRequests, currentPage, itemsPerPage])
+
+    // Reset to page 1 when filters change
+    useMemo(() => {
+        setCurrentPage(1)
+    }, [searchQuery, activeTab, activeFilters, sortBy, sortOrder])
 
     // Focus search input when icon is clicked
     const handleSearchIconClick = () => {
         searchInputRef.current?.focus()
     }
 
+    // Handle view request details
+    const handleViewRequest = (requestId: string) => {
+        navigate(`/request/${requestId}`)
+    }
+
     return (
-        <div className="space-y-6">
+        <div className="space-y-6 w-full">
             {/* View Toggle, Filter, and Search Bar */}
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between gap-4">
                 {/* Left Section - View Toggle */}
                 <div className="flex w-[84px] items-center rounded-[6px] bg-[#fcfcfc] p-[4px]">
                     <button
@@ -79,22 +201,41 @@ function MyRequests() {
                     </button>
                 </div>
 
-                {/* Right Section - Filter and Search Bar grouped together */}
-                <div className="flex items-center gap-5">
+                {/* Right Section - Reset Filter, Filter and Search Bar grouped together */}
+                <div className="flex items-center gap-3 flex-1 justify-end min-w-0">
+                    {/* Reset Filter Button - Only visible when filters are active */}
+                    {hasActiveFilters && (
+                        <button
+                            onClick={handleResetFilters}
+                            className="h-[32px] w-[124px] rounded-[10px] border border-[#001c43] bg-white hover:bg-gray-50 transition-colors flex items-center justify-center flex-shrink-0"
+                        >
+                            <span className="font-['Montserrat'] font-normal text-[14px] leading-[20px] text-[#001c43]">
+                                Reset Filter
+                            </span>
+                        </button>
+                    )}
+
                     {/* Filter Button */}
-                    <button className="relative cursor-pointer hover:bg-gray-100 p-2 rounded-md transition-colors">
-                        <ListFilterPlus className="h-6 w-6 text-[#001c43]" />
-                    </button>
+                    <Popover open={isFilterOpen} onOpenChange={setIsFilterOpen}>
+                        <PopoverTrigger asChild>
+                            <button className="relative cursor-pointer hover:bg-gray-100 p-2 rounded-md transition-colors flex-shrink-0">
+                                <ListFilterPlus className="h-6 w-6 text-[#001c43]" />
+                            </button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="end">
+                            <FilterPanel onApply={handleApplyFilters} onReset={handleResetFilters} />
+                        </PopoverContent>
+                    </Popover>
 
                     {/* Search Bar */}
-                    <div className="relative w-[438px]">
+                    <div className="relative min-w-[438px] max-w-[438px]">
                         <input
                             ref={searchInputRef}
                             type="text"
                             placeholder="Search by Request Type, Description, ID, etc."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="text-[12px] w-full rounded-[20px] border border-[#b1b1b1] bg-white px-[20px] py-[13px] font-['Montserrat'] font-normal leading-5 text-[#001c43] placeholder:text-[#b1b1b1] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="text-[12px] w-full rounded-[20px] border border-[#b1b1b1] bg-white px-[20px] py-[13px] font-['Montserrat'] font-normal leading-5 text-[#001c43] placeholder:text-[#b1b1b1] focus:outline-none focus:border-[#001c43]"
                         />
                         <Search
                             onClick={handleSearchIconClick}
@@ -105,13 +246,13 @@ function MyRequests() {
             </div>
 
             {/* Horizontal Tab Bar */}
-            <div className="flex items-center justify-center">
+            <div className="flex items-center justify-center overflow-x-auto">
                 <div className="flex items-center rounded-[6px] bg-[#fcfcfc] p-[4px] w-full">
                     {tabs.map((tab) => (
                         <button
                             key={tab}
                             onClick={() => setActiveTab(tab)}
-                            className={`w-[196px] cursor-pointer px-[12px] py-[6px] text-center font-['Montserrat'] text-[12px] font-normal leading-5 transition-colors ${activeTab === tab
+                            className={`flex-1 min-w-[120px] cursor-pointer px-[12px] py-[6px] text-center font-['Montserrat'] text-[12px] font-normal leading-5 transition-colors ${activeTab === tab
                                 ? 'rounded-[4px] bg-white text-[#09090b] shadow-sm'
                                 : 'text-[#71717a]'
                                 }`}
@@ -122,53 +263,197 @@ function MyRequests() {
                 </div>
             </div>
 
-            {/* Table */}
-            <div className="bg-white rounded-lg border">
-                <Table>
-                    <TableHeader>
-                        <TableRow className="bg-[#001C43] hover:bg-[#001C43]">
-                            <TableHead className="text-white text-[12px] text-center font-semibold min-w-[80px] rounded-tl-[12px]">Request ID</TableHead>
-                            <TableHead className="text-white text-[12px] text-center font-semibold min-w-[180px]">Request Type</TableHead>
-                            <TableHead className="text-white text-[12px] text-center font-semibold min-w-[140px]">Date Requested</TableHead>
-                            <TableHead className="text-white text-[12px] text-center font-semibold min-w-[300px]">Description</TableHead>
-                            <TableHead className="text-white text-[12px] text-center font-semibold min-w-[100px]">Amount</TableHead>
-                            <TableHead className="text-white text-[12px] text-center font-semibold min-w-[140px]">Status</TableHead>
-                            <TableHead className="text-white text-[12px] text-center font-semibold min-w-[80px] rounded-tr-[12px]">Action</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {filteredRequests.length === 0 ? (
-                            <TableRow>
-                                <TableCell colSpan={7} className="text-center py-8 text-gray-500">
-                                    No requests found.
-                                </TableCell>
+            {/* Conditional Rendering: Table or Card View */}
+            {viewMode === 'table' ? (
+                /* Table View */
+                <div className="bg-white rounded-[12px] overflow-x-auto">
+                    <Table>
+                        <TableHeader>
+                            <TableRow className="bg-[#001C43] hover:bg-[#001C43]">
+                                <TableHead className="text-white text-[12px] text-center font-semibold min-w-[80px]">Request ID</TableHead>
+                                <TableHead className="text-white text-[12px] text-center font-semibold min-w-[180px]">Request Type</TableHead>
+                                <TableHead
+                                    className="text-white text-[12px] text-center font-semibold min-w-[140px] cursor-pointer hover:bg-[#002856] transition-colors"
+                                    onClick={() => handleSort('date')}
+                                >
+                                    <div className="flex items-center justify-center gap-1">
+                                        Date Requested
+                                        <ArrowUpDown className="h-3 w-3" />
+                                    </div>
+                                </TableHead>
+                                <TableHead className="text-white text-[12px] text-center font-semibold min-w-[300px]">Description</TableHead>
+                                <TableHead
+                                    className="text-white text-[12px] text-center font-semibold min-w-[100px] cursor-pointer hover:bg-[#002856] transition-colors"
+                                    onClick={() => handleSort('amount')}
+                                >
+                                    <div className="flex items-center justify-center gap-1">
+                                        Amount
+                                        <ArrowUpDown className="h-3 w-3" />
+                                    </div>
+                                </TableHead>
+                                <TableHead className="text-white text-[12px] text-center font-semibold min-w-[140px]">Status</TableHead>
+                                <TableHead className="text-white text-[12px] text-center font-semibold min-w-[80px] rounded-tr-[12px]">Action</TableHead>
                             </TableRow>
-                        ) : (
-                            filteredRequests.map((request) => (
-                                <TableRow key={request.id}>
-                                    <TableCell className="text-[12px] text-center">{request.id}</TableCell>
-                                    <TableCell className="text-[12px] text-center">{request.requestType}</TableCell>
-                                    <TableCell className="text-[12px] text-center">{request.dateRequested}</TableCell>
-                                    <TableCell className="text-[12px] text-center">{request.description}</TableCell>
-                                    <TableCell className="text-[12px] text-center">
-                                        {request.currency} {request.amount}
-                                    </TableCell>
-                                    <TableCell className="text-center">
-                                        <StatusBadge status={request.status} />
-                                    </TableCell>
-                                    <TableCell className="text-center">
-                                        <Button variant="ghost" size="icon">
-                                            <Eye className="h-4 w-4" />
-                                        </Button>
+                        </TableHeader>
+                        <TableBody>
+                            {paginatedRequests.length === 0 ? (
+                                <TableRow>
+                                    <TableCell colSpan={7} className="text-center py-8 text-gray-500">
+                                        No requests found for the selected filters.
                                     </TableCell>
                                 </TableRow>
-                            ))
-                        )}
-                    </TableBody>
-                </Table>
-            </div>
+                            ) : (
+                                paginatedRequests.map((request) => (
+                                    <TableRow key={request.id}>
+                                        <TableCell className="text-[12px] text-center">{request.id}</TableCell>
+                                        <TableCell className="text-[12px] text-center">{request.requestType}</TableCell>
+                                        <TableCell className="text-[12px] text-center">{request.dateRequested}</TableCell>
+                                        <TableCell className="text-[12px] text-center">{request.description}</TableCell>
+                                        <TableCell className="text-[12px] text-center">
+                                            {request.currency} {request.amount}
+                                        </TableCell>
+                                        <TableCell className="text-center">
+                                            <StatusBadge status={request.status} />
+                                        </TableCell>
+                                        <TableCell className="text-center">
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                onClick={() => handleViewRequest(request.id)}
+                                            >
+                                                <Eye className="h-4 w-4" />
+                                            </Button>
+                                        </TableCell>
+                                    </TableRow>
+                                ))
+                            )}
+                        </TableBody>
+                    </Table>
+
+                    {/* Pagination Controls */}
+                    {filteredRequests.length > 0 && totalPages > 1 && (
+                        <div className="flex items-center justify-between px-6 py-4 border-t">
+                            <div className="text-[12px] text-gray-600">
+                                Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, filteredRequests.length)} of {filteredRequests.length} requests
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                                    disabled={currentPage === 1}
+                                    className="text-[12px]"
+                                >
+                                    Previous
+                                </Button>
+                                <div className="flex items-center gap-1">
+                                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                                        <Button
+                                            key={page}
+                                            variant={currentPage === page ? "default" : "outline"}
+                                            size="sm"
+                                            onClick={() => setCurrentPage(page)}
+                                            className={`w-8 h-8 p-0 text-[12px] ${currentPage === page ? 'bg-[#001c43] hover:bg-[#002856]' : ''}`}
+                                        >
+                                            {page}
+                                        </Button>
+                                    ))}
+                                </div>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                                    disabled={currentPage === totalPages}
+                                    className="text-[12px]"
+                                >
+                                    Next
+                                </Button>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            ) : (
+                /* Card Grid View */
+                <div className="min-h-[400px] w-full">
+                    {paginatedRequests.length === 0 ? (
+                        <div className="flex items-center justify-center py-16">
+                            <p className="text-center text-gray-500 text-[14px]">
+                                No requests found for the selected filters.
+                            </p>
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
+                            {paginatedRequests.map((request) => (
+                                <RequestCard
+                                    key={request.id}
+                                    request={request}
+                                    onViewClick={() => handleViewRequest(request.id)}
+                                />
+                            ))}
+                        </div>
+                    )}
+
+                    {/* Pagination Controls for Card View */}
+                    {filteredRequests.length > 0 && totalPages > 1 && (
+                        <div className="flex items-center justify-between mt-6 px-4 py-4 bg-white rounded-lg border">
+                            <div className="text-sm text-gray-600">
+                                Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, filteredRequests.length)} of {filteredRequests.length} requests
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                                    disabled={currentPage === 1}
+                                    className="text-[12px]"
+                                >
+                                    Previous
+                                </Button>
+                                <div className="flex items-center gap-1">
+                                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                                        <Button
+                                            key={page}
+                                            variant={currentPage === page ? "default" : "outline"}
+                                            size="sm"
+                                            onClick={() => setCurrentPage(page)}
+                                            className={`w-8 h-8 p-0 text-[12px] ${currentPage === page ? 'bg-[#001c43] hover:bg-[#002856]' : ''}`}
+                                        >
+                                            {page}
+                                        </Button>
+                                    ))}
+                                </div>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                                    disabled={currentPage === totalPages}
+                                    className="text-[12px]"
+                                >
+                                    Next
+                                </Button>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            )}
         </div>
     )
 }
 
 export default MyRequests
+
+/*
+⚠️ WHAT'S MISSING (Not Blocking for AC-7)
+The 5% missing are:
+Real-time updates - Requires backend (WebSocket/polling)
+Request detail page - Eye icon works but target page doesn't exist
+
+|            Feature           | Priority | Why Not Blocking                                 | Implementation Time     |
+|-----------------------------|----------|--------------------------------------------------|-------------------------|
+| Real-time updates          | LOW      | Requires backend WebSocket or polling            | Separate ticket         |
+| Backend API integration   | LOW      | Currently using mockData (correct approach)      | When backend is ready   |
+| Request detail page      | MEDIUM   | Eye icon navigates, but page doesn't exist yet   | Separate ticket (AC-8?) |
+| Loading spinner         | LOW      | Using instant mock data, add when API is ready   | 5 minutes               |
+
+
+*/
