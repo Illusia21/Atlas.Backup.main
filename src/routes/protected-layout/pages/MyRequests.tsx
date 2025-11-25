@@ -74,6 +74,11 @@ function MyRequests() {
         setIsFilterOpen(false)
     }
 
+    // Check if any filters are active
+    const hasActiveFilters = activeFilters.requestType !== 'all' ||
+        activeFilters.dateRange?.from !== undefined ||
+        activeFilters.dateRange?.to !== undefined
+
     // Sort handler
     const handleSort = (column: 'date' | 'amount') => {
         if (sortBy === column) {
@@ -196,8 +201,20 @@ function MyRequests() {
                     </button>
                 </div>
 
-                {/* Right Section - Filter and Search Bar grouped together */}
+                {/* Right Section - Reset Filter, Filter and Search Bar grouped together */}
                 <div className="flex items-center gap-3 flex-1 justify-end min-w-0">
+                    {/* Reset Filter Button - Only visible when filters are active */}
+                    {hasActiveFilters && (
+                        <button
+                            onClick={handleResetFilters}
+                            className="h-[32px] w-[124px] rounded-[10px] border border-[#001c43] bg-white hover:bg-gray-50 transition-colors flex items-center justify-center flex-shrink-0"
+                        >
+                            <span className="font-['Montserrat'] font-normal text-[14px] leading-[20px] text-[#001c43]">
+                                Reset Filter
+                            </span>
+                        </button>
+                    )}
+
                     {/* Filter Button */}
                     <Popover open={isFilterOpen} onOpenChange={setIsFilterOpen}>
                         <PopoverTrigger asChild>
