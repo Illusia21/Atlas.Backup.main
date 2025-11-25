@@ -16,7 +16,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/components/ui/selectRFPStep1";
 
 // Dummy schema
 const step1RequestorInfoSchema = z.object({
