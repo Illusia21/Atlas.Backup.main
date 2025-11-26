@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef } from 'react'
+import { useState, useMemo, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Eye, Search, Table as TableIcon, LayoutGrid, ListFilterPlus, ArrowUpDown } from 'lucide-react'
 import { mockRequests } from '@/data/mockRequests'
@@ -19,6 +19,15 @@ import type { RequestStatus } from '@/types'
 
 function MyRequests() {
     const navigate = useNavigate()
+
+    // Track cancelled requests from localStorage
+    const [cancelledRequests, setCancelledRequests] = useState<string[]>([]);
+
+    // Load cancelled requests on mount
+    useEffect(() => {
+        const cancelled = JSON.parse(localStorage.getItem("cancelledRequests") || "[]");
+        setCancelledRequests(cancelled);
+    }, []);
 
     // State for filters
     const [activeTab, setActiveTab] = useState<RequestStatus | 'All'>('All')
@@ -65,6 +74,11 @@ function MyRequests() {
         setIsFilterOpen(false)
     }
 
+    // Check if any filters are active
+    const hasActiveFilters = activeFilters.requestType !== 'all' ||
+        activeFilters.dateRange?.from !== undefined ||
+        activeFilters.dateRange?.to !== undefined
+
     // Sort handler
     const handleSort = (column: 'date' | 'amount') => {
         if (sortBy === column) {
@@ -79,8 +93,17 @@ function MyRequests() {
 
     // Filter and Sort logic
     const filteredRequests = useMemo(() => {
-        // First, filter the requests
-        let filtered = mockRequests.filter((request) => {
+        // First, map requests to update cancelled ones
+        let requests = mockRequests.map(request => {
+            // Check if request is cancelled
+            if (cancelledRequests.includes(request.id)) {
+                return { ...request, status: "Cancellation Requested" as RequestStatus };
+            }
+            return request;
+        });
+
+        // Then filter the requests
+        let filtered = requests.filter((request) => {
             // Tab filter
             const matchesTab = activeTab === 'All' || request.status === activeTab
 
@@ -131,7 +154,7 @@ function MyRequests() {
         }
 
         return filtered
-    }, [searchQuery, activeTab, activeFilters, sortBy, sortOrder])
+    }, [searchQuery, activeTab, activeFilters, sortBy, sortOrder, cancelledRequests])
 
     // Pagination logic
     const totalPages = Math.ceil(filteredRequests.length / itemsPerPage)
@@ -157,7 +180,7 @@ function MyRequests() {
     }
 
     return (
-        <div className="space-y-6 w-full overflow-x-hidden">
+        <div className="space-y-6 w-full">
             {/* View Toggle, Filter, and Search Bar */}
             <div className="flex items-center justify-between gap-4">
                 {/* Left Section - View Toggle */}
@@ -178,8 +201,20 @@ function MyRequests() {
                     </button>
                 </div>
 
-                {/* Right Section - Filter and Search Bar grouped together */}
+                {/* Right Section - Reset Filter, Filter and Search Bar grouped together */}
                 <div className="flex items-center gap-3 flex-1 justify-end min-w-0">
+                    {/* Reset Filter Button - Only visible when filters are active */}
+                    {hasActiveFilters && (
+                        <button
+                            onClick={handleResetFilters}
+                            className="h-[32px] w-[124px] rounded-[10px] border border-[#001c43] bg-white hover:bg-gray-50 transition-colors flex items-center justify-center flex-shrink-0"
+                        >
+                            <span className="font-['Montserrat'] font-normal text-[14px] leading-[20px] text-[#001c43]">
+                                Reset Filter
+                            </span>
+                        </button>
+                    )}
+
                     {/* Filter Button */}
                     <Popover open={isFilterOpen} onOpenChange={setIsFilterOpen}>
                         <PopoverTrigger asChild>
@@ -231,11 +266,11 @@ function MyRequests() {
             {/* Conditional Rendering: Table or Card View */}
             {viewMode === 'table' ? (
                 /* Table View */
-                <div className="bg-white rounded-lg border overflow-x-auto">
+                <div className="bg-white rounded-[12px] overflow-x-auto">
                     <Table>
                         <TableHeader>
                             <TableRow className="bg-[#001C43] hover:bg-[#001C43]">
-                                <TableHead className="text-white text-[12px] text-center font-semibold min-w-[80px] rounded-tl-[12px]">Request ID</TableHead>
+                                <TableHead className="text-white text-[12px] text-center font-semibold min-w-[80px]">Request ID</TableHead>
                                 <TableHead className="text-white text-[12px] text-center font-semibold min-w-[180px]">Request Type</TableHead>
                                 <TableHead
                                     className="text-white text-[12px] text-center font-semibold min-w-[140px] cursor-pointer hover:bg-[#002856] transition-colors"

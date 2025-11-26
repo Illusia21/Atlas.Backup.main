@@ -1,4 +1,4 @@
-export type RequestStatus = 'Pending' | 'Returned' | 'Completed' | 'Rejected' | 'Cancelled';
+export type RequestStatus = 'Pending' | 'Returned' | 'Completed' | 'Rejected' | 'Cancelled' | 'Cancellation Requested';
 
 export type RequestType = 'Reimbursement' | 'Vendor Payment' | 'Cash Advance' | 'Travel Request' | 'Purchase Request';
 
