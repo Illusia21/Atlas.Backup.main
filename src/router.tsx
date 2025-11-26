@@ -23,6 +23,8 @@ import LiquidationDetails from "./routes/protected-layout/pages/Liquidation/Liqu
 import LiquidationStep1 from "./routes/protected-layout/pages/Liquidation/LiquidationStep1";
 import LiquidationStep2 from "./routes/protected-layout/pages/Liquidation/LiquidationStep2";
 import LiquidationStep3 from "./routes/protected-layout/pages/Liquidation/LiquidationStep3";
+//import CashAdvance from "./routes/protected-layout/pages/CashAdvance";
+import RFPStep3Bank from "./routes/public-layout/pages/Reimbursement/RFPStep3Bank";
 
 function Logout() {
   logout();
@@ -48,6 +50,10 @@ const Router = createBrowserRouter([
       {
         path: "/request/reimbursement",
         element: <Reimbursement />,
+      },
+      {
+        path: "/reimbursement/step3-bank/:id",
+        element: <RFPStep3Bank />,
       },
       {
         path: "/request/non-trade-payable",

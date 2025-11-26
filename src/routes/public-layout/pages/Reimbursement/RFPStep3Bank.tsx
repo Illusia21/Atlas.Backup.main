@@ -1,12 +1,10 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useNavigate, useParams } from "react-router-dom";
+import { useEffect } from "react";
 import { ArrowRight, Info, ChevronRight } from "lucide-react";
-import { SidebarProvider } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/AppSidebar";
-import { Topbar } from "@/components/Topbar";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -49,18 +47,15 @@ const FormError = ({ message }: { message?: string }) => (
   message ? <p className="text-[#E50019] text-[12px] mt-1">{message}</p> : null
 );
 
-// Dummy draft data
-const dummyDraft = {
-  modeOfPayment: "",
-  totalAmount: 0,
-  currency: "PHP",
-};
-
-const step3Schema = z.object({
+const step3BankSchema = z.object({
   modeOfPayment: z.string().min(1, "Mode of Payment is required"),
   termsOfPayment: z.string().min(1, "Terms of Payment is required"),
   taxRegistration: z.string().min(1, "Tax Registration is required"),
   typeOfBusiness: z.string().min(1, "Type of Business is required"),
+  bankName: z.string().min(1, "Bank Name is required"),
+  accountName: z.string().min(1, "Account Name is required"),
+  accountNumber: z.string().min(1, "Account Number is required"),
+  instructions: z.string().optional(),
   poType: z.enum(["PO", "Non-PO"]).optional(),
   pr: z.string().optional(),
   rr: z.string().optional(),
@@ -68,14 +63,21 @@ const step3Schema = z.object({
   lessEWT: z.string().optional(),
 });
 
-type Step3FormData = z.infer<typeof step3Schema>;
+type Step3BankFormData = z.infer<typeof step3BankSchema>;
 
-export default function Step3MainLayout() {
+// Dummy draft data
+const dummyDraft = {
+  modeOfPayment: "bank-transfer",
+  totalAmount: 0,
+  currency: "PHP",
+};
+
+export default function Step3Bank() {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const draft = dummyDraft; // Using dummy data
   const draftLoading = false;
-  
+
   const {
     register,
     handleSubmit,
@@ -83,14 +85,18 @@ export default function Step3MainLayout() {
     watch,
     trigger,
     setValue,
-  } = useForm<Step3FormData>({
-    resolver: zodResolver(step3Schema),
-    mode: "onChange", // Validate on change to enable/disable button
+  } = useForm<Step3BankFormData>({
+    resolver: zodResolver(step3BankSchema),
+    mode: "onChange",
     defaultValues: {
-      modeOfPayment: "",
+      modeOfPayment: "bank-transfer",
       termsOfPayment: "",
       taxRegistration: "",
       typeOfBusiness: "",
+      bankName: "",
+      accountName: "",
+      accountNumber: "",
+      instructions: "",
       poType: undefined,
       pr: "",
       rr: "",
@@ -100,36 +106,40 @@ export default function Step3MainLayout() {
   });
 
   const poType = watch("poType");
+  const isPO = poType === "PO";
+
   const modeOfPaymentValue = watch("modeOfPayment");
   const termsOfPaymentValue = watch("termsOfPayment");
   const taxRegistrationValue = watch("taxRegistration");
   const typeOfBusinessValue = watch("typeOfBusiness");
-  const isPO = poType === "PO";
+  const bankNameValue = watch("bankName");
+  const accountNameValue = watch("accountName");
+  const accountNumberValue = watch("accountNumber");
+
+  // Navigate to different step3 components based on Mode of Payment
+  useEffect(() => {
+    if (modeOfPaymentValue && modeOfPaymentValue !== "bank-transfer" && id) {
+      navigate(`/reimbursement/step3/${id}`, { replace: true });
+    }
+  }, [modeOfPaymentValue, id, navigate]);
+
   const serviceFee = watch("serviceFee") || "";
   const lessEWT = watch("lessEWT") || "";
   // Get total amount from draft data (from step 2), default to 0 if not available
   const totalAmount = draft.totalAmount || 0;
 
-  // Navigate to different step3 components based on Mode of Payment
-  useEffect(() => {
-    if (modeOfPaymentValue === "bank-transfer" && id) {
-      navigate(`/reimbursement/step3-bank/${id}`, { replace: true });
-    }
-  }, [modeOfPaymentValue, id, navigate]);
-  
-  // Safely parse service fee and less EWT
   const serviceFeeNum = serviceFee ? parseFloat(serviceFee) : 0;
   const lessEWTNum = lessEWT ? parseFloat(lessEWT) : 0;
   const calculatedTotal = Math.max(0, totalAmount + serviceFeeNum - lessEWTNum);
 
-  const onSubmit = async (data: Step3FormData) => {
+  const onSubmit = async (data: Step3BankFormData) => {
     if (!isValid) {
       // Trigger validation to show all errors
       await trigger();
       return;
     }
     
-    console.log("Step 3 data:", data);
+    console.log("Step 3 Bank data:", data);
    
     if (id) {
       navigate(`/reimbursement/step4/${id}`);
@@ -137,7 +147,6 @@ export default function Step3MainLayout() {
   };
 
   const handleBack = () => {
-    // Navigate back to step 2
     if (id) {
       navigate(`/reimbursement/step2/${id}`);
     }
@@ -151,19 +160,11 @@ export default function Step3MainLayout() {
     );
   }
 
-  // Mode of payment selection - user stays on the same page for now
-  // const currentModeOfPayment = draft.modeOfPayment || modeOfPaymentValue;
-
   return (
-    <SidebarProvider defaultOpen={false}>
-      <AppSidebar />
-      <div className="flex flex-col w-full">
-        <Topbar pageTitle="Reimbursement Request" />
-        <main className="flex-1 bg-[#F5F5F5]">
-          <div
-            className="bg-[#F3F3F3] box-border gap-[20px] grid grid-cols-3 grid-rows-[170px_40px_minmax(0,_1fr)_70px] overflow-clip p-[30px] relative shrink-0"
-            style={{ minHeight: "calc(100vh - 92px)" }}
-          >
+    <div
+      className="bg-[#F3F3F3] box-border gap-[20px] grid grid-cols-3 grid-rows-[170px_40px_minmax(0,_1fr)_70px] overflow-clip p-[30px] relative shrink-0"
+      style={{ minHeight: "100vh" }}
+    >
       {/* STEP PROGRESS - Centered */}
       <div className="col-[1_/_span_3] row-[1] flex justify-center items-center relative mb-[75px] mx-auto">
         <div className="relative w-[1240px]">
@@ -277,12 +278,12 @@ export default function Step3MainLayout() {
 
       {/* FORM CARD */}
       <form
-        id="step3-form"
+        id="step3-bank-form"
         onSubmit={handleSubmit(onSubmit)}
         className="bg-[#FCFCFC] col-[1_/_span_3] row-[3] p-[20px] flex flex-col gap-[30px] rounded-[20px]"
       >
         <div className="px-3">
-          <h3 className="font-['Montserrat',sans-serif] font-bold text-[24px] text-[#001C43] leading-[32px] mb-[20px]">
+          <h3 className="font-['Montserrat',sans-serif] font-bold text-[24px] text-[#001C43] leading-[32px] mt-[-10px]">
             Payment Schedule
           </h3>
         </div>
@@ -290,7 +291,7 @@ export default function Step3MainLayout() {
         {/* Top row - Four fields aligned horizontally */}
         <div className="grid grid-cols-4 gap-[30px] px-5 min-w-0">
           {/* Mode of Payment */}
-          <FormField error={errors.modeOfPayment?.message} className="gap-[10px] mt-[-40px] font-[700]">
+          <FormField error={errors.modeOfPayment?.message} className="gap-[10px] mt-[-20px] font-[700]">
             <FormLabel>Mode of Payment</FormLabel>
             <Select
               value={modeOfPaymentValue || ""}
@@ -315,7 +316,7 @@ export default function Step3MainLayout() {
           </FormField>
 
           {/* Terms of Payment */}
-          <FormField error={errors.termsOfPayment?.message} className="gap-[10px] mt-[-40px] font-[700]">
+          <FormField error={errors.termsOfPayment?.message} className="gap-[10px] mt-[-20px] font-[700]">
             <FormLabel>Terms of Payment</FormLabel>
             <Select
               value={termsOfPaymentValue || ""}
@@ -339,7 +340,7 @@ export default function Step3MainLayout() {
           </FormField>
 
           {/* Tax Registration */}
-          <FormField error={errors.taxRegistration?.message} className="gap-[10px] mt-[-40px] font-[700]">
+          <FormField error={errors.taxRegistration?.message} className="gap-[10px] mt-[-20px] font-[700]">
             <FormLabel>Tax Registration</FormLabel>
             <Select
               value={taxRegistrationValue || ""}
@@ -363,7 +364,7 @@ export default function Step3MainLayout() {
           </FormField>
 
           {/* Type of Business */}
-          <FormField error={errors.typeOfBusiness?.message} className="gap-[10px] mt-[-40px] font-[700]">
+          <FormField error={errors.typeOfBusiness?.message} className="gap-[10px] mt-[-20px] font-[700]">
             <FormLabel>Type of Business</FormLabel>
             <Select
               value={typeOfBusinessValue || ""}
@@ -389,6 +390,34 @@ export default function Step3MainLayout() {
           </FormField>
         </div>
 
+        <div className="grid grid-cols-3 gap-[24px] px-5">
+          <FormField error={errors.bankName?.message} className="gap-[8px] col-span-1 w-[530px] h-[40px]">
+            <FormLabel className="font-[700]">Bank Name</FormLabel>
+            <Input {...register("bankName")} placeholder="ex" className="h-[46px]" />
+            <FormError message={errors.bankName?.message} />
+          </FormField>
+
+          <FormField error={errors.accountName?.message} className="gap-[8px] w-[400px] h-[40px] ml-[90px]">
+            <FormLabel className="font-[700]">Account Name</FormLabel>
+            <Input {...register("accountName")} placeholder="ex" className="h-[46px]" />
+            <FormError message={errors.accountName?.message} />
+          </FormField>
+
+          <FormField error={errors.accountNumber?.message} className="gap-[8px] w-[400px] h-[40px]">
+            <FormLabel className="font-[700]">Account Number</FormLabel>
+            <Input {...register("accountNumber")} placeholder="ex" className="h-[46px]" />
+            <FormError message={errors.accountNumber?.message} />
+          </FormField>
+        </div>
+
+        <div className="px-5 mt-[40px]">
+          <FormField error={errors.instructions?.message} className="gap-[8px] w-[630px] h-[40px]">
+            <FormLabel className="font-[700]">Instructions</FormLabel>
+            <Input {...register("instructions")} placeholder="Enter instructions" className="h-[46px]" />
+            <FormError message={errors.instructions?.message} />
+          </FormField>
+        </div>
+
         <div className="grid grid-cols-[minmax(0,_1fr)_320px] gap-[40px] px-5 items-start">
           {/* Left column - PO/Non-PO and related fields */}
           <div className="flex flex-col gap-[60px] mt-[120px]">
@@ -398,13 +427,13 @@ export default function Step3MainLayout() {
                 <div className="flex items-center gap-[10px]">
                   <input
                     type="radio"
-                    id="poTypePO"
+                    id="bankPoTypePO"
                     value="PO"
                     {...register("poType")}
                     className="w-4 h-4 cursor-pointer"
                   />
                   <label
-                    htmlFor="poTypePO"
+                    htmlFor="bankPoTypePO"
                     className="font-['Montserrat',sans-serif] font-[600] text-[16px] text-[#001C43] leading-none tracking-[-0.32px] cursor-pointer"
                   >
                     PO
@@ -413,13 +442,13 @@ export default function Step3MainLayout() {
                 <div className="flex items-center gap-[10px]">
                   <input
                     type="radio"
-                    id="poTypeNonPO"
+                    id="bankPoTypeNonPO"
                     value="Non-PO"
                     {...register("poType")}
                     className="w-4 h-4 cursor-pointer"
                   />
                   <label
-                    htmlFor="poTypeNonPO"
+                    htmlFor="bankPoTypeNonPO"
                     className="font-['Montserrat',sans-serif] font-[600] text-[16px] text-[#001C43] leading-none tracking-[-0.32px] cursor-pointer"
                   >
                     Non-PO
@@ -456,7 +485,7 @@ export default function Step3MainLayout() {
 
           {/* Right column - Payment summary */}
           <div className="flex flex-col gap-[16px] w-full max-w-[320px] justify-self-end mt-[100px]">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between mt-[3px]">
               <p className="font-['Montserrat',sans-serif] font-[700] text-[14px] text-[#001C43] leading-[20px]">
                 Total Amount:
               </p>
@@ -493,7 +522,7 @@ export default function Step3MainLayout() {
               <div className="w-[320px] h-[3px] bg-[#B1B1B1] relative left-[0px]"></div>
             </div>
 
-            <div className=" w-[300px] h-[39px] bg-[#114B9F] rounded-bl-[12px] rounded-br-[12px] px-0 py-[8px]">
+            <div className=" w-[300px] h-[39px] bg-[#114B9F] rounded-bl-[12px] rounded-br-[12px] px-0 py-[12px]">
               <p className="font-['Montserrat',sans-serif] font-[700] text-[#FFFFFF] leading-[24px] ml-[20px]">
                 <span className="text-[12px]">Total Amount</span>
                 <span className="text-[14px]">{`: `}</span>
@@ -510,31 +539,30 @@ export default function Step3MainLayout() {
         </div>
       </form>
 
-      {/* ACTION BUTTONS */}
+      {/* Action buttons */}
       <div className="col-[3] row-[4] grid grid-cols-2 gap-[30px] justify-self-end w-[293px] mt-[30px]">
         <Button
           type="button"
           variant="outline"
           onClick={handleBack}
           disabled={isSubmitting}
-          className="w-[137px] h-[46px] gap-[7px] justify-self-center"
+          className="w-[137px] gap-[7px] justify-self-center"
         >
           <ArrowRight className="w-[20px] h-[20px] rotate-180 text-[#001C43]" />
           <span>Back</span>
         </Button>
         <Button
           type="submit"
-          form="step3-form"
+          form="step3-bank-form"
           disabled={isSubmitting || !isValid}
-          className="w-[137px] h-[46px] gap-[7px] justify-self-center"
+          className="w-[137px] gap-[7px] justify-self-center"
         >
           <span>Next</span>
           <ChevronRight className="size-[24px]" />
         </Button>
       </div>
-          </div>
-        </main>
-      </div>
-    </SidebarProvider>
+    </div>
   );
 }
+
+
