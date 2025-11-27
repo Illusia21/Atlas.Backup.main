@@ -13,6 +13,7 @@ import TradePayable from "./routes/protected-layout/pages/TradePayable";
 import CashAdvance from "./routes/protected-layout/pages/CashAdvance";
 import RequestDetails from "./routes/protected-layout/pages/RequestDetails";
 import RFPStep1 from "./routes/public-layout/pages/Reimbursement/RFPStep1";
+import RFPStep2 from "./routes/public-layout/pages/Reimbursement/RFPStep2";
 
 function Logout() {
   logout();
@@ -79,6 +80,10 @@ const Router = createBrowserRouter([
       {
         path: "/reimbursement/step1",
         element: <RFPStep1 />,
+      },
+      {
+        path: "/reimbursement/step2/:id",
+        element: <RFPStep2 />,
       },
     ],
   },
