@@ -312,47 +312,56 @@ export default function Step1MainLayout() {
         </FormField>
 
         {/* Department */}
+        {/* Department */}
 <FormField
   error={errors.departmentId?.message}
-  className="flex flex-col items-start gap-1.5 px-5 w-[584px] h-[60px]"
+  className="flex flex-col items-start gap-2.5 px-5"
 >
   <FormLabel
     htmlFor="departmentId"
-    className="text-[#001C43] text-[14] font-[700] font-[Montserrat]"
+    className="text-[#001C43] text-[14] font-[700]"
   >
     Department
   </FormLabel>
-  <Select
-    value={selectedDepartmentId || ""}
-    onValueChange={(value) => {
-      setValue("departmentId", value, { shouldValidate: true });
-      const selectedDept = departments.find(
-        (d: { id: string; name: string }) => d.id === value
-      );
-      if (selectedDept) {
-        setValue("department", selectedDept.name, { shouldValidate: true });
-      }
-    }}
-    disabled={departmentsLoading}
+
+  {/* Container based on provided Figma specs */}
+  <div
+    className={`flex items-center gap-2.5 w-[584px] h-[46px] rounded-md ${
+      errors.departmentId ? "border border-[#E50019]" : ""
+    }`}
   >
-    <SelectTrigger
-      aria-invalid={errors.departmentId ? "true" : "false"}
-      className={`w-full border ${
-        errors.departmentId
-          ? "border-[#E50019] focus-visible:border-[#E50019] focus-visible:ring-[#E50019]/50"
-          : "border-[#E4E4E7]"
-      } bg-white text-[14px] text-[#001C43] font-[Montserrat] leading-[20px] rounded-md px-3 py-2.5 h-auto`}
+    <Select
+      value={selectedDepartmentId || ""}
+      onValueChange={(value) => {
+        setValue("departmentId", value, { shouldValidate: true });
+        const selectedDept = departments.find(
+          (d: { id: string; name: string }) => d.id === value
+        );
+        if (selectedDept) {
+          setValue("department", selectedDept.name, { shouldValidate: true });
+        }
+      }}
+      disabled={departmentsLoading}
     >
-      <SelectValue placeholder="Select Department" />
-    </SelectTrigger>
-    <SelectContent>
-      {departments.map((dept: { id: string; name: string }) => (
-        <SelectItem key={dept.id} value={dept.id}>
-          {dept.name}
-        </SelectItem>
-      ))}
-    </SelectContent>
-  </Select>
+      <SelectTrigger
+        className={`flex-1 h-[46px] border ${
+          errors.departmentId
+            ? "border-[#E50019] focus:ring-[#E50019]"
+            : "border-[#E4E4E7]"
+        } bg-white text-[14px] text-[#001C43] font-[Montserrat] leading-[20px] rounded-md`}
+      >
+        <SelectValue placeholder="Select Department" />
+      </SelectTrigger>
+      <SelectContent>
+        {departments.map((dept: { id: string; name: string }) => (
+          <SelectItem key={dept.id} value={dept.id}>
+            {dept.name}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  </div>
+
   <FormError
     message={errors.departmentId?.message || errors.department?.message}
   />

@@ -6,14 +6,17 @@ import ResetPassword from "./routes/public-layout/pages/ResetPassword";
 import ProtectedLayout from "./routes/protected-layout";
 import PublicLayout from "./routes/public-layout";
 import { logout } from './utils/auth';
-import MyRequests from "./routes/protected-layout/pages/MyRequests";
+import MyRequests from "./routes/protected-layout/pages/MyRequestPage/MyRequests";
+import RFPStep1 from "./routes/public-layout/pages/Reimbursement/RFPStep1";
 import Reimbursement from "./routes/protected-layout/pages/Reimbursement";
 import NonTradePayable from "./routes/protected-layout/pages/NonTradePayable";
 import TradePayable from "./routes/protected-layout/pages/TradePayable";
-import CashAdvance from "./routes/protected-layout/pages/CashAdvance";
-import RequestDetails from "./routes/protected-layout/pages/RequestDetails";
-import RFPStep1 from "./routes/public-layout/pages/Reimbursement/RFPStep1";
-import RFPStep2 from "./routes/public-layout/pages/Reimbursement/RFPStep2";
+import RequestDetails from "./routes/protected-layout/pages/MyRequestPage/RequestDetails";
+import CAStep1 from "./routes/protected-layout/pages/CashAdvance/CAStep1";
+import CAStep2 from "./routes/protected-layout/pages/CashAdvance/CAStep2";
+import CAStep3 from "./routes/protected-layout/pages/CashAdvance/CAStep3";
+import CAStep4 from "./routes/protected-layout/pages/CashAdvance/CAStep4";
+import CAStep5 from "./routes/protected-layout/pages/CashAdvance/CAStep5";
 
 function Logout() {
   logout();
@@ -50,7 +53,23 @@ const Router = createBrowserRouter([
       },
       {
         path: "/request/cash-advance",
-        element: <CashAdvance />,
+        element: <CAStep1 />,
+      },
+      {
+        path: "/request/cash-advance/step2",
+        element: <CAStep2 />,
+      },
+      {
+        path: "/request/cash-advance/step3",
+        element: <CAStep3 />,
+      },
+      {
+        path: "/request/cash-advance/step4",
+        element: <CAStep4 />,
+      },
+      {
+        path: "/request/cash-advance/step5",
+        element: <CAStep5 />,
       },
       {
         path: "/logout",
@@ -80,10 +99,6 @@ const Router = createBrowserRouter([
       {
         path: "/reimbursement/step1",
         element: <RFPStep1 />,
-      },
-      {
-        path: "/reimbursement/step2/:id",
-        element: <RFPStep2 />,
       },
     ],
   },

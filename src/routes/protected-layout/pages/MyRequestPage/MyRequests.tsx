@@ -29,6 +29,15 @@ function MyRequests() {
         setCancelledRequests(cancelled);
     }, []);
 
+    // Track submitted requests from localStorage
+    const [submittedRequests, setSubmittedRequests] = useState<any[]>([]);
+
+    // Load submitted requests on mount
+    useEffect(() => {
+        const submitted = JSON.parse(localStorage.getItem('submittedRequests') || '[]');
+        setSubmittedRequests(submitted);
+    }, []);
+
     // State for filters
     const [activeTab, setActiveTab] = useState<RequestStatus | 'All'>('All')
     const [searchQuery, setSearchQuery] = useState('')
@@ -93,14 +102,17 @@ function MyRequests() {
 
     // Filter and Sort logic
     const filteredRequests = useMemo(() => {
-        // First, map requests to update cancelled ones
-        let requests = mockRequests.map(request => {
-            // Check if request is cancelled
-            if (cancelledRequests.includes(request.id)) {
-                return { ...request, status: "Cancellation Requested" as RequestStatus };
-            }
-            return request;
-        });
+        // Merge mock requests with submitted requests from localStorage
+        let requests = [
+            ...submittedRequests, // New submitted requests first
+            ...mockRequests.map(request => {
+                // Check if request is cancelled
+                if (cancelledRequests.includes(request.id)) {
+                    return { ...request, status: "Cancellation Requested" as RequestStatus };
+                }
+                return request;
+            })
+        ];
 
         // Then filter the requests
         let filtered = requests.filter((request) => {
@@ -154,7 +166,7 @@ function MyRequests() {
         }
 
         return filtered
-    }, [searchQuery, activeTab, activeFilters, sortBy, sortOrder, cancelledRequests])
+    }, [activeTab, searchQuery, activeFilters, sortBy, sortOrder, cancelledRequests, submittedRequests])
 
     // Pagination logic
     const totalPages = Math.ceil(filteredRequests.length / itemsPerPage)
