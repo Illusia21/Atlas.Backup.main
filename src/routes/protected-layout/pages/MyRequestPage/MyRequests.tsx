@@ -333,7 +333,7 @@ function MyRequests() {
                                                 size="icon"
                                                 onClick={() => handleViewRequest(request.id)}
                                             >
-                                                <Eye className="h-4 w-4" />
+                                                <Eye className="w-[24px] h-[24px] text-[#114b9f]" />
                                             </Button>
                                         </TableCell>
                                     </TableRow>
