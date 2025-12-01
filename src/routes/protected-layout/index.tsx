@@ -27,6 +27,7 @@ const routeTitles: Record<string, string> = {
   '/request/cash-advance/step5': 'Request Cash Advance',
   '/request/non-trade-payable': 'Non-Trade Payable',
   '/request/trade-payable': 'Trade Payable',
+  '/liquidation': 'For Liquidation',
 }
 
 export default function ProtectedLayout() {
@@ -98,17 +99,15 @@ export default function ProtectedLayout() {
   }
 
   return isAuthorized ? (
-    <AuthProvider>
-      <SidebarProvider defaultOpen={false}>
-        <AppSidebar />
-        <div className="flex flex-col w-full min-w-0">
-          <Topbar pageTitle={pageTitle} />
-          <main className="flex-1 bg-[#F5F5F5] p-6 overflow-x-hidden">
-            <Outlet />
-          </main>
-        </div>
-        <Toaster position="top-center" />
-      </SidebarProvider>
-    </AuthProvider>
+    <SidebarProvider defaultOpen={false}>
+      <AppSidebar />
+      <div className="flex flex-col w-full min-w-0">
+        <Topbar pageTitle={pageTitle} />
+        <main className="flex-1 bg-[#F5F5F5] p-6 overflow-x-hidden">
+          <Outlet />
+        </main>
+      </div>
+      <Toaster position="top-center" />
+    </SidebarProvider>
   ) : <Navigate to="/login" />;
 }
