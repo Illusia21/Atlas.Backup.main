@@ -57,9 +57,16 @@ const bottomMenuItems = [
 export function AppSidebar() {
     const location = useLocation();
     const isActive = (path: string) => location.pathname === path;
-    const { state } = useSidebar();
+    const { state, setOpen } = useSidebar();
     const [isNewRequestOpen, setIsNewRequestOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
+
+    // Handle clicking New Request button in collapsed mode
+    const handleCollapsedNewRequest = (e: React.MouseEvent) => {
+        e.preventDefault(); // Prevent navigation
+        setOpen(true); // Expand the sidebar
+        setIsNewRequestOpen(true); // Open the dropdown
+    };
 
     // Reset dropdown when sidebar collapses
     useEffect(() => {
@@ -142,13 +149,13 @@ export function AppSidebar() {
                                                     <Tooltip>
                                                         <TooltipTrigger asChild>
                                                             <SidebarMenuButton asChild className="w-auto h-auto p-0">
-                                                                <Link
-                                                                    to={item.url}
+                                                                <button
+                                                                    onClick={handleCollapsedNewRequest}
                                                                     className="flex h-[36px] w-[36px] items-center justify-center rounded-[10px] bg-[#001c43] hover:bg-[#002856] transition-all duration-300"
                                                                     aria-label={item.title}
                                                                 >
                                                                     <item.icon className="h-6 w-6 text-white" />
-                                                                </Link>
+                                                                </button>
                                                             </SidebarMenuButton>
                                                         </TooltipTrigger>
                                                         <TooltipContent side="right">
