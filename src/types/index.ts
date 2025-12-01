@@ -19,7 +19,7 @@ export interface LiquidationRequest {
     requestType: 'Cash Advance'; // Only Cash Advance in liquidation
     dateRequested: string;
     description: string;
-    amount: string;
+    amount: number;
     currency: 'PHP' | 'USD' | 'EUR';
     status: LiquidationStatus;
 }

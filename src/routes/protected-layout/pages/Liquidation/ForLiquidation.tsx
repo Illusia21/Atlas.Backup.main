@@ -32,7 +32,7 @@ export default function ForLiquidation() {
         dateRange: { from: undefined, to: undefined }
     });
 
-    // Sorting state
+    // Sorting state - Default: sort by date, descending (most recent first)
     const [sortBy, setSortBy] = useState<'date' | 'amount' | null>('date');
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
 
@@ -107,6 +107,19 @@ export default function ForLiquidation() {
         }
     ];
 
+    // TODO: Get current user from auth context when backend is ready
+    // import { useAuth } from '@/hooks/useAuth';
+    // const { currentUser } = useAuth();
+
+    // Filter to show only current user's requests
+    // Uncomment this when you have real authentication:
+    // const userLiquidationRequests = mockLiquidationRequests.filter(
+    //     req => req.userId === currentUser?.id
+    // );
+
+    // For now, use all mock data (replace with userLiquidationRequests when backend is ready)
+    const userLiquidationRequests = mockLiquidationRequests;
+
     // Filter tabs
     const tabs: (LiquidationStatus | 'All')[] = ['All', 'Pending', 'Approved', 'Returned', 'Rejected', 'Completed'];
 
@@ -141,7 +154,7 @@ export default function ForLiquidation() {
 
     // Filtered requests based on active tab, search query, filters, and sorting
     const filteredRequests = useMemo(() => {
-        let requests = mockLiquidationRequests;
+        let requests = userLiquidationRequests; // Use user-specific data
 
         // Filter by tab
         if (activeTab !== 'All') {
@@ -374,7 +387,7 @@ export default function ForLiquidation() {
                                                 size="icon"
                                                 onClick={() => handleViewRequest(request.id)}
                                             >
-                                                <Eye className="h-4 w-4" />
+                                                <Eye className="w-[24px] h-[24px] text-[#114b9f]" />
                                             </Button>
                                         </TableCell>
                                     </TableRow>
