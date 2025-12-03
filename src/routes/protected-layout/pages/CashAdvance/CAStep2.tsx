@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { toast } from 'sonner';
 import Stepper from '@/components/Stepper';
+import { getProgramsByDepartment } from '@/data/departmentPrograms';
 import type { LineItem } from '@/types/cashAdvance';
 import { useCashAdvanceStore } from '@/store/useCashAdvanceStore';
 import { format } from 'date-fns';
@@ -63,7 +64,11 @@ const CURRENCIES = [
 
 export default function CAStep2() {
     const navigate = useNavigate();
-    const { step2Data, saveStep2 } = useCashAdvanceStore();
+    const { step1Data, step2Data, saveStep2 } = useCashAdvanceStore();
+
+    // Get department from Step 1
+    const selectedDepartment = step1Data?.department || '';
+    const availablePrograms = getProgramsByDepartment(selectedDepartment);
 
     // Initialize state
     const [sourceOfFunds, setSourceOfFunds] = useState('');
@@ -291,17 +296,35 @@ export default function CAStep2() {
                             </Select>
                         </div>
 
-                        {/* Cost Center */}
+                        {/* Cost Center - Based on Department */}
                         <div className="flex flex-col gap-[6px]">
                             <label className="font-['Montserrat'] font-bold text-[14px] leading-[20px] text-[#001c43]">
                                 Cost Center
                             </label>
-                            <Input
-                                value={costCenter}
-                                onChange={(e) => setCostCenter(e.target.value)}
-                                placeholder="CCIS-2025-01"
-                                className="!h-[44px] bg-white border border-[#b1b1b1] rounded-[6px] px-[12px] font-['Montserrat'] font-normal text-[14px] leading-[20px] text-[#001c43]"
-                            />
+                            {selectedDepartment ? (
+                                <Select value={costCenter} onValueChange={setCostCenter}>
+                                    <SelectTrigger className="w-full !h-[44px] bg-white border border-[#b1b1b1] rounded-[6px] px-[12px] font-['Montserrat'] font-normal text-[14px] leading-[20px] text-[#001c43]">
+                                        <SelectValue placeholder="Select program" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {availablePrograms.map((program) => (
+                                            <SelectItem
+                                                key={program}
+                                                value={program}
+                                                className="font-['Montserrat'] text-[14px]"
+                                            >
+                                                {program}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            ) : (
+                                <div className="h-[44px] bg-gray-100 border border-[#b1b1b1] rounded-[6px] px-[12px] flex items-center">
+                                    <span className="font-['Montserrat'] font-normal text-[14px] text-gray-400">
+                                        Please select a department in Step 1 first
+                                    </span>
+                                </div>
+                            )}
                         </div>
 
                         {/* Description/Purpose */}

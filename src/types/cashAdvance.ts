@@ -25,7 +25,8 @@ export interface CAStep2Data {
 
 export interface CAStep3Data {
     bankName: string;
-    swiftCode: string;
+    //swiftCode: string;
+    swiftCode?: string; // Made optional to maintain type compatibility
     accountName: string;
     accountNumber: string;
     instructions: string;

@@ -20,7 +20,7 @@ export default function CAStep3() {
 
     // Initialize state
     const [bankName, setBankName] = useState('');
-    const [swiftCode, setSwiftCode] = useState('');
+    //const [swiftCode, setSwiftCode] = useState('');
     const [accountName, setAccountName] = useState('');
     const [accountNumber, setAccountNumber] = useState('');
     const [instructions, setInstructions] = useState('');
@@ -29,7 +29,7 @@ export default function CAStep3() {
     useEffect(() => {
         if (step3Data) {
             setBankName(step3Data.bankName);
-            setSwiftCode(step3Data.swiftCode);
+            //setSwiftCode(step3Data.swiftCode);
             setAccountName(step3Data.accountName);
             setAccountNumber(step3Data.accountNumber);
             setInstructions(step3Data.instructions);
@@ -39,7 +39,7 @@ export default function CAStep3() {
     // Validation errors
     const [errors, setErrors] = useState({
         bankName: '',
-        swiftCode: '',
+        //swiftCode: '',
         accountName: '',
         accountNumber: '',
     });
@@ -63,7 +63,7 @@ export default function CAStep3() {
     const validateForm = () => {
         const newErrors = {
             bankName: '',
-            swiftCode: '',
+            //swiftCode: '',
             accountName: '',
             accountNumber: '',
         };
@@ -110,7 +110,7 @@ export default function CAStep3() {
         const dataToSave = {
             bankName,
             accountName,
-            swiftCode,
+            //swiftCode,
             accountNumber,
             instructions,
         };
@@ -171,7 +171,7 @@ export default function CAStep3() {
                                 )}
                             </div>
 
-                            {/* Swift Code */}
+                            {/* Swift Code
                             <div className="flex flex-col gap-[6px]">
                                 <label className="font-['Montserrat'] font-bold text-[14px] leading-[20px] text-[#001c43]">
                                     Swift Code
@@ -191,7 +191,7 @@ export default function CAStep3() {
                                         {errors.swiftCode}
                                     </span>
                                 )}
-                            </div>
+                            </div> */}
 
                             {/* Account Name and Account Number - with 10px gap between them */}
                             <div className="flex gap-[10px] flex-1">

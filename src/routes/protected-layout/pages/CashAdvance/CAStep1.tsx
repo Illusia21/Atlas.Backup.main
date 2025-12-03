@@ -5,6 +5,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
 import Stepper from '@/components/Stepper';
+import { Check, ChevronsUpDown } from "lucide-react";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { useCashAdvanceStore } from '@/store/useCashAdvanceStore';
 
 const CASH_ADVANCE_STEPS = [
@@ -21,7 +26,7 @@ export default function CAStep1() {
     const { step1Data, saveStep1 } = useCashAdvanceStore();
 
     // Initialize state from store or user data
-    const [requestedBy] = useState(step1Data?.requestedBy || user?.name || '');
+    const [requestedBy, setRequestedBy] = useState(step1Data?.requestedBy || user?.name || '');
     const [department, setDepartment] = useState(step1Data?.department || user?.department || '');
 
     // Load saved data when component mounts
@@ -89,17 +94,60 @@ export default function CAStep1() {
                 <div className="bg-white rounded-[20px] p-[20px] flex-1 flex flex-col">
                     {/* Input Fields */}
                     <div className="grid grid-cols-2 gap-[50px] px-[20px]">
-                        {/* Requested By Field */}
+                        {/* Requested By Field - Combobox */}
                         <div className="flex flex-col gap-[6px]">
                             <label className="font-['Montserrat'] font-bold text-[14px] leading-[20px] text-[#001c43]">
                                 Requested By
                             </label>
-                            <div className="h-[44px] bg-white border border-[#b1b1b1] rounded-[6px] px-[12px] flex items-center justify-between">
-                                <span className="font-['Montserrat'] font-normal text-[14px] leading-[20px] text-[#001c43]">
-                                    {requestedBy}
-                                </span>
-                                <PenLine className="w-[24px] h-[24px] text-[#001c43] opacity-50" />
-                            </div>
+                            <Popover>
+                                <PopoverTrigger asChild>
+                                    <Button
+                                        variant="outline"
+                                        role="combobox"
+                                        className="w-full h-[44px] justify-between bg-white border border-[#b1b1b1] rounded-[6px] px-[12px] font-['Montserrat'] font-normal text-[14px] text-[#001c43] hover:bg-white"
+                                    >
+                                        {requestedBy || "Select name..."}
+                                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                    </Button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-full p-0">
+                                    <Command>
+                                        <CommandInput
+                                            placeholder="Search or type name..."
+                                            onValueChange={(value) => setRequestedBy(value)}
+                                        />
+                                        <CommandEmpty>
+                                            <button
+                                                onClick={() => {
+                                                    const input = document.querySelector('[placeholder="Search or type name..."]') as HTMLInputElement;
+                                                    if (input?.value) {
+                                                        setRequestedBy(input.value);
+                                                    }
+                                                }}
+                                                className="w-full text-left px-2 py-1.5 text-sm"
+                                            >
+                                                Use "{requestedBy}" (custom name)
+                                            </button>
+                                        </CommandEmpty>
+                                        <CommandGroup>
+                                            <CommandItem
+                                                value={user?.name || ''}
+                                                onSelect={(currentValue) => {
+                                                    setRequestedBy(currentValue);
+                                                }}
+                                            >
+                                                <Check
+                                                    className={cn(
+                                                        "mr-2 h-4 w-4",
+                                                        requestedBy === user?.name ? "opacity-100" : "opacity-0"
+                                                    )}
+                                                />
+                                                {user?.name} (You)
+                                            </CommandItem>
+                                        </CommandGroup>
+                                    </Command>
+                                </PopoverContent>
+                            </Popover>
                         </div>
 
                         {/* Department Dropdown */}

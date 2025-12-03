@@ -435,7 +435,7 @@ export default function CAStep5() {
                                     </p>
                                 </div>
 
-                                {/* Swift Code */}
+                                {/* Swift Code
                                 <div className="col-span-1 flex flex-col gap-[10px] px-[20px]">
                                     <p className="font-['Montserrat'] font-bold text-[14px] leading-[20px] text-[#001c43]">
                                         Swift Code
@@ -443,7 +443,7 @@ export default function CAStep5() {
                                     <p className="font-['Montserrat'] font-normal text-[14px] leading-[20px] text-[#001c43]">
                                         {step3Data?.swiftCode || 'N/A'}
                                     </p>
-                                </div>
+                                </div> */}
 
                                 {/* Account Name */}
                                 <div className="col-span-1 flex flex-col gap-[10px] px-[20px]">
