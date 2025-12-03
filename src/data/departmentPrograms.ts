@@ -1,49 +1,47 @@
 // Mapping of departments to their programs (cost centers)
 export const DEPARTMENT_PROGRAMS: Record<string, string[]> = {
+    ATYCB: [
+        'AIS - Accounting Information System',
+        'Accountancy',
+        'BA - Business Administration',
+        'ENTREP - Entrepreneurship',
+        'TM - Tourism Management'
+    ],
+    CAS: [
+        'COMM - Communication',
+        'MMA - Multimedia Arts',
+    ],
     CCIS: [
         'CS - Computer Science',
         'EMC - Entertainment and Multimedia Computing',
         'IS - Information Systems',
     ],
     CEA: [
+        'AR - Architecture',
         'CE - Civil Engineering',
         'CHE - Chemical Engineering',
+        'ChemE - Chemical Engineering',
+        'CpE - Computer Engineering',
         'ECE - Electronics and Communications Engineering',
         'EE - Electrical Engineering',
         'IE - Industrial Engineering',
         'ME - Mechanical Engineering',
     ],
-    CAFA: [
-        'ARCH - Architecture',
-        'ID - Interior Design',
-        'MMA - Multimedia Arts',
-    ],
-    CSB: [
-        'ACCTG - Accountancy',
-        'BA - Business Administration',
-        'ECON - Economics',
-        'ENTREP - Entrepreneurship',
-    ],
-    CHTM: [
-        'HM - Hotel Management',
-        'TM - Tourism Management',
-    ],
-    COL: [
-        'AB - Arts and Letters',
+    CHS: [
+        'BIO - Biology',
+        'MT / MLS - Medical Technology / Medical Laboratory Science',
+        'PHAR - Psychology',
         'PSYCH - Psychology',
-        'SOCIO - Sociology',
+        'PT - Physical Therapy',
     ],
     Admin: [
-        'ADMIN - Administration',
-        'FACILITIES - Facilities Management',
+        'Lorem  Ipsum',
     ],
     Finance: [
-        'FIN - Finance Department',
-        'ACCT - Accounting Department',
+        'Lorem  Ipsum',
     ],
     HR: [
-        'HR - Human Resources',
-        'PAYROLL - Payroll',
+        'Lorem  Ipsum',
     ],
 };
 

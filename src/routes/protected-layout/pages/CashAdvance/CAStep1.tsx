@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Info, ArrowRight, CircleX, PenLine } from 'lucide-react';
+import { Info, ArrowRight, CircleX } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
@@ -38,12 +38,11 @@ export default function CAStep1() {
 
     // Available departments (will come from backend later)
     const departments = [
+        'ATYCB',
+        'CAS',
         'CCIS',
-        'CEAS',
-        'CAFA',
-        'CSB',
-        'CHTM',
-        'COL',
+        'CEA',
+        'CHS',
         'Admin',
         'Finance',
         'HR'
