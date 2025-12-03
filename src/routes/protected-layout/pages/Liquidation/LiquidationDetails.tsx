@@ -7,6 +7,14 @@ import { X, Send, MoveRight, Download, Link, HardDriveDownload, Link2 } from "lu
 import { mockLiquidationDetails, type LiquidationDetail, type LiquidationLineItem } from "@/data/mockLiquidationDetails";
 import type { Comment, Attachment, JourneyStep } from "@/data/mockRequestDetails";
 import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@/components/ui/table";
+import {
     Tooltip,
     TooltipContent,
     TooltipProvider,
@@ -22,300 +30,637 @@ const formatNumber = (num: number): string => {
 function LiquidationFormContent({ request }: { request: LiquidationDetail }) {
     return (
         <div className="bg-white min-h-full p-8">
-            {/* Header with Logo and Title */}
-            <div className="grid grid-cols-3 items-center pb-4 mb-8 border-b border-gray-300">
-                {/* Left: Logo */}
-                <div className="flex items-center">
+            {/* === HEADER SECTION === */}
+            <div className="grid grid-cols-3 items-end h-[100px] gap-[10px] mb-8">
+                {/* Logo */}
+                <div className="flex items-start">
                     <img
                         src={mapuaLogo}
                         alt="MAPUA Logo"
-                        className="w-[284px] h-[108px] object-contain"
+                        className="h-[108px] w-auto object-contain"
                     />
                 </div>
 
-                {/* Center: Title */}
-                <div className="flex justify-center">
-                    <h1 className="text-[#001c43] font-bold text-[32px] leading-normal">Liquidation Report</h1>
+                {/* Title */}
+                <div className="flex items-end justify-center pb-[10px]">
+                    <h2 className="font-['DM_Sans'] font-bold text-[32px] leading-[normal] text-[#001c43] text-center">
+                        Liquidation Report
+                    </h2>
                 </div>
 
-                {/* Right: Reference Number */}
-                <div className="flex justify-end items-end">
-                    <p className="text-[#001c43] text-[16px] font-semibold tracking-[-0.32px]">{request.referenceNumber}</p>
-                </div>
-            </div>
-
-            <div className="border-b border-gray-300 mb-8" />
-
-            {/* Requester Information Section */}
-            <div className="bg-white rounded-[20px] p-[20px] mb-8">
-                <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-[#001c43] font-semibold text-[20px] leading-[28px]">Requester Information</h2>
-                </div>
-                <div className="grid grid-cols-2 gap-x-8 gap-y-4">
-                    <div>
-                        <p className="text-[#001c43] font-bold text-[14px] leading-[20px] mb-[10px]">Requested By</p>
-                        <p className="text-[#001c43] text-[14px] leading-[20px]">{request.requesterInfo.requestedBy}</p>
-                    </div>
-                    <div>
-                        <p className="text-[#001c43] font-bold text-[14px] leading-[20px] mb-[10px]">Department</p>
-                        <p className="text-[#001c43] text-[14px] leading-[20px]">{request.requesterInfo.department}</p>
-                    </div>
+                {/* Reference Number */}
+                <div className="flex items-end justify-end pb-[10px]">
+                    <p className="font-['Montserrat'] font-semibold text-[16px] leading-none text-[#001c43] tracking-[-0.32px]">
+                        {request.referenceNumber}
+                    </p>
                 </div>
             </div>
 
-            <div className="border-b border-gray-300 mb-8" />
+            {/* Separator */}
+            <div className="h-[2px] bg-[#b1b1b1] mb-8" />
 
-            {/* Request Details Section */}
-            <div className="bg-white rounded-[20px] p-[20px] mb-8">
-                <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-[#001c43] font-semibold text-[20px] leading-[28px]">Request Details</h2>
-                </div>
+            {/* === REQUESTER INFORMATION SECTION === */}
+            <div className="bg-white rounded-[20px] p-[20px] border border-transparent mb-8">
+                <div className="grid grid-cols-2 gap-y-[10px]">
+                    {/* Section Title */}
+                    <div className="col-span-2">
+                        <h3 className="font-['Montserrat'] font-semibold text-[20px] leading-[28px] text-[#001c43] mb-[10px]">
+                            Requester Information
+                        </h3>
+                    </div>
 
-                <div className="mb-4">
-                    <p className="text-[#001c43] font-bold text-[14px] leading-[20px] mb-[10px]">Cash Advance Form</p>
-                    <p className="text-[#001c43] text-[14px] leading-[20px]">{request.requestDetailsInfo.cashAdvanceForm}</p>
-                </div>
+                    {/* Requested By */}
+                    <div className="col-span-1 flex flex-col gap-[10px] px-[20px]">
+                        <p className="font-['Montserrat'] font-bold text-[14px] leading-[20px] text-[#001c43]">
+                            Requested By
+                        </p>
+                        <p className="font-['Montserrat'] font-normal text-[14px] leading-[20px] text-[#001c43]">
+                            {request.requesterInfo.requestedBy}
+                        </p>
+                    </div>
 
-                <div className="mb-4">
-                    <p className="text-[#001c43] font-bold text-[14px] leading-[20px] mb-[10px]">Description/Purpose</p>
-                    <p className="text-[#001c43] text-[14px] leading-[20px]">{request.requestDetailsInfo.descriptionPurpose}</p>
-                </div>
-
-                <div className="grid grid-cols-2 gap-x-8 gap-y-4 mb-6">
-                    <div>
-                        <p className="text-[#001c43] font-bold text-[14px] leading-[20px] mb-[10px]">Source of Fund</p>
-                        <p className="text-[#001c43] text-[14px] leading-[20px]">{request.requestDetailsInfo.sourceOfFund}</p>
-                    </div>
-                    <div>
-                        <p className="text-[#001c43] font-bold text-[14px] leading-[20px] mb-[10px]">Cost Center</p>
-                        <p className="text-[#001c43] text-[14px] leading-[20px]">{request.requestDetailsInfo.costCenter}</p>
-                    </div>
-                    <div>
-                        <p className="text-[#001c43] font-bold text-[14px] leading-[20px] mb-[10px]">Date Requested</p>
-                        <p className="text-[#001c43] text-[14px] leading-[20px]">{request.requestDetailsInfo.dateRequested}</p>
-                    </div>
-                    <div>
-                        <p className="text-[#001c43] font-bold text-[14px] leading-[20px] mb-[10px]">Date Needed</p>
-                        <p className="text-[#001c43] text-[14px] leading-[20px]">{request.requestDetailsInfo.dateNeeded}</p>
-                    </div>
-                    <div>
-                        <p className="text-[#001c43] font-bold text-[14px] leading-[20px] mb-[10px]">Date Start</p>
-                        <p className="text-[#001c43] text-[14px] leading-[20px]">{request.requestDetailsInfo.dateStart}</p>
-                    </div>
-                    <div>
-                        <p className="text-[#001c43] font-bold text-[14px] leading-[20px] mb-[10px]">Date End</p>
-                        <p className="text-[#001c43] text-[14px] leading-[20px]">{request.requestDetailsInfo.dateEnd}</p>
-                    </div>
-                </div>
-
-                {/* Line Items Table */}
-                <div className="overflow-hidden rounded-[12px]">
-                    <table className="w-full border-collapse">
-                        <thead>
-                            <tr className="bg-[#001c43] text-white">
-                                <th className="py-[12px] px-[24px] text-center font-bold text-[14px] leading-[20px] border-b border-[#fcfcfc]">Line/Item</th>
-                                <th className="py-[12px] px-[24px] text-center font-bold text-[14px] leading-[20px] border-b border-[#fcfcfc]">Category</th>
-                                <th className="py-[12px] px-[24px] text-center font-bold text-[14px] leading-[20px] border-b border-[#fcfcfc]">Activity/Description</th>
-                                <th className="py-[12px] px-[24px] text-center font-bold text-[14px] leading-[20px] border-b border-[#fcfcfc]">Quantity</th>
-                                <th className="py-[12px] px-[24px] text-center font-bold text-[14px] leading-[20px] border-b border-[#fcfcfc]">UOM</th>
-                                <th className="py-[12px] px-[24px] text-center font-bold text-[14px] leading-[20px] border-b border-[#fcfcfc]">Price</th>
-                                <th className="py-[12px] px-[24px] text-center font-bold text-[14px] leading-[20px] border-b border-[#fcfcfc]">Amount</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {request.lineItems.map((item, index) => (
-                                <tr key={index} className="bg-[#fcfcfc] border-b border-[#fcfcfc] last:border-b-0">
-                                    <td className="py-[12px] px-[24px] text-[#001c43] text-[14px] font-bold leading-[20px] text-center">{item.lineNumber}</td>
-                                    <td className="py-[12px] px-[24px] text-[#001c43] text-[14px] font-bold leading-[20px]">{item.category}</td>
-                                    <td className="py-[12px] px-[24px] text-[#001c43] text-[14px] font-bold leading-[20px]">{item.activityDescription}</td>
-                                    <td className="py-[12px] px-[24px] text-[#001c43] text-[14px] font-bold leading-[20px] text-center">{item.quantity}</td>
-                                    <td className="py-[12px] px-[24px] text-[#001c43] text-[14px] font-bold leading-[20px] text-center">{item.uom}</td>
-                                    <td className="py-[12px] px-[24px] text-[#001c43] text-[14px] font-bold leading-[20px] text-center">{formatNumber(item.price)}</td>
-                                    <td className="py-[12px] px-[24px] text-[#001c43] text-[14px] font-bold leading-[20px] text-center">{formatNumber(item.amount)}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div className="border-b border-gray-300 mb-8" />
-
-            {/* Amount Summary */}
-            <div className="mb-8 bg-[#ececec] p-6 rounded-[20px]">
-                <div className="flex justify-between items-start">
-                    <div className="text-[14px] leading-[20px] text-[#001c43]">
-                        <span className="font-bold">Currency: {request.amountSummary.currency}</span>
-                    </div>
-                    <div className="text-right space-y-3 min-w-[300px]">
-                        <div className="flex justify-between gap-8">
-                            <span className="text-[#001c43] text-[14px] leading-[20px] font-bold">Total Amount</span>
-                            <span className="text-[#001c43] text-[14px] leading-[20px] font-bold">{formatNumber(request.amountSummary.totalAmount)}</span>
-                        </div>
-                        <div className="flex justify-between gap-8">
-                            <span className="text-[#001c43] text-[14px] leading-[20px] font-bold">Cash Advance</span>
-                            <span className="text-[#001c43] text-[14px] leading-[20px] font-bold">{formatNumber(request.amountSummary.cashAdvance)}</span>
-                        </div>
-                        <div className="border-t-2 border-[#b1b1b1] pt-3 mt-3">
-                            <div className="flex justify-between gap-8">
-                                <span className="text-[#001c43] text-[14px] leading-[20px] font-bold">Amount to Return/(Refund)</span>
-                                <span className="text-[#001c43] text-[14px] leading-[20px] font-bold">{formatNumber(request.amountSummary.amountToReturn)}</span>
-                            </div>
-                        </div>
+                    {/* Department */}
+                    <div className="col-span-1 flex flex-col gap-[10px] px-[20px]">
+                        <p className="font-['Montserrat'] font-bold text-[14px] leading-[20px] text-[#001c43]">
+                            Department
+                        </p>
+                        <p className="font-['Montserrat'] font-normal text-[14px] leading-[20px] text-[#001c43]">
+                            {request.requesterInfo.department}
+                        </p>
                     </div>
                 </div>
             </div>
 
-            <div className="border-b border-gray-300 mb-8" />
+            {/* Separator */}
+            <div className="h-[2px] bg-[#b1b1b1] mb-8" />
 
-            {/* Attachments Section */}
-            <div className="flex items-start justify-between mb-8">
-                <div className="flex items-center gap-[10px]">
-                    <Link className="w-[24px] h-[24px] text-[#001c43]" />
-                    <p className="text-[#001c43] text-[14px] leading-[20px] font-normal">Attachments</p>
+            {/* === REQUEST DETAILS SECTION === */}
+            <div className="bg-white rounded-[20px] p-[20px] border border-transparent mb-8">
+                <div className="grid grid-cols-2 gap-y-[10px]">
+                    {/* Section Title */}
+                    <div className="col-span-2">
+                        <h3 className="font-['Montserrat'] font-semibold text-[20px] leading-[28px] text-[#001c43] mb-[10px]">
+                            Request Details
+                        </h3>
+                    </div>
+
+                    {/* Cash Advance Form */}
+                    <div className="col-span-2 flex flex-col gap-[10px] px-[20px]">
+                        <p className="font-['Montserrat'] font-bold text-[14px] leading-[20px] text-[#001c43]">
+                            Cash Advance Form
+                        </p>
+                        <p className="font-['Montserrat'] font-normal text-[14px] leading-[20px] text-[#001c43]">
+                            {request.requestDetailsInfo.cashAdvanceForm}
+                        </p>
+                    </div>
+
+                    {/* Description/Purpose */}
+                    <div className="col-span-2 flex flex-col gap-[10px] px-[20px]">
+                        <p className="font-['Montserrat'] font-bold text-[14px] leading-[20px] text-[#001c43]">
+                            Description/Purpose
+                        </p>
+                        <p className="font-['Montserrat'] font-normal text-[14px] leading-[20px] text-[#001c43]">
+                            {request.requestDetailsInfo.descriptionPurpose}
+                        </p>
+                    </div>
+
+                    {/* Source of Fund */}
+                    <div className="col-span-1 flex flex-col gap-[10px] px-[20px]">
+                        <p className="font-['Montserrat'] font-bold text-[14px] leading-[20px] text-[#001c43]">
+                            Source of Fund
+                        </p>
+                        <p className="font-['Montserrat'] font-normal text-[14px] leading-[20px] text-[#001c43]">
+                            {request.requestDetailsInfo.sourceOfFund}
+                        </p>
+                    </div>
+
+                    {/* Cost Center */}
+                    <div className="col-span-1 flex flex-col gap-[10px] px-[20px]">
+                        <p className="font-['Montserrat'] font-bold text-[14px] leading-[20px] text-[#001c43]">
+                            Cost Center
+                        </p>
+                        <p className="font-['Montserrat'] font-normal text-[14px] leading-[20px] text-[#001c43]">
+                            {request.requestDetailsInfo.costCenter}
+                        </p>
+                    </div>
+
+                    {/* Date Requested */}
+                    <div className="col-span-1 flex flex-col gap-[10px] px-[20px]">
+                        <p className="font-['Montserrat'] font-bold text-[14px] leading-[20px] text-[#001c43]">
+                            Date Requested
+                        </p>
+                        <p className="font-['Montserrat'] font-normal text-[14px] leading-[20px] text-[#001c43]">
+                            {request.requestDetailsInfo.dateRequested}
+                        </p>
+                    </div>
+
+                    {/* Date Needed */}
+                    <div className="col-span-1 flex flex-col gap-[10px] px-[20px]">
+                        <p className="font-['Montserrat'] font-bold text-[14px] leading-[20px] text-[#001c43]">
+                            Date Needed
+                        </p>
+                        <p className="font-['Montserrat'] font-normal text-[14px] leading-[20px] text-[#001c43]">
+                            {request.requestDetailsInfo.dateNeeded}
+                        </p>
+                    </div>
+
+                    {/* Date Start */}
+                    <div className="col-span-1 flex flex-col gap-[10px] px-[20px]">
+                        <p className="font-['Montserrat'] font-bold text-[14px] leading-[20px] text-[#001c43]">
+                            Date Start
+                        </p>
+                        <p className="font-['Montserrat'] font-normal text-[14px] leading-[20px] text-[#001c43]">
+                            {request.requestDetailsInfo.dateStart}
+                        </p>
+                    </div>
+
+                    {/* Date End */}
+                    <div className="col-span-1 flex flex-col gap-[10px] px-[20px]">
+                        <p className="font-['Montserrat'] font-bold text-[14px] leading-[20px] text-[#001c43]">
+                            Date End
+                        </p>
+                        <p className="font-['Montserrat'] font-normal text-[14px] leading-[20px] text-[#001c43]">
+                            {request.requestDetailsInfo.dateEnd}
+                        </p>
+                    </div>
+
+                    {/* Line Items Table - Full Width */}
+                    <div className="col-span-2 px-[20px] mt-[10px]">
+                        <Table>
+                            <TableHeader>
+                                <TableRow className="bg-[#001c43] hover:bg-[#001c43]">
+                                    <TableHead className="text-white font-['Montserrat'] font-bold text-[14px] text-center border-b border-white rounded-tl-[12px]">
+                                        Line/Item
+                                    </TableHead>
+                                    <TableHead className="text-white font-['Montserrat'] font-bold text-[14px] text-center border-b border-white">
+                                        Category
+                                    </TableHead>
+                                    <TableHead className="text-white font-['Montserrat'] font-bold text-[14px] text-center border-b border-white">
+                                        Activity/Description
+                                    </TableHead>
+                                    <TableHead className="text-white font-['Montserrat'] font-bold text-[14px] text-center border-b border-white">
+                                        Quantity
+                                    </TableHead>
+                                    <TableHead className="text-white font-['Montserrat'] font-bold text-[14px] text-center border-b border-white">
+                                        UOM
+                                    </TableHead>
+                                    <TableHead className="text-white font-['Montserrat'] font-bold text-[14px] text-center border-b border-white">
+                                        Price
+                                    </TableHead>
+                                    <TableHead className="text-white font-['Montserrat'] font-bold text-[14px] text-center border-b border-white rounded-tr-[12px]">
+                                        Amount
+                                    </TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {request.lineItems.map((item, index) => (
+                                    <TableRow key={index} className="hover:bg-white">
+                                        <TableCell className="text-center font-['Montserrat'] font-bold text-[14px] text-[#001c43] border-b border-white">
+                                            {item.lineNumber}
+                                        </TableCell>
+                                        <TableCell className="font-['Montserrat'] font-bold text-[14px] text-[#001c43] border-b border-white">
+                                            {item.category}
+                                        </TableCell>
+                                        <TableCell className="font-['Montserrat'] font-bold text-[14px] text-[#001c43] border-b border-white">
+                                            {item.activityDescription}
+                                        </TableCell>
+                                        <TableCell className="text-center font-['Montserrat'] font-bold text-[14px] text-[#001c43] border-b border-white">
+                                            {item.quantity}
+                                        </TableCell>
+                                        <TableCell className="font-['Montserrat'] font-bold text-[14px] text-[#001c43] border-b border-white">
+                                            {item.uom}
+                                        </TableCell>
+                                        <TableCell className="text-center font-['Montserrat'] font-bold text-[14px] text-[#001c43] border-b border-white">
+                                            {formatNumber(item.price)}
+                                        </TableCell>
+                                        <TableCell className="text-center font-['Montserrat'] font-bold text-[14px] text-[#001c43] border-b border-white">
+                                            {formatNumber(item.amount)}
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </div>
+                </div>
+            </div>
+
+            {/* Separator */}
+            <div className="h-[2px] bg-[#b1b1b1] mb-8" />
+
+            {/* === AMOUNT SUMMARY SECTION === */}
+            <div className="bg-[#ececec] rounded-[20px] p-[20px] mb-8">
+                <div className="grid grid-cols-2 gap-y-[10px] px-[20px]">
+                    {/* Currency */}
+                    <div className="col-span-1 flex items-center gap-[10px]">
+                        <p className="font-['Montserrat'] font-bold text-[14px] leading-[20px] text-[#001c43]">
+                            Currency:
+                        </p>
+                        <p className="font-['Montserrat'] font-bold text-[14px] leading-[20px] text-[#001c43]">
+                            {request.amountSummary.currency}
+                        </p>
+                    </div>
+
+                    {/* Total Amount */}
+                    <div className="col-span-1 grid grid-cols-2 gap-[10px]">
+                        <p className="font-['Montserrat'] font-bold text-[14px] leading-[20px] text-[#001c43] text-right">
+                            Total Amount
+                        </p>
+                        <p className="font-['Montserrat'] font-bold text-[14px] leading-[20px] text-[#001c43] text-right">
+                            {formatNumber(request.amountSummary.totalAmount)}
+                        </p>
+                    </div>
+
+                    {/* Empty cell for spacing */}
+                    <div className="col-span-1" />
+
+                    {/* Cash Advance */}
+                    <div className="col-span-1 grid grid-cols-2 gap-[10px]">
+                        <p className="font-['Montserrat'] font-bold text-[14px] leading-[20px] text-[#001c43] text-right">
+                            Cash Advance
+                        </p>
+                        <p className="font-['Montserrat'] font-bold text-[14px] leading-[20px] text-[#001c43] text-right">
+                            {formatNumber(request.amountSummary.cashAdvance)}
+                        </p>
+                    </div>
+
+                    {/* Separator line */}
+                    <div className="col-span-1" />
+                    <div className="col-span-1">
+                        <div className="h-[2px] bg-[#b1b1b1]" />
+                    </div>
+
+                    {/* Empty cell for spacing */}
+                    <div className="col-span-1" />
+
+                    {/* Amount to Return/(Refund) */}
+                    <div className="col-span-1 grid grid-cols-2 gap-[10px]">
+                        <p className="font-['Montserrat'] font-bold text-[14px] leading-[20px] text-[#001c43] text-right">
+                            Amount to Return/(Refund)
+                        </p>
+                        <p className="font-['Montserrat'] font-bold text-[14px] leading-[20px] text-[#001c43] text-right">
+                            {formatNumber(request.amountSummary.amountToReturn)}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            {/* Separator */}
+            <div className="h-[2px] bg-[#b1b1b1] mb-8" />
+
+            {/* === ATTACHMENTS SECTION === */}
+            <div className="flex items-start px-[20px] py-[10px]">
+                {/* Attachments Button */}
+                <div className="flex items-center">
+                    <button className="bg-white border-0 rounded-[16px] px-[41px] py-[16px] flex items-center gap-[10px] h-[36px] hover:bg-gray-50 transition-colors">
+                        <Link2 className="w-[24px] h-[24px] text-[#001c43]" />
+                        <span className="font-['Montserrat'] font-normal text-[14px] leading-[20px] text-[#001c43]">
+                            Attachments
+                        </span>
+                    </button>
                 </div>
 
-                <div className="border border-[#001c43] rounded-[20px] p-[10px] min-w-[541px]">
+                {/* 85px gap */}
+                <div className="w-[85px]" />
+
+                {/* Attachments List */}
+                <div className="border border-[#001c43] rounded-[20px] p-[20px] w-[541px] flex flex-col gap-[10px]">
                     {request.attachments.length > 0 ? (
-                        <div className="space-y-2">
-                            {request.attachments.map((attachment) => (
-                                <div key={attachment.id} className="flex items-center gap-[10px] px-[20px] py-0">
-                                    <div className="w-[17px] h-[17px] flex-shrink-0">
-                                        <svg width="17" height="17" viewBox="0 0 17 17" fill="none">
-                                            <path d="M9.5 2.5H4.5C4.10218 2.5 3.72064 2.65804 3.43934 2.93934C3.15804 3.22064 3 3.60218 3 4V13C3 13.3978 3.15804 13.7794 3.43934 14.0607C3.72064 14.342 4.10218 14.5 4.5 14.5H12.5C12.8978 14.5 13.2794 14.342 13.5607 14.0607C13.842 13.7794 14 13.3978 14 13V7L9.5 2.5Z" stroke="#001C43" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                                            <path d="M9.5 2.5V7H14" stroke="#001C43" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                                        </svg>
-                                    </div>
-                                    <p className="text-[#001c43] text-[14px] font-medium leading-[20px]">{attachment.filename}</p>
+                        request.attachments.map((attachment) => (
+                            <div key={attachment.id} className="flex items-center gap-[10px]">
+                                <div className="w-[17px] h-[17px] flex-shrink-0">
+                                    <svg width="17" height="17" viewBox="0 0 17 17" fill="none">
+                                        <path d="M9.5 2.5H4.5C4.10218 2.5 3.72064 2.65804 3.43934 2.93934C3.15804 3.22064 3 3.60218 3 4V13C3 13.3978 3.15804 13.7794 3.43934 14.0607C3.72064 14.342 4.10218 14.5 4.5 14.5H12.5C12.8978 14.5 13.2794 14.342 13.5607 14.0607C13.842 13.7794 14 13.3978 14 13V7L9.5 2.5Z" stroke="#001C43" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                        <path d="M9.5 2.5V7H14" stroke="#001C43" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                    </svg>
                                 </div>
-                            ))}
-                        </div>
+                                <p className="font-['Montserrat'] font-medium text-[14px] leading-[20px] text-[#001c43]">
+                                    {attachment.filename}
+                                </p>
+                            </div>
+                        ))
                     ) : (
                         <p className="text-[#9ca3af] text-sm text-center py-2">No attachments</p>
                     )}
                 </div>
             </div>
-
         </div>
     );
 }
 
-// Print-optimized Liquidation Form Content
+// === PRINT VERSION WITH ATTACHMENTS AT THE BOTTOM ===
 function PrintLiquidationFormContent({ request }: { request: LiquidationDetail }) {
     return (
-        <div className="bg-white p-4 text-[9px]">
-            {/* Header */}
-            <div className="grid grid-cols-3 items-center pb-2 mb-3 border-b border-gray-300">
-                <img src={mapuaLogo} alt="MAPUA Logo" className="w-[80px] h-auto object-contain" />
-                <h1 className="text-[#001c43] font-bold text-[16px] text-center">Liquidation Report</h1>
-                <p className="text-[#001c43] text-[9px] font-medium text-right">{request.referenceNumber}</p>
-            </div>
+        <div className="bg-white p-6 text-[10px]">
+            {/* === HEADER SECTION === */}
+            <div className="grid grid-cols-3 items-end h-[80px] gap-[8px] mb-5">
+                {/* Logo */}
+                <div className="flex items-start">
+                    <img
+                        src={mapuaLogo}
+                        alt="MAPUA Logo"
+                        className="h-[80px] w-auto object-contain"
+                    />
+                </div>
 
-            {/* Requester Information */}
-            <div className="mb-3">
-                <h2 className="text-[#001c43] font-bold text-[11px] mb-2">Requester Information</h2>
-                <div className="grid grid-cols-2 gap-x-4 gap-y-1">
-                    <div>
-                        <p className="text-[#001c43] font-bold">Requested By</p>
-                        <p className="text-[#001c43]">{request.requesterInfo.requestedBy}</p>
-                    </div>
-                    <div>
-                        <p className="text-[#001c43] font-bold">Department</p>
-                        <p className="text-[#001c43]">{request.requesterInfo.department}</p>
-                    </div>
+                {/* Title */}
+                <div className="flex items-end justify-center pb-[6px]">
+                    <h2 className="font-['DM_Sans'] font-bold text-[20px] leading-[normal] text-[#001c43] text-center">
+                        Liquidation Report
+                    </h2>
+                </div>
+
+                {/* Reference Number */}
+                <div className="flex items-end justify-end pb-[6px]">
+                    <p className="font-['Montserrat'] font-semibold text-[10px] leading-none text-[#001c43] tracking-[-0.32px]">
+                        {request.referenceNumber}
+                    </p>
                 </div>
             </div>
 
-            <div className="border-b border-gray-300 mb-3" />
+            {/* Separator */}
+            <div className="h-[2px] bg-[#b1b1b1] mb-5" />
 
-            {/* Request Details */}
-            <div className="mb-3">
-                <h2 className="text-[#001c43] font-bold text-[11px] mb-2">Request Details</h2>
-                <div className="mb-2">
-                    <p className="text-[#001c43] font-bold">Cash Advance Form</p>
-                    <p className="text-[#001c43]">{request.requestDetailsInfo.cashAdvanceForm}</p>
-                </div>
-                <div className="mb-2">
-                    <p className="text-[#001c43] font-bold">Description/Purpose</p>
-                    <p className="text-[#001c43]">{request.requestDetailsInfo.descriptionPurpose}</p>
-                </div>
-                <div className="grid grid-cols-3 gap-x-4 gap-y-1 mb-2">
-                    <div>
-                        <p className="text-[#001c43] font-bold">Source of Fund</p>
-                        <p className="text-[#001c43]">{request.requestDetailsInfo.sourceOfFund}</p>
+            {/* === REQUESTER INFORMATION SECTION === */}
+            <div className="bg-white rounded-[12px] p-[14px] border border-transparent mb-5">
+                <div className="grid grid-cols-2 gap-y-[10px]">
+                    {/* Section Title */}
+                    <div className="col-span-2 mb-[6px]">
+                        <h3 className="font-['Montserrat'] font-bold text-[12px] leading-[16px] text-[#001c43]">
+                            Requester Information
+                        </h3>
                     </div>
-                    <div>
-                        <p className="text-[#001c43] font-bold">Cost Center</p>
-                        <p className="text-[#001c43]">{request.requestDetailsInfo.costCenter}</p>
-                    </div>
-                    <div>
-                        <p className="text-[#001c43] font-bold">Date Requested</p>
-                        <p className="text-[#001c43]">{request.requestDetailsInfo.dateRequested}</p>
-                    </div>
-                    <div>
-                        <p className="text-[#001c43] font-bold">Date Needed</p>
-                        <p className="text-[#001c43]">{request.requestDetailsInfo.dateNeeded}</p>
-                    </div>
-                    <div>
-                        <p className="text-[#001c43] font-bold">Date Start</p>
-                        <p className="text-[#001c43]">{request.requestDetailsInfo.dateStart}</p>
-                    </div>
-                    <div>
-                        <p className="text-[#001c43] font-bold">Date End</p>
-                        <p className="text-[#001c43]">{request.requestDetailsInfo.dateEnd}</p>
-                    </div>
-                </div>
 
-                {/* Line Items Table */}
-                <table className="w-full border-collapse text-[8px] border border-gray-200">
-                    <thead>
-                        <tr className="bg-[#001c43] text-white">
-                            <th className="py-1 px-1 text-center font-bold border border-gray-300">Line/Item</th>
-                            <th className="py-1 px-1 text-center font-bold border border-gray-300">Category</th>
-                            <th className="py-1 px-1 text-center font-bold border border-gray-300">Activity/Description</th>
-                            <th className="py-1 px-1 text-center font-bold border border-gray-300">Quantity</th>
-                            <th className="py-1 px-1 text-center font-bold border border-gray-300">UOM</th>
-                            <th className="py-1 px-1 text-center font-bold border border-gray-300">Price</th>
-                            <th className="py-1 px-1 text-center font-bold border border-gray-300">Amount</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {request.lineItems.map((item, index) => (
-                            <tr key={index} className="border-b border-gray-200">
-                                <td className="py-1 px-1 text-[#001c43] text-center border border-gray-200">{item.lineNumber}</td>
-                                <td className="py-1 px-1 text-[#001c43] border border-gray-200">{item.category}</td>
-                                <td className="py-1 px-1 text-[#001c43] border border-gray-200">{item.activityDescription}</td>
-                                <td className="py-1 px-1 text-[#001c43] text-center border border-gray-200">{item.quantity}</td>
-                                <td className="py-1 px-1 text-[#001c43] text-center border border-gray-200">{item.uom}</td>
-                                <td className="py-1 px-1 text-[#001c43] text-center border border-gray-200">{formatNumber(item.price)}</td>
-                                <td className="py-1 px-1 text-[#001c43] text-center border border-gray-200">{formatNumber(item.amount)}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+                    {/* Requested By */}
+                    <div className="col-span-1 flex flex-col gap-[6px] px-[12px]">
+                        <p className="font-['Montserrat'] font-bold text-[10px] leading-[14px] text-[#001c43]">
+                            Requested By
+                        </p>
+                        <p className="font-['Montserrat'] font-normal text-[10px] leading-[14px] text-[#001c43]">
+                            {request.requesterInfo.requestedBy}
+                        </p>
+                    </div>
+
+                    {/* Department */}
+                    <div className="col-span-1 flex flex-col gap-[6px] px-[12px]">
+                        <p className="font-['Montserrat'] font-bold text-[10px] leading-[14px] text-[#001c43]">
+                            Department
+                        </p>
+                        <p className="font-['Montserrat'] font-normal text-[10px] leading-[14px] text-[#001c43]">
+                            {request.requesterInfo.department}
+                        </p>
+                    </div>
+                </div>
             </div>
 
-            <div className="border-b border-gray-300 mb-3" />
+            {/* Separator */}
+            <div className="h-[2px] bg-[#b1b1b1] mb-5" />
 
-            {/* Amount Summary */}
-            <div className="mb-3 bg-gray-100 p-3 rounded">
-                <div className="flex justify-between">
-                    <p className="text-[#001c43] font-bold">Currency: {request.amountSummary.currency}</p>
-                    <div className="text-right space-y-1">
-                        <div className="flex justify-between gap-4">
-                            <span className="text-[#001c43] font-bold">Total Amount</span>
-                            <span className="text-[#001c43]">{formatNumber(request.amountSummary.totalAmount)}</span>
+            {/* === REQUEST DETAILS SECTION === */}
+            <div className="bg-white rounded-[12px] p-[14px] border border-transparent mb-5">
+                <div className="grid grid-cols-2 gap-y-[10px]">
+                    {/* Section Title */}
+                    <div className="col-span-2 mb-[6px]">
+                        <h3 className="font-['Montserrat'] font-bold text-[12px] leading-[16px] text-[#001c43]">
+                            Request Details
+                        </h3>
+                    </div>
+
+                    {/* Cash Advance Form */}
+                    <div className="col-span-2 flex flex-col gap-[6px] px-[12px]">
+                        <p className="font-['Montserrat'] font-bold text-[10px] leading-[14px] text-[#001c43]">
+                            Cash Advance Form
+                        </p>
+                        <p className="font-['Montserrat'] font-normal text-[10px] leading-[14px] text-[#001c43]">
+                            {request.requestDetailsInfo.cashAdvanceForm}
+                        </p>
+                    </div>
+
+                    {/* Description/Purpose */}
+                    <div className="col-span-2 flex flex-col gap-[6px] px-[12px]">
+                        <p className="font-['Montserrat'] font-bold text-[10px] leading-[14px] text-[#001c43]">
+                            Description/Purpose
+                        </p>
+                        <p className="font-['Montserrat'] font-normal text-[10px] leading-[14px] text-[#001c43]">
+                            {request.requestDetailsInfo.descriptionPurpose}
+                        </p>
+                    </div>
+
+                    {/* Source of Fund */}
+                    <div className="col-span-1 flex flex-col gap-[6px] px-[12px]">
+                        <p className="font-['Montserrat'] font-bold text-[10px] leading-[14px] text-[#001c43]">
+                            Source of Fund
+                        </p>
+                        <p className="font-['Montserrat'] font-normal text-[10px] leading-[14px] text-[#001c43]">
+                            {request.requestDetailsInfo.sourceOfFund}
+                        </p>
+                    </div>
+
+                    {/* Cost Center */}
+                    <div className="col-span-1 flex flex-col gap-[6px] px-[12px]">
+                        <p className="font-['Montserrat'] font-bold text-[10px] leading-[14px] text-[#001c43]">
+                            Cost Center
+                        </p>
+                        <p className="font-['Montserrat'] font-normal text-[10px] leading-[14px] text-[#001c43]">
+                            {request.requestDetailsInfo.costCenter}
+                        </p>
+                    </div>
+
+                    {/* Date Requested */}
+                    <div className="col-span-1 flex flex-col gap-[6px] px-[12px]">
+                        <p className="font-['Montserrat'] font-bold text-[10px] leading-[14px] text-[#001c43]">
+                            Date Requested
+                        </p>
+                        <p className="font-['Montserrat'] font-normal text-[10px] leading-[14px] text-[#001c43]">
+                            {request.requestDetailsInfo.dateRequested}
+                        </p>
+                    </div>
+
+                    {/* Date Needed */}
+                    <div className="col-span-1 flex flex-col gap-[6px] px-[12px]">
+                        <p className="font-['Montserrat'] font-bold text-[10px] leading-[14px] text-[#001c43]">
+                            Date Needed
+                        </p>
+                        <p className="font-['Montserrat'] font-normal text-[10px] leading-[14px] text-[#001c43]">
+                            {request.requestDetailsInfo.dateNeeded}
+                        </p>
+                    </div>
+
+                    {/* Date Start */}
+                    <div className="col-span-1 flex flex-col gap-[6px] px-[12px]">
+                        <p className="font-['Montserrat'] font-bold text-[10px] leading-[14px] text-[#001c43]">
+                            Date Start
+                        </p>
+                        <p className="font-['Montserrat'] font-normal text-[10px] leading-[14px] text-[#001c43]">
+                            {request.requestDetailsInfo.dateStart}
+                        </p>
+                    </div>
+
+                    {/* Date End */}
+                    <div className="col-span-1 flex flex-col gap-[6px] px-[12px]">
+                        <p className="font-['Montserrat'] font-bold text-[10px] leading-[14px] text-[#001c43]">
+                            Date End
+                        </p>
+                        <p className="font-['Montserrat'] font-normal text-[10px] leading-[14px] text-[#001c43]">
+                            {request.requestDetailsInfo.dateEnd}
+                        </p>
+                    </div>
+
+                    {/* Line Items Table - Full Width - ROUNDED CORNERS */}
+                    <div className="col-span-2 px-[12px] mt-[8px]">
+                        <div className="overflow-hidden rounded-[8px]">
+                            <Table>
+                                <TableHeader>
+                                    <TableRow className="bg-[#001c43] hover:bg-[#001c43]">
+                                        <TableHead className="text-white font-['Montserrat'] font-bold text-[9px] text-center border-b border-white py-[2px] px-2 rounded-tl-[8px]">
+                                            Line/Item
+                                        </TableHead>
+                                        <TableHead className="text-white font-['Montserrat'] font-bold text-[9px] text-center border-b border-white py-[2px] px-2">
+                                            Category
+                                        </TableHead>
+                                        <TableHead className="text-white font-['Montserrat'] font-bold text-[9px] text-center border-b border-white py-[2px] px-2">
+                                            Activity/Description
+                                        </TableHead>
+                                        <TableHead className="text-white font-['Montserrat'] font-bold text-[9px] text-center border-b border-white py-[2px] px-2">
+                                            Quantity
+                                        </TableHead>
+                                        <TableHead className="text-white font-['Montserrat'] font-bold text-[9px] text-center border-b border-white py-[2px] px-2">
+                                            UOM
+                                        </TableHead>
+                                        <TableHead className="text-white font-['Montserrat'] font-bold text-[9px] text-center border-b border-white py-[2px] px-2">
+                                            Price
+                                        </TableHead>
+                                        <TableHead className="text-white font-['Montserrat'] font-bold text-[9px] text-center border-b border-white py-[2px] px-2 rounded-tr-[8px]">
+                                            Amount
+                                        </TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    {request.lineItems.map((item, index) => (
+                                        <TableRow key={index} className="hover:bg-white">
+                                            <TableCell className="text-center font-['Montserrat'] font-bold text-[9px] text-[#001c43] border-b border-white py-[6px] px-2">
+                                                {item.lineNumber}
+                                            </TableCell>
+                                            <TableCell className="font-['Montserrat'] font-bold text-[9px] text-[#001c43] border-b border-white py-[6px] px-2">
+                                                {item.category}
+                                            </TableCell>
+                                            <TableCell className="font-['Montserrat'] font-bold text-[9px] text-[#001c43] border-b border-white py-[6px] px-2">
+                                                {item.activityDescription}
+                                            </TableCell>
+                                            <TableCell className="text-center font-['Montserrat'] font-bold text-[9px] text-[#001c43] border-b border-white py-[6px] px-2">
+                                                {item.quantity}
+                                            </TableCell>
+                                            <TableCell className="font-['Montserrat'] font-bold text-[9px] text-[#001c43] border-b border-white py-[6px] px-2">
+                                                {item.uom}
+                                            </TableCell>
+                                            <TableCell className="text-center font-['Montserrat'] font-bold text-[9px] text-[#001c43] border-b border-white py-[6px] px-2">
+                                                {formatNumber(item.price)}
+                                            </TableCell>
+                                            <TableCell className="text-center font-['Montserrat'] font-bold text-[9px] text-[#001c43] border-b border-white py-[6px] px-2">
+                                                {formatNumber(item.amount)}
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
                         </div>
-                        <div className="flex justify-between gap-4">
-                            <span className="text-[#001c43] font-bold">Cash Advance</span>
-                            <span className="text-[#001c43]">{formatNumber(request.amountSummary.cashAdvance)}</span>
-                        </div>
-                        <div className="border-t border-gray-300 pt-1 mt-1">
-                            <div className="flex justify-between gap-4">
-                                <span className="text-[#001c43] font-bold text-[10px]">Amount to Return/(Refund)</span>
-                                <span className="text-[#001c43] font-bold text-[10px]">{formatNumber(request.amountSummary.amountToReturn)}</span>
+                    </div>
+                </div>
+            </div>
+
+            {/* Separator */}
+            <div className="h-[2px] bg-[#b1b1b1] mb-5" />
+
+            {/* === AMOUNT SUMMARY SECTION === */}
+            <div className="bg-[#ececec] rounded-[12px] p-[14px] mb-5">
+                <div className="grid grid-cols-2 gap-y-[8px] px-[12px]">
+                    {/* Currency */}
+                    <div className="col-span-1 flex items-center gap-[6px]">
+                        <p className="font-['Montserrat'] font-bold text-[10px] leading-[14px] text-[#001c43]">
+                            Currency:
+                        </p>
+                        <p className="font-['Montserrat'] font-bold text-[10px] leading-[14px] text-[#001c43]">
+                            {request.amountSummary.currency}
+                        </p>
+                    </div>
+
+                    {/* Total Amount */}
+                    <div className="col-span-1 grid grid-cols-2 gap-[6px]">
+                        <p className="font-['Montserrat'] font-bold text-[10px] leading-[14px] text-[#001c43] text-right">
+                            Total Amount
+                        </p>
+                        <p className="font-['Montserrat'] font-bold text-[10px] leading-[14px] text-[#001c43] text-right">
+                            {formatNumber(request.amountSummary.totalAmount)}
+                        </p>
+                    </div>
+
+                    {/* Empty cell for spacing */}
+                    <div className="col-span-1" />
+
+                    {/* Cash Advance */}
+                    <div className="col-span-1 grid grid-cols-2 gap-[6px]">
+                        <p className="font-['Montserrat'] font-bold text-[10px] leading-[14px] text-[#001c43] text-right">
+                            Cash Advance
+                        </p>
+                        <p className="font-['Montserrat'] font-bold text-[10px] leading-[14px] text-[#001c43] text-right">
+                            {formatNumber(request.amountSummary.cashAdvance)}
+                        </p>
+                    </div>
+
+                    {/* Separator line */}
+                    <div className="col-span-1" />
+                    <div className="col-span-1 pt-[4px]">
+                        <div className="h-[2px] bg-[#b1b1b1]" />
+                    </div>
+
+                    {/* Empty cell for spacing */}
+                    <div className="col-span-1" />
+
+                    {/* Amount to Return/(Refund) */}
+                    <div className="col-span-1 grid grid-cols-2 gap-[6px] pt-[4px]">
+                        <p className="font-['Montserrat'] font-bold text-[10px] leading-[14px] text-[#001c43] text-right">
+                            Amount to Return/(Refund)
+                        </p>
+                        <p className="font-['Montserrat'] font-bold text-[10px] leading-[14px] text-[#001c43] text-right">
+                            {formatNumber(request.amountSummary.amountToReturn)}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            {/* Separator */}
+            <div className="h-[2px] bg-[#b1b1b1] mb-4" />
+
+            {/* === ATTACHMENTS SECTION - MATCHING SCREEN DESIGN === */}
+            <div className="px-[12px] py-[6px] flex justify-end">
+                <div className="flex items-start">
+                    {/* Attachments Label (left side) */}
+                    <div className="flex-shrink-0 mr-[55px]">
+                        <p className="font-['Montserrat'] font-normal text-[10px] leading-[14px] text-[#001c43]">
+                            Attachments
+                        </p>
+                    </div>
+
+                    {/* Attachments Box - Fixed Width with proper border */}
+                    <div className="border border-[#001c43] rounded-[12px] p-[10px] w-[350px] mr-[55px]">
+                        {request.attachments.length > 0 ? (
+                            <div className="flex flex-col gap-[5px]">
+                                {request.attachments.map((attachment) => (
+                                    <div key={attachment.id} className="flex items-center gap-[6px]">
+                                        <div className="w-[11px] h-[11px] flex-shrink-0">
+                                            <svg width="11" height="11" viewBox="0 0 17 17" fill="none">
+                                                <path d="M9.5 2.5H4.5C4.10218 2.5 3.72064 2.65804 3.43934 2.93934C3.15804 3.22064 3 3.60218 3 4V13C3 13.3978 3.15804 13.7794 3.43934 14.0607C3.72064 14.342 4.10218 14.5 4.5 14.5H12.5C12.8978 14.5 13.2794 14.342 13.5607 14.0607C13.842 13.7794 14 13.3978 14 13V7L9.5 2.5Z" stroke="#001C43" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                                <path d="M9.5 2.5V7H14" stroke="#001C43" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                            </svg>
+                                        </div>
+                                        <p className="font-['Montserrat'] font-medium text-[10px] leading-[14px] text-[#001c43]">
+                                            {attachment.filename}
+                                        </p>
+                                    </div>
+                                ))}
                             </div>
-                        </div>
+                        ) : (
+                            <p className="text-[#9ca3af] text-[10px] text-center">No attachments</p>
+                        )}
                     </div>
                 </div>
             </div>
@@ -526,10 +871,19 @@ export default function LiquidationDetails() {
     });
 
     const handleCommentSubmit = () => {
-        if (commentText.trim()) {
-            console.log("Comment submitted:", commentText);
-            setCommentText("");
-        }
+        if (!commentText.trim() || !request) return;
+
+        const newCommentObj = {
+            id: `c${comments.length + 1}`,
+            author: "Current User",
+            role: "Requester",
+            timestamp: new Date().toLocaleString(),
+            text: commentText.trim(),
+            attachments: []
+        };
+
+        setComments([...comments, newCommentObj]);
+        setCommentText("");
     };
 
     const handleViewFullComments = () => {
