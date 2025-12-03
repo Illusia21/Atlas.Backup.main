@@ -28,6 +28,7 @@ const routeTitles: Record<string, string> = {
   '/request/non-trade-payable': 'Non-Trade Payable',
   '/request/trade-payable': 'Trade Payable',
   '/liquidation': 'For Liquidation',
+  '/liquidation/:id': 'Liquidation Details',
 }
 
 export default function ProtectedLayout() {

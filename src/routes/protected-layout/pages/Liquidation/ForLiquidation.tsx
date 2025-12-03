@@ -232,7 +232,7 @@ export default function ForLiquidation() {
     };
 
     const handleViewRequest = (id: string) => {
-        navigate(`/request/${id}`);
+        navigate(`/liquidation/${id}`);
     };
 
     return (

@@ -7,7 +7,6 @@ import ProtectedLayout from "./routes/protected-layout";
 import PublicLayout from "./routes/public-layout";
 import { logout } from './utils/auth';
 import MyRequests from "./routes/protected-layout/pages/MyRequestPage/MyRequests";
-import RFPStep1 from "./routes/public-layout/pages/Reimbursement/RFPStep1";
 import Reimbursement from "./routes/protected-layout/pages/Reimbursement";
 import NonTradePayable from "./routes/protected-layout/pages/NonTradePayable";
 import TradePayable from "./routes/protected-layout/pages/TradePayable";
@@ -17,6 +16,9 @@ import CAStep2 from "./routes/protected-layout/pages/CashAdvance/CAStep2";
 import CAStep3 from "./routes/protected-layout/pages/CashAdvance/CAStep3";
 import CAStep4 from "./routes/protected-layout/pages/CashAdvance/CAStep4";
 import CAStep5 from "./routes/protected-layout/pages/CashAdvance/CAStep5";
+import RFPStep1 from "./routes/public-layout/pages/Reimbursement/RFPStep1";
+import ForLiquidation from "./routes/protected-layout/pages/Liquidation/ForLiquidation";
+import LiquidationDetails from "./routes/protected-layout/pages/Liquidation/LiquidationDetails";
 
 function Logout() {
   logout();
