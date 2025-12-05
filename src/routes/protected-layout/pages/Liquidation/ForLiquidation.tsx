@@ -1,12 +1,12 @@
-import { useState, useMemo, useRef, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { Eye, Search, Table as TableIcon, LayoutGrid, ListFilterPlus, ArrowUpDown } from 'lucide-react'
-import { mockRequests } from '@/data/mockRequests'
-import { StatusBadge } from '@/components/StatusBadge'
-import { RequestCard } from '@/components/RequestCard'
-import { Button } from '@/components/ui/button'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { FilterPanel, type FilterValues } from '@/components/FilterPanel'
+import { useState, useMemo, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Eye, Search, Table as TableIcon, LayoutGrid, ListFilterPlus, ArrowUpDown } from 'lucide-react';
+import { StatusBadge } from '@/components/StatusBadge';
+import { RequestCard } from '@/components/RequestCard';
+import { Button } from '@/components/ui/button';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { FilterPanel, type FilterValues } from '@/components/FilterPanel';
+import type { LiquidationRequest, LiquidationStatus } from '@/types';
 import {
     Table,
     TableBody,
@@ -14,170 +14,226 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from '@/components/ui/table'
-import type { RequestStatus } from '@/types'
+} from "@/components/ui/table";
 
-function MyRequests() {
-    const navigate = useNavigate()
+export default function ForLiquidation() {
+    const navigate = useNavigate();
+    const searchInputRef = useRef<HTMLInputElement>(null);
 
-    // Track cancelled requests from localStorage
-    const [cancelledRequests, setCancelledRequests] = useState<string[]>([]);
-
-    // Load cancelled requests on mount
-    useEffect(() => {
-        const cancelled = JSON.parse(localStorage.getItem("cancelledRequests") || "[]");
-        setCancelledRequests(cancelled);
-    }, []);
-
-    // State for filters
-    const [activeTab, setActiveTab] = useState<RequestStatus | 'All'>('All')
-    const [searchQuery, setSearchQuery] = useState('')
-    const [viewMode, setViewMode] = useState<'table' | 'grid'>('table')
-    const searchInputRef = useRef<HTMLInputElement>(null)
+    // State
+    const [activeTab, setActiveTab] = useState<LiquidationStatus | 'All'>('All');
+    const [searchQuery, setSearchQuery] = useState('');
+    const [viewMode, setViewMode] = useState<'table' | 'grid'>('table');
 
     // Filter panel state
-    const [isFilterOpen, setIsFilterOpen] = useState(false)
+    const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [activeFilters, setActiveFilters] = useState<FilterValues>({
         requestType: 'all',
         dateRange: { from: undefined, to: undefined }
-    })
+    });
 
-    // Sorting state
-    const [sortBy, setSortBy] = useState<'date' | 'amount' | null>(null)
-    const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
+    // Sorting state - Default: sort by date, descending (most recent first)
+    const [sortBy, setSortBy] = useState<'date' | 'amount' | null>('date');
+    const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
 
     // Pagination state
-    const [currentPage, setCurrentPage] = useState(1)
-    const itemsPerPage = 20
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 20;
+
+    // Mock data - Only Cash Advance requests that reached liquidation phase
+    const mockLiquidationRequests: LiquidationRequest[] = [
+        {
+            id: 'CA-2024-001',
+            requestType: 'Cash Advance',
+            dateRequested: '01/15/2024',
+            description: 'Marketing campaign expenses for Q1',
+            amount: 50000,
+            currency: 'PHP',
+            status: 'For Liquidation'
+        },
+        {
+            id: 'CA-2024-002',
+            requestType: 'Cash Advance',
+            dateRequested: '01/18/2024',
+            description: 'Office supplies and equipment purchase',
+            amount: 1500,
+            currency: 'USD',
+            status: 'Pending'
+        },
+        {
+            id: 'CA-2024-003',
+            requestType: 'Cash Advance',
+            dateRequested: '01/20/2024',
+            description: 'Training and development program',
+            amount: 2000,
+            currency: 'EUR',
+            status: 'Pending'
+        },
+        {
+            id: 'CA-2024-004',
+            requestType: 'Cash Advance',
+            dateRequested: '01/22/2024',
+            description: 'Client meeting and entertainment expenses',
+            amount: 3500,
+            currency: 'EUR',
+            status: 'Returned'
+        },
+        {
+            id: 'CA-2024-005',
+            requestType: 'Cash Advance',
+            dateRequested: '01/25/2024',
+            description: 'Research and development materials',
+            amount: 4200,
+            currency: 'EUR',
+            status: 'Rejected'
+        },
+        {
+            id: 'CA-2024-006',
+            requestType: 'Cash Advance',
+            dateRequested: '01/28/2024',
+            description: 'Conference attendance and travel',
+            amount: 75000,
+            currency: 'PHP',
+            status: 'Completed'
+        },
+        {
+            id: 'CA-2024-007',
+            requestType: 'Cash Advance',
+            dateRequested: '02/01/2024',
+            description: 'Emergency equipment repair',
+            amount: 1200,
+            currency: 'USD',
+            status: 'Approved'
+        }
+    ];
+
+    // TODO: Get current user from auth context when backend is ready
+    // import { useAuth } from '@/hooks/useAuth';
+    // const { currentUser } = useAuth();
+
+    // Filter to show only current user's requests
+    // Uncomment this when you have real authentication:
+    // const userLiquidationRequests = mockLiquidationRequests.filter(
+    //     req => req.userId === currentUser?.id
+    // );
+
+    // For now, use all mock data (replace with userLiquidationRequests when backend is ready)
+    const userLiquidationRequests = mockLiquidationRequests;
 
     // Filter tabs
-    const tabs: Array<RequestStatus | 'All'> = [
-        'All',
-        'Pending',
-        'Returned',
-        'Completed',
-        'Rejected',
-        'Cancelled',
-    ]
+    const tabs: (LiquidationStatus | 'All')[] = ['All', 'Pending', 'Approved', 'Returned', 'Rejected', 'Completed'];
 
     // Filter handlers
     const handleApplyFilters = (filters: FilterValues) => {
-        setActiveFilters(filters)
-        setIsFilterOpen(false)
-    }
+        setActiveFilters(filters);
+        setIsFilterOpen(false);
+    };
 
     const handleResetFilters = () => {
         setActiveFilters({
             requestType: 'all',
             dateRange: { from: undefined, to: undefined }
-        })
-        setIsFilterOpen(false)
-    }
+        });
+        setIsFilterOpen(false);
+    };
 
     // Check if any filters are active
     const hasActiveFilters = activeFilters.requestType !== 'all' ||
         activeFilters.dateRange?.from !== undefined ||
-        activeFilters.dateRange?.to !== undefined
+        activeFilters.dateRange?.to !== undefined;
 
     // Sort handler
     const handleSort = (column: 'date' | 'amount') => {
         if (sortBy === column) {
-            // Toggle sort order if clicking the same column
-            setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')
+            setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
         } else {
-            // Set new column and default to ascending
-            setSortBy(column)
-            setSortOrder('asc')
+            setSortBy(column);
+            setSortOrder('asc');
         }
-    }
+    };
 
-    // Filter and Sort logic
+    // Filtered requests based on active tab, search query, filters, and sorting
     const filteredRequests = useMemo(() => {
-        // First, map requests to update cancelled ones
-        let requests = mockRequests.map(request => {
-            // Check if request is cancelled
-            if (cancelledRequests.includes(request.id)) {
-                return { ...request, status: "Cancellation Requested" as RequestStatus };
-            }
-            return request;
-        });
+        let requests = userLiquidationRequests; // Use user-specific data
 
-        // Then filter the requests
-        let filtered = requests.filter((request) => {
-            // Tab filter
-            const matchesTab = activeTab === 'All' || request.status === activeTab
+        // Filter by tab
+        if (activeTab !== 'All') {
+            requests = requests.filter(req => req.status === activeTab);
+        }
 
-            // Search filter
-            const matchesSearch =
-                searchQuery === '' ||
-                request.requestType.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                request.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                request.id.toLowerCase().includes(searchQuery.toLowerCase())
+        // Filter by search query
+        if (searchQuery.trim()) {
+            const query = searchQuery.toLowerCase();
+            requests = requests.filter(req =>
+                req.requestType.toLowerCase().includes(query) ||
+                req.description.toLowerCase().includes(query) ||
+                req.id.toLowerCase().includes(query) ||
+                req.currency.toLowerCase().includes(query)
+            );
+        }
 
-            // Request Type filter
-            const matchesRequestType =
-                activeFilters.requestType === 'all' ||
-                request.requestType === activeFilters.requestType
+        // Request Type filter
+        if (activeFilters.requestType !== 'all') {
+            requests = requests.filter(req => req.requestType === activeFilters.requestType);
+        }
 
-            // Date Range filter
-            let matchesDateRange = true
-            if (activeFilters.dateRange?.from || activeFilters.dateRange?.to) {
-                const requestDate = new Date(request.dateRequested)
+        // Date Range filter
+        if (activeFilters.dateRange?.from || activeFilters.dateRange?.to) {
+            requests = requests.filter(req => {
+                const requestDate = new Date(req.dateRequested);
+                let matchesDateRange = true;
+
                 if (activeFilters.dateRange?.from) {
-                    matchesDateRange = requestDate >= activeFilters.dateRange.from
+                    matchesDateRange = requestDate >= activeFilters.dateRange.from;
                 }
                 if (activeFilters.dateRange?.to && matchesDateRange) {
-                    matchesDateRange = requestDate <= activeFilters.dateRange.to
-                }
-            }
-
-            return matchesTab && matchesSearch && matchesRequestType && matchesDateRange
-        })
-
-        // Then, sort the filtered results
-        if (sortBy) {
-            filtered = [...filtered].sort((a, b) => {
-                let comparison = 0
-
-                if (sortBy === 'date') {
-                    const dateA = new Date(a.dateRequested).getTime()
-                    const dateB = new Date(b.dateRequested).getTime()
-                    comparison = dateA - dateB
-                } else if (sortBy === 'amount') {
-                    const amountA = parseFloat(a.amount.replace(/,/g, ''))
-                    const amountB = parseFloat(b.amount.replace(/,/g, ''))
-                    comparison = amountA - amountB
+                    matchesDateRange = requestDate <= activeFilters.dateRange.to;
                 }
 
-                return sortOrder === 'asc' ? comparison : -comparison
-            })
+                return matchesDateRange;
+            });
         }
 
-        return filtered
-    }, [searchQuery, activeTab, activeFilters, sortBy, sortOrder, cancelledRequests])
+        // Sort
+        if (sortBy) {
+            requests = [...requests].sort((a, b) => {
+                let comparison = 0;
+
+                if (sortBy === 'date') {
+                    const dateA = new Date(a.dateRequested).getTime();
+                    const dateB = new Date(b.dateRequested).getTime();
+                    comparison = dateA - dateB;
+                } else if (sortBy === 'amount') {
+                    comparison = a.amount - b.amount;
+                }
+
+                return sortOrder === 'asc' ? comparison : -comparison;
+            });
+        }
+
+        return requests;
+    }, [activeTab, searchQuery, activeFilters, sortBy, sortOrder]);
 
     // Pagination logic
-    const totalPages = Math.ceil(filteredRequests.length / itemsPerPage)
+    const totalPages = Math.ceil(filteredRequests.length / itemsPerPage);
     const paginatedRequests = useMemo(() => {
-        const startIndex = (currentPage - 1) * itemsPerPage
-        const endIndex = startIndex + itemsPerPage
-        return filteredRequests.slice(startIndex, endIndex)
-    }, [filteredRequests, currentPage, itemsPerPage])
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        return filteredRequests.slice(startIndex, endIndex);
+    }, [filteredRequests, currentPage]);
 
     // Reset to page 1 when filters change
     useMemo(() => {
-        setCurrentPage(1)
-    }, [searchQuery, activeTab, activeFilters, sortBy, sortOrder])
+        setCurrentPage(1);
+    }, [searchQuery, activeTab, activeFilters, sortBy, sortOrder]);
 
-    // Focus search input when icon is clicked
     const handleSearchIconClick = () => {
-        searchInputRef.current?.focus()
-    }
+        searchInputRef.current?.focus();
+    };
 
-    // Handle view request details
-    const handleViewRequest = (requestId: string) => {
-        navigate(`/request/${requestId}`)
-    }
+    const handleViewRequest = (id: string) => {
+        navigate(`/liquidation/${id}`);
+    };
 
     return (
         <div className="space-y-6 w-full">
@@ -201,9 +257,9 @@ function MyRequests() {
                     </button>
                 </div>
 
-                {/* Right Section - Reset Filter, Filter and Search Bar grouped together */}
+                {/* Right Section - Reset Filter, Filter and Search Bar */}
                 <div className="flex items-center gap-3 flex-1 justify-end min-w-0">
-                    {/* Reset Filter Button - Only visible when filters are active */}
+                    {/* Reset Filter Button */}
                     {hasActiveFilters && (
                         <button
                             onClick={handleResetFilters}
@@ -245,7 +301,7 @@ function MyRequests() {
                 </div>
             </div>
 
-            {/* Horizontal Tab Bar */}
+            {/* Status Tabs */}
             <div className="flex items-center justify-center overflow-x-auto">
                 <div className="flex items-center rounded-[6px] bg-[#fcfcfc] p-[4px] w-full">
                     {tabs.map((tab) => (
@@ -270,8 +326,12 @@ function MyRequests() {
                     <Table>
                         <TableHeader>
                             <TableRow className="bg-[#001C43] hover:bg-[#001C43]">
-                                <TableHead className="text-white text-[12px] text-center font-semibold min-w-[80px]">Request ID</TableHead>
-                                <TableHead className="text-white text-[12px] text-center font-semibold min-w-[180px]">Request Type</TableHead>
+                                <TableHead className="text-white text-[12px] text-center font-semibold min-w-[80px]">
+                                    Request ID
+                                </TableHead>
+                                <TableHead className="text-white text-[12px] text-center font-semibold min-w-[180px]">
+                                    Request Type
+                                </TableHead>
                                 <TableHead
                                     className="text-white text-[12px] text-center font-semibold min-w-[140px] cursor-pointer hover:bg-[#002856] transition-colors"
                                     onClick={() => handleSort('date')}
@@ -281,7 +341,9 @@ function MyRequests() {
                                         <ArrowUpDown className="h-3 w-3" />
                                     </div>
                                 </TableHead>
-                                <TableHead className="text-white text-[12px] text-center font-semibold min-w-[300px]">Description</TableHead>
+                                <TableHead className="text-white text-[12px] text-center font-semibold min-w-[300px]">
+                                    Description
+                                </TableHead>
                                 <TableHead
                                     className="text-white text-[12px] text-center font-semibold min-w-[100px] cursor-pointer hover:bg-[#002856] transition-colors"
                                     onClick={() => handleSort('amount')}
@@ -291,8 +353,12 @@ function MyRequests() {
                                         <ArrowUpDown className="h-3 w-3" />
                                     </div>
                                 </TableHead>
-                                <TableHead className="text-white text-[12px] text-center font-semibold min-w-[140px]">Status</TableHead>
-                                <TableHead className="text-white text-[12px] text-center font-semibold min-w-[80px] rounded-tr-[12px]">Action</TableHead>
+                                <TableHead className="text-white text-[12px] text-center font-semibold min-w-[140px]">
+                                    Status
+                                </TableHead>
+                                <TableHead className="text-white text-[12px] text-center font-semibold min-w-[80px] rounded-tr-[12px]">
+                                    Action
+                                </TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -310,7 +376,7 @@ function MyRequests() {
                                         <TableCell className="text-[12px] text-center">{request.dateRequested}</TableCell>
                                         <TableCell className="text-[12px] text-center">{request.description}</TableCell>
                                         <TableCell className="text-[12px] text-center">
-                                            {request.currency} {request.amount}
+                                            {request.currency} {request.amount.toLocaleString()}
                                         </TableCell>
                                         <TableCell className="text-center">
                                             <StatusBadge status={request.status} />
@@ -321,7 +387,7 @@ function MyRequests() {
                                                 size="icon"
                                                 onClick={() => handleViewRequest(request.id)}
                                             >
-                                                <Eye className="h-4 w-4" />
+                                                <Eye className="w-[24px] h-[24px] text-[#114b9f]" />
                                             </Button>
                                         </TableCell>
                                     </TableRow>
@@ -386,7 +452,11 @@ function MyRequests() {
                             {paginatedRequests.map((request) => (
                                 <RequestCard
                                     key={request.id}
-                                    request={request}
+                                    request={{
+                                        ...request,
+                                        amount: request.amount.toLocaleString(), // Convert number to string
+                                        status: request.status as any // Cast status to avoid type error
+                                    }}
                                     onViewClick={() => handleViewRequest(request.id)}
                                 />
                             ))}
@@ -437,23 +507,5 @@ function MyRequests() {
                 </div>
             )}
         </div>
-    )
+    );
 }
-
-export default MyRequests
-
-/*
-⚠️ WHAT'S MISSING (Not Blocking for AC-7)
-The 5% missing are:
-Real-time updates - Requires backend (WebSocket/polling)
-Request detail page - Eye icon works but target page doesn't exist
-
-|            Feature           | Priority | Why Not Blocking                                 | Implementation Time     |
-|-----------------------------|----------|--------------------------------------------------|-------------------------|
-| Real-time updates          | LOW      | Requires backend WebSocket or polling            | Separate ticket         |
-| Backend API integration   | LOW      | Currently using mockData (correct approach)      | When backend is ready   |
-| Request detail page      | MEDIUM   | Eye icon navigates, but page doesn't exist yet   | Separate ticket (AC-8?) |
-| Loading spinner         | LOW      | Using instant mock data, add when API is ready   | 5 minutes               |
-
-
-*/

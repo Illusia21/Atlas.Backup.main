@@ -8,6 +8,7 @@ import { SidebarProvider } from '@/components/ui/sidebar'
 import { AppSidebar } from '@/components/AppSidebar'
 import { Topbar } from '@/components/Topbar'
 import { Toaster } from "@/components/ui/sonner"
+import { AuthProvider } from '@/contexts/AuthContext';
 
 interface JWTPayload {
   exp?: number;
@@ -19,6 +20,15 @@ interface JWTPayload {
 const routeTitles: Record<string, string> = {
   '/': 'Dashboard',
   '/my-requests': 'My Requests',
+  '/request/cash-advance': 'Request Cash Advance',
+  '/request/cash-advance/step2': 'Request Cash Advance',
+  '/request/cash-advance/step3': 'Request Cash Advance',
+  '/request/cash-advance/step4': 'Request Cash Advance',
+  '/request/cash-advance/step5': 'Request Cash Advance',
+  '/request/non-trade-payable': 'Non-Trade Payable',
+  '/request/trade-payable': 'Trade Payable',
+  '/liquidation': 'For Liquidation',
+  '/liquidation/:id': 'Liquidation Details',
 }
 
 export default function ProtectedLayout() {
