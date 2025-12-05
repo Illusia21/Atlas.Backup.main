@@ -781,52 +781,182 @@ function CommentsContent({
     );
 }
 
-// Journey Tab Content (Same as RequestDetails)
-// function JourneyContent({ journey }: { journey: JourneyStep[] }) {
-//     return (
-//         <div className="flex-1 overflow-y-auto p-8">
-//             {journey.length === 0 ? (
-//                 <div className="flex items-center justify-center h-full">
-//                     <p className="text-gray-400 text-sm">No journey data available</p>
-//                 </div>
-//             ) : (
-//                 <div className="relative max-w-3xl mx-auto ml-[40px]">
-//                     <div className="absolute left-[35px] top-0 bottom-0 w-[2px] bg-[#d1d5db]" />
-//                     {journey.map((step, index) => {
-//                         const isCompleted = step.action === 'Approved' || step.action === 'Submitted' || step.action === 'Completed';
-//                         const isActive = !isCompleted && step.action !== 'Pending';
+// Journey Step Card Component
+function JourneyStepCard({
+    stepNumber,
+    stepName,
+    timestamp,
+    status,
+    approver,
+    isActive,
+    showConnectorBefore,
+    showConnectorAfter
+}: {
+    stepNumber: number;
+    stepName: string;
+    timestamp?: string;
+    status?: string;
+    approver?: string;
+    isActive: boolean;
+    showConnectorBefore: boolean;
+    showConnectorAfter: boolean;
+}) {
+    return (
+        <>
+            {/* Connector Line BEFORE Card */}
+            {showConnectorBefore && (
+                <div className="w-full flex items-center h-[100px]">
+                    <div className={`w-[2px] h-full ${isActive ? 'bg-[#8c8b8b]' : 'bg-[#b1b1b1]'}`} />
+                </div>
+            )}
 
-//                         return (
-//                             <div key={step.id} className="relative pb-8 last:pb-0">
-//                                 <div className="w-[475px] bg-[#F0F0F0] rounded-r-2xl border border-[#8C8B8B] p-5 relative">
-//                                     <div className="flex items-center gap-4 mb-10">
-//                                         <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-base flex-shrink-0 ${isCompleted || isActive ? 'bg-[#114B9F]' : 'bg-gray-400'}`}>
-//                                             {index + 1}
-//                                         </div>
-//                                         <div className="flex items-center justify-between flex-1">
-//                                             <h3 className="text-[#114B9F] font-semibold text-base">{step.step}</h3>
-//                                             <span className="text-xs font-medium text-[#001C43]">{step.timestamp}</span>
-//                                         </div>
-//                                     </div>
-//                                     <div className="grid grid-cols-2 gap-4">
-//                                         <div>
-//                                             <p className="text-sm text-[#114B9F] mb-[10px]">Form Received</p>
-//                                             <p className="text-sm font-bold text-[#001c43]">{step.action}</p>
-//                                         </div>
-//                                         <div className="text-right">
-//                                             <p className="text-sm text-[#114B9F] mb-[10px]">Assigned Approver:</p>
-//                                             <p className="text-sm font-bold text-[#001c43]">{step.actor}</p>
-//                                         </div>
-//                                     </div>
-//                                 </div>
-//                             </div>
-//                         );
-//                     })}
-//                 </div>
-//             )}
-//         </div>
-//     );
-// }
+            {/* Journey Step Card */}
+            <div
+                className={`
+                    w-full
+                    ${isActive
+                        ? 'bg-[rgba(140,139,139,0.1)] border-[#8c8b8b]'
+                        : 'bg-[rgba(177,177,177,0.1)] border-[#b1b1b1]'
+                    }
+                    border border-solid 
+                    rounded-tr-[20px] rounded-br-[20px] 
+                    p-[20px]
+                `}
+            >
+                {/* Header Row: Badge + Name + Timestamp */}
+                <div className="flex items-center justify-between mb-[40px]">
+                    {/* Left Side: Badge + Name */}
+                    <div className="flex items-center gap-[10px] flex-1 min-w-0">
+                        {/* Circular Number Badge */}
+                        <div
+                            className={`
+                                w-[60px] h-[60px] 
+                                rounded-[30px] 
+                                flex items-center justify-center 
+                                flex-shrink-0
+                                ${isActive ? 'bg-[#114b9f]' : 'bg-[#b1b1b1]'}
+                            `}
+                        >
+                            <span className="text-white font-['Montserrat'] font-bold text-[24px] leading-[32px]">
+                                {stepNumber}
+                            </span>
+                        </div>
+
+                        {/* Step Name */}
+                        <p
+                            className={`
+                                font-['Montserrat'] font-bold text-[14px] leading-[20px]
+                                ${isActive ? 'text-[#114b9f]' : 'text-[#b1b1b1]'}
+                            `}
+                        >
+                            {stepName}
+                        </p>
+                    </div>
+
+                    {/* Right Side: Timestamp (only for active/completed steps) */}
+                    {timestamp && (
+                        <p className="font-['Montserrat'] font-medium text-[12px] leading-[16px] tracking-[0.24px] text-[#001c43] flex-shrink-0 ml-[10px]">
+                            {timestamp}
+                        </p>
+                    )}
+                </div>
+
+                {/* Details Row: Status + Approver (only for active steps) */}
+                {isActive && status && approver && (
+                    <div className="flex items-start justify-between py-[5px] gap-[20px]">
+                        {/* Left Side - Status Info */}
+                        <div className="flex flex-col gap-[10px] w-[113px] flex-shrink-0">
+                            <p className="font-['Montserrat'] font-normal text-[14px] leading-[20px] text-[#114b9f]">
+                                Form Received
+                            </p>
+                            <p className="font-['Montserrat'] font-bold text-[14px] leading-[20px] text-[#001c43]">
+                                {status}
+                            </p>
+                        </div>
+
+                        {/* Right Side - Approver Info */}
+                        <div className="flex flex-col gap-[10px] items-end flex-1 min-w-0">
+                            <p className="font-['Montserrat'] font-normal text-[14px] leading-[20px] text-[#114b9f] whitespace-nowrap">
+                                Assigned Approver:
+                            </p>
+                            <p className="font-['Montserrat'] font-bold text-[14px] leading-[20px] text-[#001c43] text-right">
+                                {approver}
+                            </p>
+                        </div>
+                    </div>
+                )}
+            </div>
+
+            {/* Connector Line AFTER Card */}
+            {showConnectorAfter && (
+                <div className="w-full flex items-center h-[100px]">
+                    <div
+                        className={`
+                                w-[2px] h-full
+                                ${isActive ? 'bg-[#8c8b8b]' : 'bg-[#b1b1b1]'}
+                            `}
+                    />
+                </div>
+            )}
+        </>
+    );
+}
+
+// Journey Tab Content - Liquidation Workflow Timeline
+function JourneyContent({ journey }: { journey: JourneyStep[] }) {
+    // Define the complete workflow stages
+    const workflowStages = [
+        { id: 1, name: 'Submission', key: 'submission' },
+        { id: 2, name: 'Department Head', key: 'department_head' },
+        { id: 3, name: 'Budget', key: 'budget' },
+        { id: 4, name: 'Accounting', key: 'accounting' },
+        { id: 5, name: 'Controller', key: 'controller' },
+        { id: 6, name: 'EVPCOO', key: 'evpcoo' },
+        { id: 7, name: 'Treasury', key: 'treasury' },
+    ];
+
+    // Map journey steps to stages
+    const getStageData = (stageKey: string): JourneyStep | undefined => {
+        return journey.find(j => {
+            const stepLower = j.step.toLowerCase();
+            const normalizedStep = stepLower.replace(/\s+/g, '_');
+
+            return (
+                stepLower.includes(stageKey) ||
+                normalizedStep === stageKey ||
+                normalizedStep.includes(stageKey)
+            );
+        });
+    };
+
+    return (
+        <div className="flex-1 overflow-y-auto px-[20px] py-0">
+            {/* Timeline Container */}
+            <div className="flex flex-col items-start w-full max-w-[475px] ml-[40px]">
+                {workflowStages.map((stage, index) => {
+                    const stageData = getStageData(stage.key);
+                    const isActive = !!stageData;
+                    const showConnectorBefore = index === 0;
+                    const showConnectorAfter = index < workflowStages.length - 1;
+
+                    return (
+                        <JourneyStepCard
+                            key={stage.id}
+                            stepNumber={stage.id}
+                            stepName={stage.name}
+                            timestamp={stageData?.timestamp}
+                            status={stageData?.action}
+                            approver={stageData?.actor}
+                            isActive={isActive}
+                            showConnectorBefore={showConnectorBefore}
+                            showConnectorAfter={showConnectorAfter}
+                        />
+                    );
+                })}
+            </div>
+        </div>
+    );
+}
 
 export default function LiquidationDetails() {
     const { id } = useParams();
@@ -1052,7 +1182,7 @@ export default function LiquidationDetails() {
                                     onRemoveAttachment={removeAttachment}
                                 />
                             )}
-                            {/* {activeTab === "journey" && <JourneyContent journey={request?.journey || []} />} */}
+                            {activeTab === "journey" && <JourneyContent journey={request?.journey || []} />}
                         </div>
                     </div>
 

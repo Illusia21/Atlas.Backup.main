@@ -105,12 +105,21 @@ export const mockLiquidationDetails: Record<string, LiquidationDetail> = {
         journey: [
             {
                 id: 'j1',
-                step: 'Step 1',
-                actor: 'Aisha Nicole Dones',
+                step: 'Submission',
+                actor: 'Jervin Andoy',
                 role: 'Requester',
-                timestamp: 'Oct 3, 2025 3:45pm',
-                action: 'Submitted',
+                timestamp: 'Oct. 1, 2025 at 10:12 AM',
+                action: 'In Progress',
                 comment: 'Initial submission of liquidation report',
+            },
+            {
+                id: 'j2',
+                step: 'Department Head',
+                actor: 'Jervin Andoy',
+                role: 'Department Head',
+                timestamp: 'Oct. 1, 2025 at 10:12 AM',
+                action: 'In Progress',
+                comment: 'Under department head review',
             },
         ],
         requesterInfo: {
