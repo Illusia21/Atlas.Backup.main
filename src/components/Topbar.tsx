@@ -2,6 +2,16 @@ import { SidebarTrigger } from '@/components/ui/sidebar'
 import { Separator } from '@/components/ui/separator'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Bell, ChevronDown } from 'lucide-react'
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { User, Settings, LogOut } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+import { logout } from '@/utils/auth'
+import { useState } from 'react'
 
 interface TopbarProps {
     pageTitle: string
@@ -16,14 +26,20 @@ export function Topbar({
     userRole = "CSA Facilitator",
     userAvatar = "/Ellipse 2824.svg"
 }: TopbarProps) {
-    // Get initials for fallback (e.g., "DN" from "Dones, Aisha Nicole")
+    const navigate = useNavigate()
+    const [open, setOpen] = useState(false)
+
     const getInitials = (name: string) => {
-        const parts = name.split(' ');
+        const parts = name.split(' ')
         if (parts.length >= 2) {
-            return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
+            return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase()
         }
-        return name.substring(0, 2).toUpperCase();
-    };
+        return name.substring(0, 2).toUpperCase()
+    }
+
+    const handleViewProfile = () => navigate('/profile')
+    const handleSettings = () => navigate('/settings')
+    const handleLogout = () => logout()
 
     return (
         <header className="flex h-16 items-center gap-4 border-b bg-white px-6">
@@ -49,18 +65,58 @@ export function Topbar({
                         <p className="text-[#e50019] leading-tight">{userRole}</p>
                     </div>
 
-                    <div className="flex items-center gap-[15px]">
-                        {/* User Avatar - Using shadcn Avatar */}
-                        <Avatar className="h-[40px] w-[40px]">
-                            <AvatarImage src={userAvatar} alt={userName} />
-                            <AvatarFallback className="bg-[#001c43] text-white font-['Montserrat'] text-[12px]">
-                                {getInitials(userName)}
-                            </AvatarFallback>
-                        </Avatar>
+                    {/* Avatar + Chevron Dropdown */}
+                    <DropdownMenu open={open} onOpenChange={setOpen}>
+                        <div className="flex items-center gap-[15px]">
+                            {/* Static Avatar */}
+                            <Avatar className="h-[40px] w-[40px]">
+                                <AvatarImage src={userAvatar} alt={userName} />
+                                <AvatarFallback className="bg-[#001c43] text-white font-['Montserrat'] text-[12px]">
+                                    {getInitials(userName)}
+                                </AvatarFallback>
+                            </Avatar>
 
-                        {/* Dropdown Chevron */}
-                        <ChevronDown className="h-5 w-5 text-[#001c43]" />
-                    </div>
+                            {/* Chevron Trigger */}
+                            <DropdownMenuTrigger asChild>
+                                <button className="focus:outline-none focus:ring-2 focus:ring-[#001c43] focus:ring-offset-2 rounded-full p-1">
+                                    <ChevronDown
+                                        className={`h-5 w-5 text-[#001c43] transition-transform duration-200 ${open ? 'rotate-180' : 'rotate-0'
+                                            }`}
+                                    />
+                                </button>
+                            </DropdownMenuTrigger>
+                        </div>
+
+                        {/* Dropdown */}
+                        <DropdownMenuContent
+                            align="end"
+                            className="w-56 bg-white rounded-lg shadow-md border border-gray-200 py-2"
+                        >
+                            <DropdownMenuItem
+                                onClick={handleViewProfile}
+                                className="flex items-center gap-3 px-4 py-2.5 cursor-pointer hover:bg-gray-100 focus:bg-gray-100 transition-colors"
+                            >
+                                <User className="h-4 w-4 text-[#001c43]" />
+                                <span className="text-sm font-normal text-[#001C43]">View Profile</span>
+                            </DropdownMenuItem>
+
+                            <DropdownMenuItem
+                                onClick={handleSettings}
+                                className="flex items-center gap-3 px-4 py-2.5 cursor-pointer hover:bg-gray-100 focus:bg-gray-100 transition-colors"
+                            >
+                                <Settings className="h-4 w-4 text-[#001c43]" />
+                                <span className="text-sm font-normal text-[#001c43]">Settings</span>
+                            </DropdownMenuItem>
+
+                            <DropdownMenuItem
+                                onClick={handleLogout}
+                                className="flex items-center gap-3 px-4 py-2.5 cursor-pointer hover:bg-gray-100 focus:bg-gray-100 transition-colors text-[#001C43]"
+                            >
+                                <LogOut className="h-4 w-4" />
+                                <span className="text-sm font-normal">Log Out</span>
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                 </div>
             </div>
         </header>

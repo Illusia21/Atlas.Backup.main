@@ -100,6 +100,14 @@ const Router = createBrowserRouter([
         element: <LiquidationStep3 />,
       },
       {
+        path: "/profile",
+        element: <Navigate to="/my-requests" replace />, // Replace with actual Profile component when ready
+      },
+      {
+        path: "/settings",
+        element: <Navigate to="/my-requests" replace />, // Replace with actual Settings component when ready
+      },
+      {
         path: "/logout",
         element: <Logout />,
       },
