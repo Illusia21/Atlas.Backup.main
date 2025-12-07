@@ -111,7 +111,11 @@ const Router = createBrowserRouter([
       },
       {
         path: "/profile",
+<<<<<<< HEAD
         element: <Profile />,
+=======
+        element: <Navigate to="/my-requests" replace />, // Replace with actual Profile component when ready
+>>>>>>> d92459e (add user menu dropdown)
       },
       {
         path: "/settings",
