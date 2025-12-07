@@ -28,7 +28,7 @@ export interface JourneyStep {
     actor: string;
     role: string;
     timestamp: string;
-    action: 'Submitted' | 'Approved' | 'Returned' | 'Rejected' | 'Cancelled' | 'Completed' | 'Pending';
+    action: 'Pending' | 'Approved' | 'Returned' | 'Rejected' | 'Completed' | 'Submitted' | 'Cancelled' | 'In Progress';
     comment?: string;
 }
 

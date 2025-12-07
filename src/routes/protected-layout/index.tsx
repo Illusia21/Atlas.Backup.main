@@ -27,6 +27,11 @@ const routeTitles: Record<string, string> = {
   '/request/cash-advance/step5': 'Request Cash Advance',
   '/request/non-trade-payable': 'Non-Trade Payable',
   '/request/trade-payable': 'Trade Payable',
+  '/liquidation': 'For Liquidation',
+  '/liquidation/:id': 'Liquidation Details',
+  '/liquidation/step1': 'Liquidation Step 1',
+  '/liquidation/step2': 'Liquidation Step 2',
+  '/liquidation/step3': 'Liquidation Report',
 }
 
 export default function ProtectedLayout() {

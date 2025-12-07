@@ -5,9 +5,10 @@ interface Step {
 interface StepperProps {
     steps: Step[];
     currentStep?: number;
+    showLeadingLine?: boolean;
 }
 
-const Stepper = ({ steps, currentStep = 1 }: StepperProps) => {
+const Stepper = ({ steps, currentStep = 1, showLeadingLine = true }: StepperProps) => {
     return (
         <div className="flex items-start justify-between w-full max-w-[900px] mx-auto py-[20px] pl-[calc((100%/10)/2)]">
             {steps.map((step, index) => {
@@ -21,7 +22,7 @@ const Stepper = ({ steps, currentStep = 1 }: StepperProps) => {
                         className="flex flex-col items-center relative flex-1"
                     >
                         {/* Leading Line - before first step */}
-                        {index === 0 && (
+                        {index === 0 && showLeadingLine && (
                             <div
                                 className={`
                                     absolute top-[30px] right-[calc(-50%+30px)] left-[calc(-50%+30px)] h-[2px]

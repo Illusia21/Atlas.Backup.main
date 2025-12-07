@@ -18,6 +18,11 @@ import CAStep2 from "./routes/protected-layout/pages/CashAdvance/CAStep2";
 import CAStep3 from "./routes/protected-layout/pages/CashAdvance/CAStep3";
 import CAStep4 from "./routes/protected-layout/pages/CashAdvance/CAStep4";
 import CAStep5 from "./routes/protected-layout/pages/CashAdvance/CAStep5";
+import ForLiquidation from "./routes/protected-layout/pages/Liquidation/ForLiquidation";
+import LiquidationDetails from "./routes/protected-layout/pages/Liquidation/LiquidationDetails";
+import LiquidationStep1 from "./routes/protected-layout/pages/Liquidation/LiquidationStep1";
+import LiquidationStep2 from "./routes/protected-layout/pages/Liquidation/LiquidationStep2";
+import LiquidationStep3 from "./routes/protected-layout/pages/Liquidation/LiquidationStep3";
 
 function Logout() {
   logout();
@@ -71,6 +76,26 @@ const Router = createBrowserRouter([
       {
         path: "/request/cash-advance/step5",
         element: <CAStep5 />,
+      },
+      {
+        path: "/liquidation",
+        element: <ForLiquidation />,
+      },
+      {
+        path: "/liquidation/:id",
+        element: <LiquidationDetails />,
+      },
+      {
+        path: "/liquidation/step1",
+        element: <LiquidationStep1 />,
+      },
+      {
+        path: "/liquidation/step2",
+        element: <LiquidationStep2 />,
+      },
+      {
+        path: "/liquidation/step3",
+        element: <LiquidationStep3 />,
       },
       {
         path: "/logout",
