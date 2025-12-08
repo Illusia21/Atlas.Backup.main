@@ -52,10 +52,6 @@ const Router = createBrowserRouter([
         element: <Reimbursement />,
       },
       {
-        path: "/reimbursement/step3-bank/:id",
-        element: <RFPStep3Bank />,
-      },
-      {
         path: "/request/non-trade-payable",
         element: <NonTradePayable />,
       },
@@ -131,6 +127,10 @@ const Router = createBrowserRouter([
       {
         path: "/reimbursement/step3/:id",
         element: <RFPStep3 />,
+      },
+      {
+        path: "/reimbursement/step3-bank/:id",
+        element: <RFPStep3Bank />,
       },
       {
         path: "/reimbursement/step1",
