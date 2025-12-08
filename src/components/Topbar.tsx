@@ -63,7 +63,7 @@ export function Topbar({ pageTitle }: TopbarProps) {
                 {/* User Info with Dropdown */}
                 <DropdownMenu open={open} onOpenChange={setOpen}>
                     <DropdownMenuTrigger asChild>
-                        <button className="flex items-center gap-[15px] focus:outline-none focus:ring-2 focus:ring-[#001c43] focus:ring-offset-2 rounded-lg p-2 hover:bg-gray-50 transition-colors cursor-pointer">
+                        <button className="flex items-center gap-[15px] focus:outline-none rounded-lg p-2 hover:bg-gray-50 transition-colors cursor-pointer">
                             {/* User Name and Role */}
                             <div className="flex flex-col items-end gap-[4px] text-right font-['Montserrat'] text-[12px] font-normal leading-5">
                                 <p className="text-[#001c43] leading-tight">{userName}</p>
