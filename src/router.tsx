@@ -23,10 +23,14 @@ import LiquidationDetails from "./routes/protected-layout/pages/Liquidation/Liqu
 import LiquidationStep1 from "./routes/protected-layout/pages/Liquidation/LiquidationStep1";
 import LiquidationStep2 from "./routes/protected-layout/pages/Liquidation/LiquidationStep2";
 import LiquidationStep3 from "./routes/protected-layout/pages/Liquidation/LiquidationStep3";
+<<<<<<< HEAD
 //import CashAdvance from "./routes/protected-layout/pages/CashAdvance";
 import RFPStep3Bank from "./routes/public-layout/pages/Reimbursement/RFPStep3Bank";
 import Profile from "./routes/protected-layout/pages/Profile";
 import RFPStep3Cheque from "./routes/public-layout/pages/Reimbursement/RFPStep3Cheque";
+=======
+import Profile from "./routes/protected-layout/pages/Profile";
+>>>>>>> 6984b49 (AC-122-124 done)
 
 function Logout() {
   logout();
@@ -112,10 +116,14 @@ const Router = createBrowserRouter([
       {
         path: "/profile",
 <<<<<<< HEAD
+<<<<<<< HEAD
         element: <Profile />,
 =======
         element: <Navigate to="/my-requests" replace />, // Replace with actual Profile component when ready
 >>>>>>> d92459e (add user menu dropdown)
+=======
+        element: <Profile />,
+>>>>>>> 6984b49 (AC-122-124 done)
       },
       {
         path: "/settings",
