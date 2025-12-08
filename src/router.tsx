@@ -26,6 +26,7 @@ import LiquidationStep3 from "./routes/protected-layout/pages/Liquidation/Liquid
 //import CashAdvance from "./routes/protected-layout/pages/CashAdvance";
 import RFPStep3Bank from "./routes/public-layout/pages/Reimbursement/RFPStep3Bank";
 import Profile from "./routes/protected-layout/pages/Profile";
+import RFPStep3Cheque from "./routes/public-layout/pages/Reimbursement/RFPStep3Cheque";
 
 function Logout() {
   logout();
@@ -51,6 +52,14 @@ const Router = createBrowserRouter([
       {
         path: "/request/reimbursement",
         element: <Reimbursement />,
+      },
+      {
+        path: "/reimbursement/step3/:id",
+        element: <RFPStep3 />,
+      },
+      {
+        path: "/reimbursement/step3-cheque/:id",
+        element: <RFPStep3Cheque />,
       },
       {
         path: "/request/non-trade-payable",
