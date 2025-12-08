@@ -32,6 +32,7 @@ const routeTitles: Record<string, string> = {
   '/liquidation/step1': 'Liquidation Step 1',
   '/liquidation/step2': 'Liquidation Step 2',
   '/liquidation/step3': 'Liquidation Report',
+  '/profile': 'Profile',
 }
 
 export default function ProtectedLayout() {

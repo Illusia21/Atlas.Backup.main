@@ -1,7 +1,7 @@
 import { SidebarTrigger } from '@/components/ui/sidebar'
 import { Separator } from '@/components/ui/separator'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Bell, ChevronDown } from 'lucide-react'
+import { Bell } from 'lucide-react'
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -11,23 +11,25 @@ import {
 import { User, Settings, LogOut } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { logout } from '@/utils/auth'
-import { useState } from 'react'
+import { useState, useContext } from 'react'
+import { AuthContext } from '@/contexts/AuthContext'
 
 interface TopbarProps {
     pageTitle: string
-    userName?: string
-    userRole?: string
-    userAvatar?: string
 }
 
-export function Topbar({
-    pageTitle,
-    userName = "Dones, Aisha Nicole",
-    userRole = "CSA Facilitator",
-    userAvatar = "/Ellipse 2824.svg"
-}: TopbarProps) {
+export function Topbar({ pageTitle }: TopbarProps) {
     const navigate = useNavigate()
     const [open, setOpen] = useState(false)
+    const authContext = useContext(AuthContext)
+
+    // Get user data from AuthContext
+    const user = authContext?.user
+
+    // remove the || "Aisha Nicole Dones" when backend is connected
+    const userName = user?.name || "Aisha Nicole Dones"
+    const userRole = user?.role || "CSA Facilitator"
+    const userAvatar = user?.avatar || "/Ellipse 2824.svg"
 
     const getInitials = (name: string) => {
         const parts = name.split(' ')
@@ -58,66 +60,56 @@ export function Topbar({
                     <Bell className="h-5 w-5 text-[#001c43]" />
                 </button>
 
-                {/* User Info */}
-                <div className="flex items-center gap-[15px]">
-                    <div className="flex flex-col items-end gap-[4px] text-right font-['Montserrat'] text-[12px] font-normal leading-5">
-                        <p className="text-[#001c43] leading-tight">{userName}</p>
-                        <p className="text-[#e50019] leading-tight">{userRole}</p>
-                    </div>
+                {/* User Info with Dropdown */}
+                <DropdownMenu open={open} onOpenChange={setOpen}>
+                    <DropdownMenuTrigger asChild>
+                        <button className="flex items-center gap-[15px] focus:outline-none focus:ring-2 focus:ring-[#001c43] focus:ring-offset-2 rounded-lg p-2 hover:bg-gray-50 transition-colors cursor-pointer">
+                            {/* User Name and Role */}
+                            <div className="flex flex-col items-end gap-[4px] text-right font-['Montserrat'] text-[12px] font-normal leading-5">
+                                <p className="text-[#001c43] leading-tight">{userName}</p>
+                                <p className="text-[#e50019] leading-tight">{userRole}</p>
+                            </div>
 
-                    {/* Avatar + Chevron Dropdown */}
-                    <DropdownMenu open={open} onOpenChange={setOpen}>
-                        <div className="flex items-center gap-[15px]">
-                            {/* Static Avatar */}
+                            {/* Avatar */}
                             <Avatar className="h-[40px] w-[40px]">
                                 <AvatarImage src={userAvatar} alt={userName} />
                                 <AvatarFallback className="bg-[#001c43] text-white font-['Montserrat'] text-[12px]">
                                     {getInitials(userName)}
                                 </AvatarFallback>
                             </Avatar>
+                        </button>
+                    </DropdownMenuTrigger>
 
-                            {/* Chevron Trigger */}
-                            <DropdownMenuTrigger asChild>
-                                <button className="focus:outline-none focus:ring-2 focus:ring-[#001c43] focus:ring-offset-2 rounded-full p-1">
-                                    <ChevronDown
-                                        className={`h-5 w-5 text-[#001c43] transition-transform duration-200 ${open ? 'rotate-180' : 'rotate-0'
-                                            }`}
-                                    />
-                                </button>
-                            </DropdownMenuTrigger>
-                        </div>
-
-                        {/* Dropdown */}
-                        <DropdownMenuContent
-                            align="end"
-                            className="w-56 bg-white rounded-lg shadow-md border border-gray-200 py-2"
+                    {/* Dropdown Menu */}
+                    <DropdownMenuContent
+                        align="end"
+                        className="w-56 bg-white rounded-lg shadow-md border border-gray-200 py-2"
+                    >
+                        <DropdownMenuItem
+                            onClick={handleViewProfile}
+                            className="flex items-center gap-3 px-4 py-2.5 cursor-pointer hover:bg-gray-100 focus:bg-gray-100 transition-colors"
                         >
-                            <DropdownMenuItem
-                                onClick={handleViewProfile}
-                                className="flex items-center gap-3 px-4 py-2.5 cursor-pointer hover:bg-gray-100 focus:bg-gray-100 transition-colors"
-                            >
-                                <User className="h-4 w-4 text-[#001c43]" />
-                                <span className="text-sm font-normal text-[#001C43]">View Profile</span>
-                            </DropdownMenuItem>
+                            <User className="h-4 w-4 text-[#001c43]" />
+                            <span className="text-sm font-normal text-[#001C43]">View Profile</span>
+                        </DropdownMenuItem>
 
-                            <DropdownMenuItem
-                                onClick={handleSettings}
-                                className="flex items-center gap-3 px-4 py-2.5 cursor-pointer hover:bg-gray-100 focus:bg-gray-100 transition-colors"
-                            >
-                                <Settings className="h-4 w-4 text-[#001c43]" />
-                                <span className="text-sm font-normal text-[#001c43]">Settings</span>
-                            </DropdownMenuItem>
+                        <DropdownMenuItem
+                            onClick={handleSettings}
+                            className="flex items-center gap-3 px-4 py-2.5 cursor-pointer hover:bg-gray-100 focus:bg-gray-100 transition-colors"
+                        >
+                            <Settings className="h-4 w-4 text-[#001c43]" />
+                            <span className="text-sm font-normal text-[#001c43]">Settings</span>
+                        </DropdownMenuItem>
 
-                            <DropdownMenuItem
-                                onClick={handleLogout}
-                                className="flex items-center gap-3 px-4 py-2.5 cursor-pointer hover:bg-gray-100 focus:bg-gray-100 transition-colors text-[#001C43]"
-                            >
-                                <LogOut className="h-4 w-4" />
-                                <span className="text-sm font-normal">Log Out</span>
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                </div>
+                        <DropdownMenuItem
+                            onClick={handleLogout}
+                            className="flex items-center gap-3 px-4 py-2.5 cursor-pointer hover:bg-gray-100 focus:bg-gray-100 transition-colors text-[#001C43]"
+                        >
+                            <LogOut className="h-4 w-4" />
+                            <span className="text-sm font-normal">Log Out</span>
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
             </div>
         </header>
     )

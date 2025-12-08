@@ -25,6 +25,7 @@ import LiquidationStep2 from "./routes/protected-layout/pages/Liquidation/Liquid
 import LiquidationStep3 from "./routes/protected-layout/pages/Liquidation/LiquidationStep3";
 //import CashAdvance from "./routes/protected-layout/pages/CashAdvance";
 import RFPStep3Bank from "./routes/public-layout/pages/Reimbursement/RFPStep3Bank";
+import Profile from "./routes/protected-layout/pages/Profile";
 
 function Logout() {
   logout();
@@ -101,7 +102,7 @@ const Router = createBrowserRouter([
       },
       {
         path: "/profile",
-        element: <Navigate to="/my-requests" replace />, // Replace with actual Profile component when ready
+        element: <Profile />,
       },
       {
         path: "/settings",

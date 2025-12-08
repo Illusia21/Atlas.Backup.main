@@ -4,9 +4,13 @@ import { ACCESS_TOKEN } from '../constants';
 export interface User {
     id: string;
     name: string;
+    username?: string;  // Add this
     department: string;
+    position?: string;  // Add this
     email: string;
     role: string;
+    contactNumber?: string;  // Add this
+    avatar?: string;  // Add this
 }
 
 interface AuthContextType {
@@ -34,11 +38,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             // TODO: In the future, fetch user data from backend using token
             // For now, use mock data
             const mockUser: User = {
-                id: '12345',
+                id: '2017181910',
                 name: 'Aisha Nicole Dones',
-                department: 'CCIS',
-                email: 'aisha.dones@mapua.edu.ph',
-                role: 'CSA Facilitator'
+                username: 'username',  // Add this
+                department: 'Human Resources',  // Changed from 'CCIS'
+                position: 'Manager',  // Add this
+                email: 'flName@mcm.edu.ph',  // Changed email
+                role: 'Requestor',  // Changed from 'CSA Facilitator'
+                contactNumber: '097778888191',  // Add this
+                avatar: '/Ellipse 2824.svg',  // Add this
             };
             setUser(mockUser);
         }
