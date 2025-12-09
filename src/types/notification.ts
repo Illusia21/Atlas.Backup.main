@@ -14,6 +14,7 @@ export type RequestType = 'Cash Advance' | 'Non-Trade Payable' | 'Trade Payable'
 
 export interface Notification {
     id: string;
+    userId: string;
     type: NotificationType;
     requestType: RequestType;
     message: string;
@@ -22,5 +23,5 @@ export interface Notification {
     reviewerRemarks?: string;
     commenterName?: string;
     comment?: string;
-    requestId?: string; // For navigation
+    requestId?: string;
 }

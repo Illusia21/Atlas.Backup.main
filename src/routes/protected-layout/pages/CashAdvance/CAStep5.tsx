@@ -35,7 +35,7 @@ export default function CAStep5() {
     const [showConfirmDialog, setShowConfirmDialog] = useState(false);
     const { step1Data, step2Data, step3Data, step4Files, clearAllData } = useCashAdvanceStore();
 
-    // Generate series number (in production, this would come from backend)
+    // Generate series number
     const seriesNumber = '00556';
 
     // Format dates

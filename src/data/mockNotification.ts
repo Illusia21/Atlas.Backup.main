@@ -3,6 +3,7 @@ import type { Notification } from '@/types/notification';
 export const mockNotifications: Notification[] = [
     {
         id: '1',
+        userId: 'user-123',
         type: 'submission_success',
         requestType: 'Cash Advance',
         message: 'has been submitted successfully',
@@ -11,6 +12,7 @@ export const mockNotifications: Notification[] = [
     },
     {
         id: '2',
+        userId: 'user-123',
         type: 'received',
         requestType: 'Non-Trade Payable',
         message: 'has been received and is now for endorsement by the Budget Office.',
@@ -18,6 +20,7 @@ export const mockNotifications: Notification[] = [
     },
     {
         id: '3',
+        userId: 'user-123',
         type: 'under_review',
         requestType: 'Trade Payable',
         message: 'is now under review by the Accounting Officer.',
@@ -25,6 +28,7 @@ export const mockNotifications: Notification[] = [
     },
     {
         id: '4',
+        userId: 'user-123',
         type: 'for_approval',
         requestType: 'Cash Advance',
         message: 'is now for approval by the Dean of CCIS.',
@@ -32,6 +36,7 @@ export const mockNotifications: Notification[] = [
     },
     {
         id: '5',
+        userId: 'user-123',
         type: 'approved',
         requestType: 'Liquidation Report',
         message: 'has been approved',
@@ -40,6 +45,7 @@ export const mockNotifications: Notification[] = [
     },
     {
         id: '7',
+        userId: 'user-123',
         type: 'liquidation_required',
         requestType: 'Cash Advance',
         message: 'Request (CA-2025-0107) requires liquidation within 15 days of fund release.',
@@ -47,6 +53,7 @@ export const mockNotifications: Notification[] = [
     },
     {
         id: '8',
+        userId: 'user-123',
         type: 'cancellation_submitted',
         requestType: 'Trade Payable',
         message: 'Request (Ref. No: TP-2025-0008) has been submitted and is pending approval.',
@@ -54,6 +61,7 @@ export const mockNotifications: Notification[] = [
     },
     {
         id: '9',
+        userId: 'user-123',
         type: 'cancellation_approved',
         requestType: 'Cash Advance',
         message: 'Request (CA-2025-0107) has been approved on October 18, 2025.',
@@ -61,6 +69,7 @@ export const mockNotifications: Notification[] = [
     },
     {
         id: '10',
+        userId: 'user-123',
         type: 'returned',
         requestType: 'Liquidation Report',
         message: '(Ref. No: LR-2025-0113) has been returned for revision.',
@@ -70,6 +79,7 @@ export const mockNotifications: Notification[] = [
     },
     {
         id: '11',
+        userId: 'user-123',
         type: 'comment',
         requestType: 'Cash Advance',
         message: 'Request (CA-2025-0107) during the Review stage:',
