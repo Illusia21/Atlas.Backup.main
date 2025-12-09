@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 function Login() {
   const handleMicrosoftLogin = () => {
     const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8000";
-    window.location.href = `${apiUrl}/api/microsoft/login/`;
+    window.location.href = `${apiUrl}/auth/login/azuread-tenant-oauth2`;
   };
 
   return (
