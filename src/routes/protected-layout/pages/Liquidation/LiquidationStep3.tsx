@@ -3,7 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { useLiquidationStore } from '@/store/useLiquidationStore';
 import { format } from 'date-fns';
 import { Info, ArrowRight, CircleCheckBig, PencilLine, FileText, Link2 } from 'lucide-react';
+import mapuaLogo from '@/assets/images/mapuaLogo.png';
 import { toast } from 'sonner';
+import { useAuth } from '@/hooks/useAuth';
+import { useNotificationStore } from '@/store/useNotificationStore';
 import Stepper from '@/components/Stepper';
 import {
     Table,
@@ -32,8 +35,9 @@ export default function LiquidationStep3() {
     const navigate = useNavigate();
     const [showConfirmDialog, setShowConfirmDialog] = useState(false);
     const { step1Data, step2Files, requestedAmount, clearAllData } = useLiquidationStore();
+    const { user } = useAuth();
+    const { addNotification } = useNotificationStore();
 
-    // ✅ TODO: Update store to include cashAdvanceData
     // For now, using static values. When store is updated:
     // const { cashAdvanceData } = useLiquidationStore();
     // const requestedBy = cashAdvanceData?.requestedBy || 'N/A';
@@ -44,7 +48,6 @@ export default function LiquidationStep3() {
     const dateRequested = 'October 3, 2025';
     const dateNeeded = 'October 19, 2025';
 
-    // ✅ DESIGN FIX: Changed series number format
     const seriesNumber = 'LR2025-October-CCIS-00123';
 
     // Format dates
@@ -104,6 +107,17 @@ export default function LiquidationStep3() {
             submittedRequests.push(newRequest);
             localStorage.setItem('submittedRequests', JSON.stringify(submittedRequests));
 
+            // Add notification before clearing data
+            addNotification({
+                id: `notification-${Date.now()}`,
+                userId: user?.id || 'user-123',
+                type: 'submission_success',
+                requestType: 'Liquidation Report',
+                message: 'has been submitted successfully',
+                referenceNo: newRequest.id,
+                timestamp: new Date(),
+            });
+
             // Clear all stored draft data after successful submission
             clearAllData();
 
@@ -139,7 +153,7 @@ export default function LiquidationStep3() {
             <div className="flex-1 flex flex-col gap-[20px] relative">
                 {/* Header with Info Icon */}
                 <div className="flex items-center justify-between">
-                    {/* ✅ DESIGN FIX: Changed Step 5 to Step 3, Review Form to Review & Submit */}
+                    {/* Changed Step 5 to Step 3, Review Form to Review & Submit */}
                     <div className="flex items-center gap-[20px]">
                         <h1 className="font-['Montserrat'] font-bold text-[32px] leading-[40px] text-[#001c43]">
                             Step 3
@@ -161,20 +175,18 @@ export default function LiquidationStep3() {
                             {/* Logo */}
                             <div className="flex items-start">
                                 <img
-                                    src="https://www.figma.com/api/mcp/asset/2a9fdd51-55bc-4bc7-8b56-58158df15e75"
+                                    src={mapuaLogo}
                                     alt="MMCM Logo"
                                     className="h-[108px] w-auto object-contain"
                                 />
                             </div>
 
-                            {/* ✅ DESIGN FIX: Changed title from "Cash Advance" to "Liquidation Report" */}
                             <div className="flex items-end justify-center pb-[10px]">
-                                <h2 className="font-['DM_Sans'] font-bold text-[32px] leading-[normal] text-[#001c43] text-center">
+                                <h2 className="font-bold text-[32px] leading-[normal] text-[#001c43] text-center">
                                     Liquidation Report
                                 </h2>
                             </div>
 
-                            {/* ✅ DESIGN FIX: Changed series number format */}
                             <div className="flex items-end justify-end pb-[10px]">
                                 <p className="font-['Montserrat'] font-semibold text-[16px] leading-none text-[#001c43] tracking-[-0.32px]">
                                     {seriesNumber}
@@ -215,14 +227,12 @@ export default function LiquidationStep3() {
                                     </p>
                                 </div>
 
-                                {/* ✅ DESIGN FIX: Removed "Cash Advance Reference Number" from this section (not in Figma) */}
                             </div>
                         </div>
 
                         {/* Separator */}
                         <div className="h-[2px] bg-[#b1b1b1]" />
 
-                        {/* ✅ DESIGN FIX: Changed section title from "Liquidation Details" to "Request Details" */}
                         <div className="bg-white rounded-[20px] p-[20px] border border-transparent">
                             <div className="grid grid-cols-2 gap-y-[10px]">
                                 {/* Section Title with Edit Icon */}
@@ -240,7 +250,6 @@ export default function LiquidationStep3() {
                                     </button>
                                 </div>
 
-                                {/* ✅ DESIGN FIX: Added "Cash Advance Form" field */}
                                 <div className="col-span-2 flex flex-col gap-[10px] px-[20px]">
                                     <p className="font-['Montserrat'] font-bold text-[14px] leading-[20px] text-[#001c43]">
                                         Cash Advance Form
@@ -280,7 +289,6 @@ export default function LiquidationStep3() {
                                     </p>
                                 </div>
 
-                                {/* ✅ DESIGN FIX: Added "Date Requested" field */}
                                 <div className="col-span-1 flex flex-col gap-[10px] px-[20px]">
                                     <p className="font-['Montserrat'] font-bold text-[14px] leading-[20px] text-[#001c43]">
                                         Date Requested
@@ -290,7 +298,6 @@ export default function LiquidationStep3() {
                                     </p>
                                 </div>
 
-                                {/* ✅ DESIGN FIX: Added "Date Needed" field */}
                                 <div className="col-span-1 flex flex-col gap-[10px] px-[20px]">
                                     <p className="font-['Montserrat'] font-bold text-[14px] leading-[20px] text-[#001c43]">
                                         Date Needed
@@ -300,7 +307,6 @@ export default function LiquidationStep3() {
                                     </p>
                                 </div>
 
-                                {/* ✅ DESIGN FIX: Changed label from "Date Range (From)" to "Date Start" */}
                                 <div className="col-span-1 flex flex-col gap-[10px] px-[20px]">
                                     <p className="font-['Montserrat'] font-bold text-[14px] leading-[20px] text-[#001c43]">
                                         Date Start
@@ -310,7 +316,6 @@ export default function LiquidationStep3() {
                                     </p>
                                 </div>
 
-                                {/* ✅ DESIGN FIX: Changed label from "Date Range (To)" to "Date End" */}
                                 <div className="col-span-1 flex flex-col gap-[10px] px-[20px]">
                                     <p className="font-['Montserrat'] font-bold text-[14px] leading-[20px] text-[#001c43]">
                                         Date End
@@ -384,7 +389,6 @@ export default function LiquidationStep3() {
                         <div className="h-[2px] bg-[#b1b1b1]" />
 
                         {/* === AMOUNT SUMMARY SECTION === */}
-                        {/* ✅ DESIGN FIX: Changed labels from "Requested Amount"/"Actual Amount" to "Total Amount"/"Cash Advance"/"Amount to Return/(Refund)" */}
                         <div className="bg-[#ececec] rounded-[20px] p-[20px]">
                             <div className="grid grid-cols-2 gap-y-[10px] px-[20px]">
                                 {/* Currency */}
@@ -433,7 +437,6 @@ export default function LiquidationStep3() {
                         <div className="h-[2px] bg-[#b1b1b1]" />
 
                         {/* === ATTACHMENTS SECTION === */}
-                        {/* ⚠️ KEPT EXACTLY AS ORIGINAL - NO CHANGES TO STRUCTURE/FUNCTIONALITY */}
                         <div className="flex items-start justify-end px-[20px] py-[10px]">
                             {/* Attachments Button */}
                             <div className="flex items-center">

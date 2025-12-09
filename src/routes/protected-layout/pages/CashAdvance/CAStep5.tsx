@@ -3,7 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { useCashAdvanceStore } from '@/store/useCashAdvanceStore';
 import { format } from 'date-fns';
 import { Info, ArrowRight, CircleCheckBig, PencilLine, FileText, Link2 } from 'lucide-react';
+import mapuaLogo from '@/assets/images/mapuaLogo.png';
 import { toast } from 'sonner';
+import { useAuth } from '@/hooks/useAuth';
+import { useNotificationStore } from '@/store/useNotificationStore';
 import Stepper from '@/components/Stepper';
 import {
     Table,
@@ -34,8 +37,10 @@ export default function CAStep5() {
     const navigate = useNavigate();
     const [showConfirmDialog, setShowConfirmDialog] = useState(false);
     const { step1Data, step2Data, step3Data, step4Files, clearAllData } = useCashAdvanceStore();
+    const { user } = useAuth();
+    const { addNotification } = useNotificationStore();
 
-    // Generate series number
+    // Generate series number (in production, this would come from backend)
     const seriesNumber = '00556';
 
     // Format dates
@@ -92,6 +97,23 @@ export default function CAStep5() {
         submittedRequests.push(newRequest);
         localStorage.setItem('submittedRequests', JSON.stringify(submittedRequests));
 
+        // Add notification before clearing data
+        addNotification({
+            id: `notification-${Date.now()}`,
+            userId: user?.id || 'user-123', // Fallback to mock user ID if not authenticated
+            type: 'submission_success',
+            requestType: 'Cash Advance',
+            message: 'has been submitted successfully',
+            referenceNo: newRequest.id,
+            timestamp: new Date(),
+        });
+
+        console.log('Notification added:', {
+            userId: user?.id || 'user-123',
+            referenceNo: newRequest.id,
+            timestamp: new Date()
+        });
+
         // Clear all stored draft data after successful submission
         clearAllData();
 
@@ -136,7 +158,7 @@ export default function CAStep5() {
                             {/* Logo */}
                             <div className="flex items-start">
                                 <img
-                                    src="https://www.figma.com/api/mcp/asset/2a9fdd51-55bc-4bc7-8b56-58158df15e75"
+                                    src={mapuaLogo}
                                     alt="MMCM Logo"
                                     className="h-[108px] w-auto object-contain"
                                 />
@@ -144,7 +166,7 @@ export default function CAStep5() {
 
                             {/* Title */}
                             <div className="flex items-end justify-center pb-[10px]">
-                                <h2 className="font-['DM_Sans'] font-bold text-[32px] leading-[normal] text-[#001c43] text-center">
+                                <h2 className="font-bold text-[32px] leading-[normal] text-[#001c43] text-center">
                                     Cash Advance
                                 </h2>
                             </div>

@@ -70,8 +70,8 @@ export function NotificationCenter({
         return (
             <div className="bg-white rounded-[15px] shadow-[0px_4px_10px_0px_rgba(0,0,0,0.25)] w-[649px] max-h-[411px] p-4">
                 <div className="flex items-center justify-center h-[300px]">
-                    <p className="font-['Montserrat'] font-normal text-[14px] text-[#b1b1b1]">
-                        No notifications available
+                    <p className="font-['Montserrat'] font-bold text-[14px] text-[#001C43]">
+                        No new notifications available
                     </p>
                 </div>
             </div>

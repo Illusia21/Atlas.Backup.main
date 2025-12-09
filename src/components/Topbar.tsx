@@ -1,47 +1,78 @@
 import { SidebarTrigger } from '@/components/ui/sidebar'
 import { Separator } from '@/components/ui/separator'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Bell } from 'lucide-react'
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { User, Settings, LogOut } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
-import { logout } from '@/utils/auth'
-import { useState, useContext } from 'react'
-import { AuthContext } from '@/contexts/AuthContext'
+import { Badge } from '@/components/ui/badge'
+import { Bell, ChevronDown, X } from 'lucide-react'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { NotificationCenter } from '@/components/NotificationCenter'
+import { mockNotifications } from '@/data/mockNotification'
+import { useNotificationStore } from '@/store/useNotificationStore'
+import { useAuth } from '@/hooks/useAuth'
+import { useState, useEffect } from 'react'
 
 interface TopbarProps {
     pageTitle: string
+    userName?: string
+    userRole?: string
+    userAvatar?: string
 }
 
-export function Topbar({ pageTitle }: TopbarProps) {
-    const navigate = useNavigate()
-    const [open, setOpen] = useState(false)
-    const authContext = useContext(AuthContext)
+export function Topbar({
+    pageTitle,
+    userName = "Dones, Aisha Nicole",
+    userRole = "CSA Facilitator",
+    userAvatar = "/Ellipse 2824.svg"
+}: TopbarProps) {
+    const { user } = useAuth()
+    const { notifications: storeNotifications } = useNotificationStore()
+    const [notificationOpen, setNotificationOpen] = useState(false)
+    const [readNotifications, setReadNotifications] = useState<string[]>([])
 
-    // Get user data from AuthContext
-    const user = authContext?.user
+    // COMBINE mock notifications + store notifications
+    const allNotifications = [...storeNotifications, ...mockNotifications]
 
-    // remove the || "Aisha Nicole Dones" when backend is connected
-    const userName = user?.name || "Aisha Nicole Dones"
-    const userRole = user?.role || "CSA Facilitator"
-    const userAvatar = user?.avatar || "/Ellipse 2824.svg"
+    // Load read notifications
+    useEffect(() => {
+        const read = JSON.parse(localStorage.getItem('readNotifications') || '[]')
+        setReadNotifications(read)
+    }, [])
 
+    // Save read notifications
+    useEffect(() => {
+        localStorage.setItem('readNotifications', JSON.stringify(readNotifications))
+    }, [readNotifications])
+
+    // Get initials for fallback
     const getInitials = (name: string) => {
-        const parts = name.split(' ')
+        const parts = name.split(' ');
         if (parts.length >= 2) {
-            return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase()
+            return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
         }
-        return name.substring(0, 2).toUpperCase()
+        return name.substring(0, 2).toUpperCase();
+    };
+
+    // Count ONLY unread notifications (from BOTH sources)
+    const unreadCount = allNotifications.filter(
+        notification => !readNotifications.includes(notification.id)
+    ).length
+
+    // Mark notification as read
+    const handleNotificationClick = (notificationId: string) => {
+        if (!readNotifications.includes(notificationId)) {
+            setReadNotifications(prev => [...prev, notificationId])
+        }
     }
 
-    const handleViewProfile = () => navigate('/profile')
-    const handleSettings = () => navigate('/settings')
-    const handleLogout = () => logout()
+    // Mark all as read when notification panel opens
+    const handleNotificationOpen = (open: boolean) => {
+        setNotificationOpen(open)
+
+        // When opening, mark all as read
+        if (open) {
+            const allNotificationIds = allNotifications.map(n => n.id)
+            setReadNotifications(allNotificationIds)
+        }
+    }
 
     return (
         <header className="flex h-16 items-center gap-4 border-b bg-white px-6">
@@ -55,61 +86,65 @@ export function Topbar({ pageTitle }: TopbarProps) {
 
             {/* Right Section */}
             <div className="flex items-center gap-4">
-                {/* Notification Bell */}
-                <button className="relative">
-                    <Bell className="h-5 w-5 text-[#001c43]" />
-                </button>
-
-                {/* User Info with Dropdown */}
-                <DropdownMenu open={open} onOpenChange={setOpen}>
-                    <DropdownMenuTrigger asChild>
-                        <button className="flex items-center gap-[15px] focus:outline-none rounded-lg p-2 hover:bg-gray-50 transition-colors cursor-pointer">
-                            {/* User Name and Role */}
-                            <div className="flex flex-col items-end gap-[4px] text-right font-['Montserrat'] text-[12px] font-normal leading-5">
-                                <p className="text-[#001c43] leading-tight">{userName}</p>
-                                <p className="text-[#e50019] leading-tight">{userRole}</p>
-                            </div>
-
-                            {/* Avatar */}
-                            <Avatar className="h-[40px] w-[40px]">
-                                <AvatarImage src={userAvatar} alt={userName} />
-                                <AvatarFallback className="bg-[#001c43] text-white font-['Montserrat'] text-[12px]">
-                                    {getInitials(userName)}
-                                </AvatarFallback>
-                            </Avatar>
+                {/* Notification Bell with Popover */}
+                <Popover open={notificationOpen} onOpenChange={handleNotificationOpen}>
+                    <PopoverTrigger asChild>
+                        <button className="relative w-10 h-10 flex items-center justify-center">
+                            {notificationOpen ? (
+                                // X button
+                                <div className="absolute inset-0 bg-[#114b9f] rounded-full flex items-center justify-center hover:bg-[#0d3a7a] transition-colors">
+                                    <X className="h-5 w-5 text-white" strokeWidth={2.5} />
+                                </div>
+                            ) : (
+                                // Bell icon
+                                <>
+                                    <Bell className="h-5 w-5 text-[#001c43]" />
+                                    {unreadCount > 0 && (
+                                        <Badge
+                                            variant="destructive"
+                                            className="absolute top-0 right-0 h-4 min-w-[16px] px-1 text-[10px] font-bold flex items-center justify-center rounded-full"
+                                        >
+                                            {unreadCount > 9 ? '9+' : unreadCount}
+                                        </Badge>
+                                    )}
+                                </>
+                            )}
                         </button>
-                    </DropdownMenuTrigger>
-
-                    {/* Dropdown Menu */}
-                    <DropdownMenuContent
+                    </PopoverTrigger>
+                    <PopoverContent
                         align="end"
-                        className="w-56 bg-white rounded-lg shadow-md border border-gray-200 py-2"
+                        sideOffset={10}
+                        className="w-auto p-0 border-0 shadow-none bg-transparent"
                     >
-                        <DropdownMenuItem
-                            onClick={handleViewProfile}
-                            className="flex items-center gap-3 px-4 py-2.5 cursor-pointer hover:bg-gray-100 focus:bg-gray-100 transition-colors"
-                        >
-                            <User className="h-4 w-4 text-[#001c43]" />
-                            <span className="text-sm font-normal text-[#001C43]">View Profile</span>
-                        </DropdownMenuItem>
+                        <NotificationCenter
+                            notifications={allNotifications}
+                            onClose={() => setNotificationOpen(false)}
+                            onNotificationClick={handleNotificationClick}
+                            readNotifications={readNotifications}
+                        />
+                    </PopoverContent>
+                </Popover>
 
-                        <DropdownMenuItem
-                            onClick={handleSettings}
-                            className="flex items-center gap-3 px-4 py-2.5 cursor-pointer hover:bg-gray-100 focus:bg-gray-100 transition-colors"
-                        >
-                            <Settings className="h-4 w-4 text-[#001c43]" />
-                            <span className="text-sm font-normal text-[#001c43]">Settings</span>
-                        </DropdownMenuItem>
+                {/* User Info */}
+                <div className="flex items-center gap-[15px]">
+                    <div className="flex flex-col items-end gap-[4px] text-right font-['Montserrat'] text-[12px] font-normal leading-5">
+                        <p className="text-[#001c43] leading-tight">{userName}</p>
+                        <p className="text-[#e50019] leading-tight">{userRole}</p>
+                    </div>
 
-                        <DropdownMenuItem
-                            onClick={handleLogout}
-                            className="flex items-center gap-3 px-4 py-2.5 cursor-pointer hover:bg-gray-100 focus:bg-gray-100 transition-colors text-[#001C43]"
-                        >
-                            <LogOut className="h-4 w-4" />
-                            <span className="text-sm font-normal">Log Out</span>
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
+                    <div className="flex items-center gap-[15px]">
+                        {/* User Avatar - Using shadcn Avatar */}
+                        <Avatar className="h-[40px] w-[40px]">
+                            <AvatarImage src={userAvatar} alt={userName} />
+                            <AvatarFallback className="bg-[#001c43] text-white font-['Montserrat'] text-[12px]">
+                                {getInitials(userName)}
+                            </AvatarFallback>
+                        </Avatar>
+
+                        {/* Dropdown Chevron */}
+                        <ChevronDown className="h-5 w-5 text-[#001c43]" />
+                    </div>
+                </div>
             </div>
         </header>
     )
