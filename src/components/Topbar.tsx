@@ -2,12 +2,20 @@ import { SidebarTrigger } from '@/components/ui/sidebar'
 import { Separator } from '@/components/ui/separator'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
-import { Bell, ChevronDown, X } from 'lucide-react'
+import { Bell, X, User, Settings, LogOut } from 'lucide-react'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import { NotificationCenter } from '@/components/NotificationCenter'
 import { mockNotifications } from '@/data/mockNotification'
 import { useNotificationStore } from '@/store/useNotificationStore'
 import { useAuth } from '@/hooks/useAuth'
+import { useNavigate } from 'react-router-dom'
+import { logout } from '@/utils/auth'
 import { useState, useEffect } from 'react'
 
 interface TopbarProps {
@@ -24,8 +32,10 @@ export function Topbar({
     userAvatar = "/Ellipse 2824.svg"
 }: TopbarProps) {
     const { user } = useAuth()
+    const navigate = useNavigate()
     const { notifications: storeNotifications } = useNotificationStore()
     const [notificationOpen, setNotificationOpen] = useState(false)
+    const [dropdownOpen, setDropdownOpen] = useState(false)
     const [readNotifications, setReadNotifications] = useState<string[]>([])
 
     // COMBINE mock notifications + store notifications
@@ -74,6 +84,11 @@ export function Topbar({
         }
     }
 
+    // Dropdown handlers
+    const handleViewProfile = () => navigate('/profile')
+    const handleSettings = () => navigate('/settings')
+    const handleLogout = () => logout()
+
     return (
         <header className="flex h-16 items-center gap-4 border-b bg-white px-6">
             {/* Left Section */}
@@ -85,7 +100,7 @@ export function Topbar({
             <div className="flex-1" />
 
             {/* Right Section */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-[10px]">
                 {/* Notification Bell with Popover */}
                 <Popover open={notificationOpen} onOpenChange={handleNotificationOpen}>
                     <PopoverTrigger asChild>
@@ -125,26 +140,56 @@ export function Topbar({
                     </PopoverContent>
                 </Popover>
 
-                {/* User Info */}
-                <div className="flex items-center gap-[15px]">
-                    <div className="flex flex-col items-end gap-[4px] text-right font-['Montserrat'] text-[12px] font-normal leading-5">
-                        <p className="text-[#001c43] leading-tight">{userName}</p>
-                        <p className="text-[#e50019] leading-tight">{userRole}</p>
-                    </div>
+                {/* User Info with Dropdown */}
+                <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
+                    <DropdownMenuTrigger asChild>
+                        <button className="flex items-center gap-[15px] focus:outline-none rounded-lg p-2 hover:bg-gray-50 transition-colors cursor-pointer">
+                            {/* User Name and Role */}
+                            <div className="flex flex-col items-end gap-[4px] text-right font-['Montserrat'] text-[12px] font-normal leading-5">
+                                <p className="text-[#001c43] leading-tight">{userName}</p>
+                                <p className="text-[#e50019] leading-tight">{userRole}</p>
+                            </div>
 
-                    <div className="flex items-center gap-[15px]">
-                        {/* User Avatar - Using shadcn Avatar */}
-                        <Avatar className="h-[40px] w-[40px]">
-                            <AvatarImage src={userAvatar} alt={userName} />
-                            <AvatarFallback className="bg-[#001c43] text-white font-['Montserrat'] text-[12px]">
-                                {getInitials(userName)}
-                            </AvatarFallback>
-                        </Avatar>
+                            {/* Avatar */}
+                            <Avatar className="h-[40px] w-[40px]">
+                                <AvatarImage src={userAvatar} alt={userName} />
+                                <AvatarFallback className="bg-[#001c43] text-white font-['Montserrat'] text-[12px]">
+                                    {getInitials(userName)}
+                                </AvatarFallback>
+                            </Avatar>
+                        </button>
+                    </DropdownMenuTrigger>
 
-                        {/* Dropdown Chevron */}
-                        <ChevronDown className="h-5 w-5 text-[#001c43]" />
-                    </div>
-                </div>
+                    {/* Dropdown Menu */}
+                    <DropdownMenuContent
+                        align="end"
+                        className="w-56 bg-white rounded-lg shadow-md border border-gray-200 py-2"
+                    >
+                        <DropdownMenuItem
+                            onClick={handleViewProfile}
+                            className="flex items-center gap-3 px-4 py-2.5 cursor-pointer hover:bg-gray-100 focus:bg-gray-100 transition-colors"
+                        >
+                            <User className="h-4 w-4 text-[#001c43]" />
+                            <span className="text-sm font-normal text-[#001C43]">View Profile</span>
+                        </DropdownMenuItem>
+
+                        <DropdownMenuItem
+                            onClick={handleSettings}
+                            className="flex items-center gap-3 px-4 py-2.5 cursor-pointer hover:bg-gray-100 focus:bg-gray-100 transition-colors"
+                        >
+                            <Settings className="h-4 w-4 text-[#001c43]" />
+                            <span className="text-sm font-normal text-[#001c43]">Settings</span>
+                        </DropdownMenuItem>
+
+                        <DropdownMenuItem
+                            onClick={handleLogout}
+                            className="flex items-center gap-3 px-4 py-2.5 cursor-pointer hover:bg-gray-100 focus:bg-gray-100 transition-colors text-[#001C43]"
+                        >
+                            <LogOut className="h-4 w-4" />
+                            <span className="text-sm font-normal">Log Out</span>
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
             </div>
         </header>
     )

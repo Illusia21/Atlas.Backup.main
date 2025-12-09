@@ -71,7 +71,7 @@ export default function Profile() {
                 </div>
 
                 {/* User Details Grid */}
-                <div className="max-w-5xl mx-auto space-y-6 sm:space-y-8 border border-black">
+                <div className="max-w-5xl mx-auto space-y-6 sm:space-y-8">
                     {/* Mobile: Single Column, Tablet+: Two Column Grid */}
                     <div className="grid grid-cols-1 md:grid-cols-[auto_1fr_auto_1fr] gap-x-4 sm:gap-x-6 md:gap-x-8 gap-y-4 sm:gap-y-6 md:gap-y-8 lg:gap-y-10">
                         {/* Row 1 */}

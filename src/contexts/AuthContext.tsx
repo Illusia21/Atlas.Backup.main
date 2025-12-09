@@ -4,13 +4,13 @@ import { ACCESS_TOKEN } from '../constants';
 export interface User {
     id: string;
     name: string;
-    username?: string;  // Add this
+    username?: string;
     department: string;
-    position?: string;  // Add this
+    position?: string;
     email: string;
     role: string;
-    contactNumber?: string;  // Add this
-    avatar?: string;  // Add this
+    contactNumber?: string;
+    avatar?: string;
 }
 
 interface AuthContextType {
@@ -40,13 +40,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             const mockUser: User = {
                 id: '2017181910',
                 name: 'Aisha Nicole Dones',
-                username: 'username',  // Add this
-                department: 'Human Resources',  // Changed from 'CCIS'
-                position: 'Manager',  // Add this
-                email: 'flName@mcm.edu.ph',  // Changed email
-                role: 'Requestor',  // Changed from 'CSA Facilitator'
-                contactNumber: '097778888191',  // Add this
-                avatar: '/Ellipse 2824.svg',  // Add this
+                username: 'username',
+                department: 'Human Resources',
+                position: 'Manager',
+                email: 'flName@mcm.edu.ph',
+                role: 'Requestor',
+                contactNumber: '097778888191',
+                avatar: '/Ellipse 2824.svg',
             };
             setUser(mockUser);
         }
