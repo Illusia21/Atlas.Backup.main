@@ -6,6 +6,7 @@ import { RequestCard } from '@/components/RequestCard';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { FilterPanel, type FilterValues } from '@/components/FilterPanel';
+import { useSubmittedRequestsStore } from '@/store/useSubmittedRequestsStore';
 import type { LiquidationRequest, LiquidationStatus } from '@/types';
 import {
     Table,
@@ -21,20 +22,18 @@ export default function ForLiquidation() {
     const navigate = useNavigate();
     const searchInputRef = useRef<HTMLInputElement>(null);
 
+    // Get submitted requests from Zustand store
+    const { submittedRequests } = useSubmittedRequestsStore();
+
     // State
     const [activeTab, setActiveTab] = useState<LiquidationStatus | 'All'>('All');
     const [searchQuery, setSearchQuery] = useState('');
     const [viewMode, setViewMode] = useState<'table' | 'grid'>('table');
 
-    // Load submitted liquidation reports from localStorage
-    const [submittedLiquidations, setSubmittedLiquidations] = useState<any[]>([]);
-
-    useEffect(() => {
-        const submitted = JSON.parse(localStorage.getItem('submittedRequests') || '[]');
-        // Filter only liquidation reports
-        const liquidations = submitted.filter((req: any) => req.requestType === 'Liquidation');
-        setSubmittedLiquidations(liquidations);
-    }, []);
+    // Filter submitted requests to get only liquidations
+    const submittedLiquidations = useMemo(() => {
+        return submittedRequests.filter((req) => req.requestType === 'Liquidation');
+    }, [submittedRequests]);
 
     // Check for success flag from URL and show toast
     useEffect(() => {
@@ -137,14 +136,14 @@ export default function ForLiquidation() {
     // Merge mock data with submitted liquidations
     const allLiquidationRequests = useMemo(() => {
         return [
-            ...submittedLiquidations.map((req: any) => ({
+            ...submittedLiquidations.map((req) => ({
                 id: req.id,
                 requestType: req.requestType,
                 dateRequested: req.dateRequested,
-                description: req.description,
+                description: req.description || '',
                 amount: req.amount,
-                currency: (req.currency as 'PHP' | 'USD' | 'EUR') || 'PHP', // Default currency
-                status: req.status as LiquidationStatus
+                currency: req.currency || 'PHP',
+                status: (req.status as LiquidationStatus) || 'Pending'
             })),
             ...mockLiquidationRequests
         ];
@@ -484,7 +483,7 @@ export default function ForLiquidation() {
                                     key={request.id}
                                     request={{
                                         ...request,
-                                        amount: request.amount.toLocaleString(),
+                                        amount: request.amount,
                                         status: request.status as any
                                     }}
                                     onViewClick={() => handleViewRequest(request.id)}

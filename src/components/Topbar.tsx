@@ -41,13 +41,13 @@ export function Topbar({
     // COMBINE mock notifications + store notifications
     const allNotifications = [...storeNotifications, ...mockNotifications]
 
-    // Load read notifications
+    // Load read notifications from localStorage
     useEffect(() => {
         const read = JSON.parse(localStorage.getItem('readNotifications') || '[]')
         setReadNotifications(read)
     }, [])
 
-    // Save read notifications
+    // Save read notifications to localStorage
     useEffect(() => {
         localStorage.setItem('readNotifications', JSON.stringify(readNotifications))
     }, [readNotifications])
@@ -66,22 +66,22 @@ export function Topbar({
         notification => !readNotifications.includes(notification.id)
     ).length
 
-    // Mark notification as read
+    // Mark notification as read when clicked
     const handleNotificationClick = (notificationId: string) => {
         if (!readNotifications.includes(notificationId)) {
             setReadNotifications(prev => [...prev, notificationId])
         }
     }
 
-    // Mark all as read when notification panel opens
+    // Mark all as read when notification panel CLOSES
     const handleNotificationOpen = (open: boolean) => {
-        setNotificationOpen(open)
-
-        // When opening, mark all as read
-        if (open) {
+        // If closing the panel, mark all as read (user has seen them)
+        if (!open && notificationOpen) {
             const allNotificationIds = allNotifications.map(n => n.id)
             setReadNotifications(allNotificationIds)
         }
+
+        setNotificationOpen(open)
     }
 
     // Dropdown handlers
@@ -143,7 +143,7 @@ export function Topbar({
                 {/* User Info with Dropdown */}
                 <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
                     <DropdownMenuTrigger asChild>
-                        <button className="flex items-center gap-[15px] focus:outline-none rounded-lg p-2 hover:bg-gray-50 transition-colors cursor-pointer">
+                        <button className="flex items-center gap-[15px] focus:outline-none cursor-pointer">
                             {/* User Name and Role */}
                             <div className="flex flex-col items-end gap-[4px] text-right font-['Montserrat'] text-[12px] font-normal leading-5">
                                 <p className="text-[#001c43] leading-tight">{userName}</p>

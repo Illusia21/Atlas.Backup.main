@@ -91,9 +91,7 @@ export function NotificationCenter({
                         return (
                             <div key={notification.id}>
                                 <div
-                                    className={`flex items-start justify-between px-5 py-[10px] ${isClickable ? 'cursor-pointer hover:bg-gray-50' : ''
-                                        } ${isRead ? 'opacity-60' : ''
-                                        }`}
+                                    className={`flex items-start justify-between px-5 py-[10px] ${isClickable ? 'cursor-pointer hover:bg-gray-50' : ''}`}
                                     onClick={() => isClickable && handleNotificationClick(notification)}
                                 >
                                     {/* Icon and Message */}

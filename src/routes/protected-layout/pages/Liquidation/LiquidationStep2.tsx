@@ -30,10 +30,11 @@ export default function LiquidationStep2() {
 
     const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
     const [isDragging, setIsDragging] = useState(false);
+    const [isInitialized, setIsInitialized] = useState(false);
 
     // Load persisted files on mount
     useEffect(() => {
-        if (step2Files && step2Files.length > 0) {
+        if (step2Files && step2Files.length > 0 && !isInitialized) {
             const reconstructedFiles: UploadedFile[] = step2Files.map(meta => ({
                 id: meta.id,
                 file: new File([], meta.name, { type: meta.type }),
@@ -41,11 +42,17 @@ export default function LiquidationStep2() {
                 status: 'completed' as const,
             }));
             setUploadedFiles(reconstructedFiles);
+            setIsInitialized(true);
+        } else if (!isInitialized) {
+            setIsInitialized(true);
         }
-    }, [step2Files]);
+    }, [step2Files, isInitialized]);
 
     //Auto-save files to store
     useEffect(() => {
+        // Only save if initialized to prevent saving during initial load
+        if (!isInitialized) return;
+
         const completedFiles = uploadedFiles.filter(f => f.status === 'completed');
         const fileMetadata = completedFiles.map(f => ({
             id: f.id,
@@ -53,8 +60,12 @@ export default function LiquidationStep2() {
             size: f.file.size,
             type: f.file.type,
         }));
-        saveStep2Files(fileMetadata);
-    }, [uploadedFiles, saveStep2Files]);
+
+        // Only save if there's actual change
+        if (JSON.stringify(fileMetadata) !== JSON.stringify(step2Files)) {
+            saveStep2Files(fileMetadata);
+        }
+    }, [uploadedFiles, isInitialized]); // Removed saveStep2Files and step2Files from dependencies
 
     // Simulate file upload
     const uploadFile = useCallback((file: File) => {
