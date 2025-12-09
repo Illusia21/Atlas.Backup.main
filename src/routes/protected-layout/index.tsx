@@ -103,7 +103,7 @@ export default function ProtectedLayout() {
     return <div>Loading...</div>;
   }
 
-  return !isAuthorized ? (
+  return isAuthorized ? (
     <AuthProvider>
       <SidebarProvider defaultOpen={false}>
         <AppSidebar />

@@ -16,6 +16,7 @@ import {
     TableRow,
 } from '@/components/ui/table'
 import type { RequestStatus } from '@/types'
+import { useSubmittedRequestsStore } from '@/store/useSubmittedRequestsStore';
 
 function MyRequests() {
     const navigate = useNavigate()
@@ -30,13 +31,15 @@ function MyRequests() {
     }, []);
 
     // Track submitted requests from localStorage
-    const [submittedRequests, setSubmittedRequests] = useState<any[]>([]);
+    // const [submittedRequests, setSubmittedRequests] = useState<any[]>([]);
 
-    // Load submitted requests on mount
-    useEffect(() => {
-        const submitted = JSON.parse(localStorage.getItem('submittedRequests') || '[]');
-        setSubmittedRequests(submitted);
-    }, []);
+    // // Load submitted requests on mount
+    // useEffect(() => {
+    //     const submitted = JSON.parse(localStorage.getItem('submittedRequests') || '[]');
+    //     setSubmittedRequests(submitted);
+    // }, []);
+
+    const { submittedRequests } = useSubmittedRequestsStore();
 
     // State for filters
     const [activeTab, setActiveTab] = useState<RequestStatus | 'All'>('All')
@@ -156,8 +159,8 @@ function MyRequests() {
                     const dateB = new Date(b.dateRequested).getTime()
                     comparison = dateA - dateB
                 } else if (sortBy === 'amount') {
-                    const amountA = parseFloat(a.amount.replace(/,/g, ''))
-                    const amountB = parseFloat(b.amount.replace(/,/g, ''))
+                    const amountA = typeof a.amount === 'number' ? a.amount : parseFloat(String(a.amount).replace(/,/g, ''))
+                    const amountB = typeof b.amount === 'number' ? b.amount : parseFloat(String(b.amount).replace(/,/g, ''))
                     comparison = amountA - amountB
                 }
 
@@ -322,7 +325,7 @@ function MyRequests() {
                                         <TableCell className="text-[12px] text-center">{request.dateRequested}</TableCell>
                                         <TableCell className="text-[12px] text-center">{request.description}</TableCell>
                                         <TableCell className="text-[12px] text-center">
-                                            {request.currency} {request.amount}
+                                            {request.currency} {typeof request.amount === 'number' ? request.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : request.amount}
                                         </TableCell>
                                         <TableCell className="text-center">
                                             <StatusBadge status={request.status} />

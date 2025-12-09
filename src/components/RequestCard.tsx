@@ -48,7 +48,7 @@ export function RequestCard({ request, onViewClick }: RequestCardProps) {
                 <p className="text-[14px] text-[#001C43] font-['Montserrat']">
                     <span className="font-bold">Amount:</span>{' '}
                     <span className="font-normal">
-                        {request.currency} {request.amount}
+                        {request.currency} {typeof request.amount === 'number' ? request.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : request.amount}
                     </span>
                 </p>
             </CardContent>

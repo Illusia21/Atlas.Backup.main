@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLiquidationStore } from '@/store/useLiquidationStore';
+import { useSubmittedRequestsStore } from '@/store/useSubmittedRequestsStore';
 import { format } from 'date-fns';
 import { Info, ArrowRight, CircleCheckBig, PencilLine, FileText, Link2 } from 'lucide-react';
 import mapuaLogo from '@/assets/images/mapuaLogo.png';
 import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
 import { useNotificationStore } from '@/store/useNotificationStore';
+import type { Request } from '@/types';
 import Stepper from '@/components/Stepper';
 import {
     Table,
@@ -37,6 +39,7 @@ export default function LiquidationStep3() {
     const { step1Data, step2Files, requestedAmount, clearAllData } = useLiquidationStore();
     const { user } = useAuth();
     const { addNotification } = useNotificationStore();
+    const { addSubmittedRequest } = useSubmittedRequestsStore();
 
     // For now, using static values. When store is updated:
     // const { cashAdvanceData } = useLiquidationStore();
@@ -90,22 +93,23 @@ export default function LiquidationStep3() {
             setShowConfirmDialog(false);
 
             // Create the new liquidation request object
-            const newRequest = {
-                id: `LIQ-${Date.now()}`, // Generate unique ID
-                requestType: 'Liquidation',
+            const totalAmount = (step1Data?.lineItems || []).reduce((sum, item) => sum + item.amount, 0);
+            const newRequest: Request = {
+                id: `LIQ-${Date.now()}`,
+                requestType: 'Liquidation' as const,
                 dateRequested: new Date().toISOString().split('T')[0],
                 status: 'Pending' as const,
-                amount: (step1Data?.lineItems || []).reduce((sum, item) => sum + item.amount, 0),
+                amount: totalAmount,
+                currency: (step1Data?.currency || 'PHP') as 'PHP' | 'USD' | 'EUR',
                 description: step1Data?.descriptionPurpose || '',
-                requestedBy: 'N/A', // TODO: Get from auth context
-                department: 'N/A', // TODO: Get from auth context
-                cashAdvanceRef: 'CA-2024-001', // TODO: Get from original CA request
             };
 
             // Save to localStorage (will be replaced by API call later)
-            const submittedRequests = JSON.parse(localStorage.getItem('submittedRequests') || '[]');
-            submittedRequests.push(newRequest);
-            localStorage.setItem('submittedRequests', JSON.stringify(submittedRequests));
+            // const submittedRequests = JSON.parse(localStorage.getItem('submittedRequests') || '[]');
+            // submittedRequests.push(newRequest);
+            // localStorage.setItem('submittedRequests', JSON.stringify(submittedRequests));
+
+            addSubmittedRequest(newRequest);
 
             // Add notification before clearing data
             addNotification({

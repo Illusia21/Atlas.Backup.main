@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCashAdvanceStore } from '@/store/useCashAdvanceStore';
+import { useSubmittedRequestsStore } from '@/store/useSubmittedRequestsStore';
 import { format } from 'date-fns';
 import { Info, ArrowRight, CircleCheckBig, PencilLine, FileText, Link2 } from 'lucide-react';
 import mapuaLogo from '@/assets/images/mapuaLogo.png';
 import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
 import { useNotificationStore } from '@/store/useNotificationStore';
+import type { Request } from '@/types';
 import Stepper from '@/components/Stepper';
 import {
     Table,
@@ -39,6 +41,7 @@ export default function CAStep5() {
     const { step1Data, step2Data, step3Data, step4Files, clearAllData } = useCashAdvanceStore();
     const { user } = useAuth();
     const { addNotification } = useNotificationStore();
+    const { addSubmittedRequest } = useSubmittedRequestsStore();
 
     // Generate series number (in production, this would come from backend)
     const seriesNumber = '00556';
@@ -81,21 +84,22 @@ export default function CAStep5() {
         setShowConfirmDialog(false);
 
         // Create the new request object
-        const newRequest = {
-            id: `CA-${Date.now()}`, // Generate unique ID
-            requestType: 'Cash Advance',
+        const newRequest: Request = {
+            id: `CA-${Date.now()}`,
+            requestType: 'Cash Advance' as const,
             dateRequested: new Date().toISOString().split('T')[0],
             status: 'Pending' as const,
             amount: step2Data?.totalAmount || 0,
+            currency: (step2Data?.currency || 'PHP') as 'PHP' | 'USD' | 'EUR',
             description: step2Data?.description || '',
-            requestedBy: step1Data?.requestedBy || '',
-            department: step1Data?.department || '',
         };
 
-        // Save to localStorage (will be replaced by API call later)
-        const submittedRequests = JSON.parse(localStorage.getItem('submittedRequests') || '[]');
-        submittedRequests.push(newRequest);
-        localStorage.setItem('submittedRequests', JSON.stringify(submittedRequests));
+        // Save to localStorage
+        // const submittedRequests = JSON.parse(localStorage.getItem('submittedRequests') || '[]');
+        // submittedRequests.push(newRequest);
+        // localStorage.setItem('submittedRequests', JSON.stringify(submittedRequests));
+
+        addSubmittedRequest(newRequest);
 
         // Add notification before clearing data
         addNotification({
