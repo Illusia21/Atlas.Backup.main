@@ -102,7 +102,7 @@ export function NotificationCenter({
                                             style={{ backgroundColor: bgColor }}
                                         >
                                             <Icon className="h-6 w-6 text-white" />
-                                            {/* ✅ Unread indicator dot */}
+                                            {/*  Unread indicator dot */}
                                             {!isRead && (
                                                 <div className="absolute -top-1 -right-1 w-3 h-3 bg-[#e50019] rounded-full border-2 border-white" />
                                             )}

@@ -3,6 +3,9 @@ import mapuaLogo from '@/assets/images/mapuaLogo.png'
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useMemo, useRef } from "react";
 import { useReactToPrint } from "react-to-print";
+import { useNotificationStore } from '@/store/useNotificationStore';
+import { useAuth } from '@/hooks/useAuth';
+import { useCancelledRequestsStore } from '@/store/useCancelledRequestsStore';
 import { X, Send, MoveRight, Download, Link2, HardDriveDownload, CloudUpload } from "lucide-react";
 import { mockRequestDetails, type RequestDetail, type Comment, type JourneyStep } from "@/data/mockRequestDetails";
 import {
@@ -609,6 +612,9 @@ export default function MyRequestDetails() {
     const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
     const [cancelReason, setCancelReason] = useState("");
     const [cancelAttachments, setCancelAttachments] = useState<File[]>([]);
+    const { addNotification } = useNotificationStore();
+    const { user } = useAuth();
+    const { addCancelledRequest } = useCancelledRequestsStore();
 
     // Ref for printing
     const printRef = useRef<HTMLDivElement>(null);
@@ -691,6 +697,17 @@ export default function MyRequestDetails() {
         console.log("Cancel reason:", cancelReason);
         console.log("Attachments:", cancelAttachments);
 
+        // Add notification for cancellation submission
+        addNotification({
+            id: `notification-${Date.now()}`,
+            userId: user?.id || 'user-123',
+            type: 'cancellation_submitted',
+            requestType: (request?.requestType as 'Cash Advance' | 'Non-Trade Payable' | 'Trade Payable' | 'Liquidation Report') || 'Cash Advance',
+            message: `Request (Ref. No: ${id}) has been submitted and is pending approval.`,
+            referenceNo: id || '',
+            timestamp: new Date(),
+        });
+
         // Show success toast
         toast.success("Request cancelation submitted Successfully!", {
             duration: 3000,
@@ -707,10 +724,10 @@ export default function MyRequestDetails() {
             },
         });
 
-        // Store cancellation in localStorage to update MyRequests page
-        const cancelledRequests = JSON.parse(localStorage.getItem("cancelledRequests") || "[]");
-        cancelledRequests.push(id);
-        localStorage.setItem("cancelledRequests", JSON.stringify(cancelledRequests));
+        // Store cancellation in store (temporary, clears on refresh)
+        if (id) {
+            addCancelledRequest(id);
+        }
 
         // Close dialog and reset states
         setShowCancelDialog(false);

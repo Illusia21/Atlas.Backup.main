@@ -17,18 +17,13 @@ import {
 } from '@/components/ui/table'
 import type { RequestStatus } from '@/types'
 import { useSubmittedRequestsStore } from '@/store/useSubmittedRequestsStore';
+import { useCancelledRequestsStore } from '@/store/useCancelledRequestsStore';
 
 function MyRequests() {
     const navigate = useNavigate()
 
-    // Track cancelled requests from localStorage
-    const [cancelledRequests, setCancelledRequests] = useState<string[]>([]);
-
-    // Load cancelled requests on mount
-    useEffect(() => {
-        const cancelled = JSON.parse(localStorage.getItem("cancelledRequests") || "[]");
-        setCancelledRequests(cancelled);
-    }, []);
+    // Track cancelled requests from store (temporary, clears on refresh)
+    const { cancelledRequestIds } = useCancelledRequestsStore();
 
     // Track submitted requests from localStorage
     // const [submittedRequests, setSubmittedRequests] = useState<any[]>([]);
@@ -110,7 +105,7 @@ function MyRequests() {
             ...submittedRequests, // New submitted requests first
             ...mockRequests.map(request => {
                 // Check if request is cancelled
-                if (cancelledRequests.includes(request.id)) {
+                if (cancelledRequestIds.includes(request.id)) {
                     return { ...request, status: "Cancellation Requested" as RequestStatus };
                 }
                 return request;
@@ -169,7 +164,7 @@ function MyRequests() {
         }
 
         return filtered
-    }, [activeTab, searchQuery, activeFilters, sortBy, sortOrder, cancelledRequests, submittedRequests])
+    }, [activeTab, searchQuery, activeFilters, sortBy, sortOrder, cancelledRequestIds, submittedRequests])
 
     // Pagination logic
     const totalPages = Math.ceil(filteredRequests.length / itemsPerPage)
