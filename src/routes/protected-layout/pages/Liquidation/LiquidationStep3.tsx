@@ -157,7 +157,7 @@ export default function LiquidationStep3() {
             <div className="flex-1 flex flex-col gap-[20px] relative">
                 {/* Header with Info Icon */}
                 <div className="flex items-center justify-between">
-                    {/* Changed Step 5 to Step 3, Review Form to Review & Submit */}
+                    {/* DESIGN FIX: Changed Step 5 to Step 3, Review Form to Review & Submit */}
                     <div className="flex items-center gap-[20px]">
                         <h1 className="font-['Montserrat'] font-bold text-[32px] leading-[40px] text-[#001c43]">
                             Step 3
@@ -185,11 +185,13 @@ export default function LiquidationStep3() {
                                 />
                             </div>
 
+
                             <div className="flex items-end justify-center pb-[10px]">
                                 <h2 className="font-bold text-[32px] leading-[normal] text-[#001c43] text-center">
                                     Liquidation Report
                                 </h2>
                             </div>
+
 
                             <div className="flex items-end justify-end pb-[10px]">
                                 <p className="font-['Montserrat'] font-semibold text-[16px] leading-none text-[#001c43] tracking-[-0.32px]">
@@ -231,11 +233,13 @@ export default function LiquidationStep3() {
                                     </p>
                                 </div>
 
+
                             </div>
                         </div>
 
                         {/* Separator */}
                         <div className="h-[2px] bg-[#b1b1b1]" />
+
 
                         <div className="bg-white rounded-[20px] p-[20px] border border-transparent">
                             <div className="grid grid-cols-2 gap-y-[10px]">
@@ -253,6 +257,7 @@ export default function LiquidationStep3() {
                                         <PencilLine className="w-[24px] h-[24px]" strokeWidth={2} />
                                     </button>
                                 </div>
+
 
                                 <div className="col-span-2 flex flex-col gap-[10px] px-[20px]">
                                     <p className="font-['Montserrat'] font-bold text-[14px] leading-[20px] text-[#001c43]">
@@ -293,6 +298,7 @@ export default function LiquidationStep3() {
                                     </p>
                                 </div>
 
+
                                 <div className="col-span-1 flex flex-col gap-[10px] px-[20px]">
                                     <p className="font-['Montserrat'] font-bold text-[14px] leading-[20px] text-[#001c43]">
                                         Date Requested
@@ -301,6 +307,7 @@ export default function LiquidationStep3() {
                                         {dateRequested}
                                     </p>
                                 </div>
+
 
                                 <div className="col-span-1 flex flex-col gap-[10px] px-[20px]">
                                     <p className="font-['Montserrat'] font-bold text-[14px] leading-[20px] text-[#001c43]">
@@ -311,6 +318,7 @@ export default function LiquidationStep3() {
                                     </p>
                                 </div>
 
+
                                 <div className="col-span-1 flex flex-col gap-[10px] px-[20px]">
                                     <p className="font-['Montserrat'] font-bold text-[14px] leading-[20px] text-[#001c43]">
                                         Date Start
@@ -319,6 +327,7 @@ export default function LiquidationStep3() {
                                         {formatDate(step1Data?.dateRange?.from)}
                                     </p>
                                 </div>
+
 
                                 <div className="col-span-1 flex flex-col gap-[10px] px-[20px]">
                                     <p className="font-['Montserrat'] font-bold text-[14px] leading-[20px] text-[#001c43]">
@@ -393,6 +402,7 @@ export default function LiquidationStep3() {
                         <div className="h-[2px] bg-[#b1b1b1]" />
 
                         {/* === AMOUNT SUMMARY SECTION === */}
+
                         <div className="bg-[#ececec] rounded-[20px] p-[20px]">
                             <div className="grid grid-cols-2 gap-y-[10px] px-[20px]">
                                 {/* Currency */}
@@ -441,6 +451,7 @@ export default function LiquidationStep3() {
                         <div className="h-[2px] bg-[#b1b1b1]" />
 
                         {/* === ATTACHMENTS SECTION === */}
+
                         <div className="flex items-start justify-end px-[20px] py-[10px]">
                             {/* Attachments Button */}
                             <div className="flex items-center">
